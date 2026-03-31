@@ -1,0 +1,8 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "DSA40 Application Helper — FastAPI backend"
+readme = "README.md"
+authors = [{ name = "Luis Glaser", email = "l.glaser@comprensio.ai" }]
+requires-python = ">=3.11"
+classifiers = ["Private :: Do Not Upload"]
