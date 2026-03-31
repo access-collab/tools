@@ -6,3 +6,11 @@ readme = "README.md"
 authors = [{ name = "Luis Glaser", email = "l.glaser@comprensio.ai" }]
 requires-python = ">=3.11"
 classifiers = ["Private :: Do Not Upload"]
+
+[dependency-groups]
+dev = ["mypy>=1.19.1", "ruff>=0.12.7"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["*.py"]
