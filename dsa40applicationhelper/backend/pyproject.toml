@@ -5,6 +5,10 @@ description = "DSA40 Application Helper — FastAPI backend"
 readme = "README.md"
 authors = [{ name = "Luis Glaser", email = "l.glaser@comprensio.ai" }]
 requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.135.2",
+    "sqlalchemy>=2.0.48",
+]
 classifiers = ["Private :: Do Not Upload"]
 
 [dependency-groups]
