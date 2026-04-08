@@ -41,7 +41,7 @@ class PutVlopseRequest(BaseModel):
 
 
 @router.put("/api/vlopse/{name}")
-async def put_vlopse(name, req: PutVlopseRequest) -> JSONResponse:
+async def put_vlopse(name: str, req: PutVlopseRequest) -> JSONResponse:
     try:
         vlopse_service.rename(name, req.new_name)
     except VlopseDoesNotExistException:
