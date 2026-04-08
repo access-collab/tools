@@ -1,0 +1,17 @@
+{
+  "mappings": {
+    "M3": "first-name",
+    "M4": "last-name",
+    "M5": "email-inst",
+    "M14": { "src": "org-addr-country", "operation": "make-iso" },
+    "M29": "resaerch-publications",
+    "M30": "research-outcomes"
+  },
+  "conditions": {
+    "research-outcomes": [
+      {
+        "show_if": { "question_id": "M29", "operator": "eq", "value": "Other" }
+      }
+    ]
+  }
+}
