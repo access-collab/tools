@@ -43,3 +43,14 @@
   </section>
 </main>
 
+<style>
+  main {
+    font-family: system-ui, sans-serif;
+    max-width: 600px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+  }
+  h1 {
+    font-size: 1.75rem;
+  }
+</style>
