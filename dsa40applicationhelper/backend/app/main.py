@@ -20,6 +20,7 @@ app = FastAPI(
 init_db()
 
 app.include_router(health.router)
+app.include_router(form.router)
 app.include_router(vlopse.router)
 @app.get("/")
 def index_fallback() -> JSONResponse:

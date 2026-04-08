@@ -1,21 +1,30 @@
 import json
 from pathlib import Path
-from typing import Any, TypedDict
 
-from app.models import Condition, PlatformMapping
+from pydantic import BaseModel
+
+from app.models import Condition
 
 _DATA_DIR = Path(__file__).parent.parent / "data"
 
 
-class CustomStuffs(TypedDict):
+class PlatformMappingComplex(BaseModel):
+    src: str | list[str]
+    operation: str
+
+
+PlatformMapping = str | PlatformMappingComplex
+
+
+class CustomStuffs(BaseModel):
     mappings: dict[str, PlatformMapping]
-    conditions: list[Condition]
+    conditions: dict[str, Condition]
 
 
-def _load_json(filename: str) -> Any:
+def _load_json(filename: str) -> CustomStuffs:
     path = _DATA_DIR / filename
-    with open(path) as f:
-        return json.load(f)
+    data = path.read_text()
+    return CustomStuffs.model_validate_json(data)
 
 
 def _write_json(filename: str, value: CustomStuffs):
