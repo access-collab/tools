@@ -1,0 +1,7 @@
+{
+  "mappings": {
+    "T1": {"src": ["first-name", "last-name"], "operation": "join-space"},
+    "T2": "commercial-purpose"
+  },
+  "conditions": {}
+}
