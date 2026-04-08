@@ -9,12 +9,12 @@ from app.services.vlopse import (
 )
 
 router = APIRouter()
-service = VlopseConfigService()
+vlopse_service = VlopseConfigService()
 
 
-@router.get("/api/vlopse")
+@router.get("/api/vlopse", response_model=list[str])
 async def get_vlopse() -> JSONResponse:
-    vlopses = service.get_all()
+    vlopses = vlopse_service.get_all()
     return JSONResponse(vlopses)
 
 
@@ -25,7 +25,7 @@ class PostVlopseRequest(BaseModel):
 @router.post("/api/vlopse")
 async def add_vlopse(new_vlopse: PostVlopseRequest) -> JSONResponse:
     try:
-        service.add(new_vlopse.name)
+        vlopse_service.add(new_vlopse.name)
     except VlopseExistsException:
         raise HTTPException(status_code=409, detail="vlopse already exists")
 
@@ -39,7 +39,7 @@ class PutVlopseRequest(BaseModel):
 @router.put("/api/vlopse/{name}")
 async def put_vlopse(name, req: PutVlopseRequest) -> JSONResponse:
     try:
-        service.rename(name, req.new_name)
+        vlopse_service.rename(name, req.new_name)
     except VlopseDoesNotExistException:
         raise HTTPException(status_code=404, detail="vlopse does not exist")
     except VlopseExistsException:
@@ -50,7 +50,7 @@ async def put_vlopse(name, req: PutVlopseRequest) -> JSONResponse:
 @router.delete("/api/vlopse/{name}")
 async def delete_vlopse(name: str) -> JSONResponse:
     try:
-        service.delete(name)
+        vlopse_service.delete(name)
     except VlopseDoesNotExistException:
         raise HTTPException(status_code=404, detail="Item not found")
     return JSONResponse({"success": True})
