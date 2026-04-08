@@ -22,3 +22,8 @@ dev = [
 python_version = "3.11"
 strict = true
 files = ["*.py"]
+
+
+[tool.basedpyright]
+venvPath = "."
+venv = ".venv"
