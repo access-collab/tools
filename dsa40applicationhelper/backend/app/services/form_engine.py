@@ -49,6 +49,15 @@ class Answer(BaseModel):
     value: str
 
 
+class MappedAnswer(BaseModel):
+    question_id: str
+    value: str
+
+
+class MappingError(BaseModel):
+    question_id: str
+    errors: list[ErrorDetails]
+
 
 ta = TypeAdapter(CustomStuffs)
 
@@ -161,6 +170,7 @@ class QuestionMapper:
         result = []
         # op = self._hydrate_operator(operator)
 
+
 class AnswerTransformer:
     _mapping: dict[str, PlatformMapping]
 
@@ -183,6 +193,7 @@ class AnswerTransformer:
 
     def map(self, answers: list[Answer]):
         answer_map = {a.question_id: a.value for a in answers}
+        result: list[MappedAnswer | MappingError] = []
         for src, operator in self._mapping.items():  # FIXME: src name is confusing??
             print(f"FIGURE OUT INPUT FOR {operator} TO GET {src}")
             op = _hydrate_operator(operator)
@@ -198,8 +209,20 @@ class AnswerTransformer:
                 raise TypeError()
             print(f"SOLUTION CANDIDATE {inputs}")
             output = self.apply_operator(op, inputs)
+            try:
+                answer = MappedAnswer(question_id=src, value=output)
+            except ValidationError as e:
+                answer = MappingError(question_id=src, errors=e.errors())
+            result.append(answer)
         print(f"MAPPED RESULT: {result}")
 
         return result
 
 
+def to_frage(question: UnifiedQuestion, vlopse: str):
+    stuff = get_custom_stuffs_for(vlopse)
+    q_id = question.id
+
+    stuff["mapping"]
+
+    # Frage(id=q_id, question.text_en, help_text=question.help_text)

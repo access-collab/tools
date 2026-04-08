@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageProps } from "./$types";
 
+  import { enhance } from "$app/forms";
   import Question from "$lib/Question.svelte";
   let { data, form }: PageProps = $props();
   let error = $state(undefined);
@@ -22,3 +23,20 @@
   {/each}
   <button>Submit</button>
 </form>
+{#if form?.success}
+  <h1>Result</h1>
+  {#each form.answers as vlopse}
+    <h2>{vlopse.name}</h2>
+    {#each vlopse.answers as answer}
+      <p>{answer.question_id}</p>
+      :
+      {#if answer.errors}
+        <p>{answer.errors[0].msg}</p>
+      {:else}
+        <p>{answer.value}</p>
+      {/if}
+    {/each}
+  {/each}
+{:else}
+  No Success
+{/if}

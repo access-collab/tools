@@ -34,3 +34,30 @@ async def applicable_questions(
     return qs
 
 
+class AnswerRequest(BaseModel):
+    answers: list[Answer]
+
+
+class TransformResponseForVlopse(BaseModel):
+    name: str
+    answers: list[MappedAnswer | MappingError]
+
+
+class TransformResponse(BaseModel):
+    by_vlopse: list[TransformResponseForVlopse]
+
+
+@router.post("/api/transform")
+async def transform_answers(answers: AnswerRequest, vlopse: list[str] = Query(...)):
+    result = []
+    for klops in vlopse:
+        mapper = AnswerTransformer.from_vlopse_name(klops)
+        result.append(
+            TransformResponseForVlopse(name=klops, answers=mapper.map(answers.answers))
+        )
+
+    print(f"Returning {result}")
+    response = TransformResponse(by_vlopse=result)
+    return response
+
+
