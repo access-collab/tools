@@ -6,34 +6,20 @@ from pydantic_core import ErrorDetails
 
 from app.models import UnifiedQuestion
 from app.services.mapping import (
-    CustomStuffs,
+    VLOPSEConfiguration,
     PlatformMapping,
     PlatformMappingComplex,
-    get_custom_stuffs_for,
+    get_vlopse_configuration_for,
 )
-
-DEBUG = False
-#
-# class MapperService:  # not relaly a service lul
-#     def __init__(self) -> None:
-#         pass
-#
-#     def map_question_to(self, question: UnifiedQuestion, vlopse: str):
-#         pass
-#
-#     def map_questions_to(self, questions: list[UnifiedQuestion], vlopse: str):
-#         pass
-
-
-class REMOVEMEJUSTVALIDATION(BaseModel):
-    thissucks: list[UnifiedQuestion]
-
 
 someadapter = TypeAdapter(list[UnifiedQuestion])
 
 
+_DATA_DIR = Path(__file__).parent.parent / "data"
+
+
 def dEBUGLOAD():
-    path = Path("app/data/questions.json")
+    path = _DATA_DIR / "questions.json"
     data = path.read_text()
     result = someadapter.validate_json(data)
     return result
@@ -59,7 +45,7 @@ class MappingError(BaseModel):
     errors: list[ErrorDetails]
 
 
-ta = TypeAdapter(CustomStuffs)
+ta = TypeAdapter(VLOPSEConfiguration)
 
 
 def find_inputs_for_multiple(candidates: dict[str, Any], keys: list[str]):
@@ -142,7 +128,9 @@ class QuestionMapper:
 
     @classmethod
     def from_vlopse_names(cls, vlopses: list[str]):
-        mapping = {vlopse: get_custom_stuffs_for(vlopse).mappings for vlopse in vlopses}
+        mapping = {
+            vlopse: get_vlopse_configuration_for(vlopse).mappings for vlopse in vlopses
+        }
         return cls(mapping)
 
     def __init__(self, mapping: dict[str, dict[str, PlatformMapping]]) -> None:
@@ -176,7 +164,7 @@ class AnswerTransformer:
 
     @classmethod
     def from_vlopse_name(cls, vlopse: str):
-        mapping = get_custom_stuffs_for(vlopse).mappings
+        mapping = get_vlopse_configuration_for(vlopse).mappings
         return cls(mapping)
 
     def __init__(self, mapping: dict[str, PlatformMapping]) -> None:
@@ -220,7 +208,7 @@ class AnswerTransformer:
 
 
 def to_frage(question: UnifiedQuestion, vlopse: str):
-    stuff = get_custom_stuffs_for(vlopse)
+    stuff = get_vlopse_configuration_for(vlopse)
     q_id = question.id
 
     stuff["mapping"]

@@ -1,11 +1,11 @@
 from pathlib import Path
 from app.services.mapping import (
-    CustomStuffs,
-    get_custom_stuffs_for,
-    write_custom_stuffs_for,
+    VLOPSEConfiguration,
+    get_vlopse_configuration_for,
+    write_vlopse_configuration_for,
 )
 
-_DATA_DIR = Path(__file__).parent.parent / "data"
+_DATA_DIR = Path(__file__).parent.parent / "data" / "vlopses"
 
 
 class VlopseExistsException(BaseException):
@@ -17,16 +17,16 @@ class VlopseDoesNotExistException(BaseException):
 
 
 class VlopseConfigService:
-    def add(self, name):
+    def add(self, name: str):
         current = self.get(name)
         if current:
             raise VlopseExistsException()
-        stuff = {"mappings": {}, "conditions": []}
-        write_custom_stuffs_for(name, stuff)
+        empty = VLOPSEConfiguration(mappings={}, conditions={})
+        write_vlopse_configuration_for(name, empty)
 
-    def get(self, name):
+    def get(self, name: str):
         try:
-            return get_custom_stuffs_for(name)
+            return get_vlopse_configuration_for(name)
         except FileNotFoundError:
             return None
 
@@ -52,7 +52,7 @@ class VlopseConfigService:
         self.add(new_name)
         self.update(new_name, current)
 
-    def update(self, name, value: CustomStuffs):
+    def update(self, name, value: VLOPSEConfiguration):
         if self.get(name) is None:
             raise VlopseDoesNotExistException()
-        write_custom_stuffs_for(name, value)
+        write_vlopse_configuration_for(name, value)

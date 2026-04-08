@@ -59,5 +59,3 @@ async def transform_answers(answers: AnswerRequest, vlopse: list[str] = Query(..
     print(f"Returning {result}")
     response = TransformResponse(by_vlopse=result)
     return response
-
-
