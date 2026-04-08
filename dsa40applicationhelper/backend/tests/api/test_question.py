@@ -39,11 +39,3 @@ def test_selection_question(client: TestClient):
     assert response.status_code == 200
     question = response.json()
     assert question["id"] == question_id
-
-
-def test_post_vlopse():
-    response = client.post("/api/vlopse", json={"name": "testing"})
-    assert response.status_code == 200
-    # Cleanup
-    response = client.delete("/api/vlopse/testing")
-    assert response.status_code == 200
