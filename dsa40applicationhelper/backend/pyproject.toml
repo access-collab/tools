@@ -15,6 +15,7 @@ classifiers = ["Private :: Do Not Upload"]
 dev = [
     "mypy>=1.19.1",
     "pytest>=9.0.2",
+    "requests>=2.33.1",
     "ruff>=0.12.7",
 ]
 
