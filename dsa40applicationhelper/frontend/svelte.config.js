@@ -5,6 +5,9 @@ import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 const config = {
   preprocess: vitePreprocess(),
   kit: {
+    "alias": {
+      "@api": "./src/api",
+    },
     adapter: adapter({
       // Output to backend/static so FastAPI can serve it
       pages: "../backend/static",

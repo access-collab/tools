@@ -7,9 +7,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "generate": "openapi-ts"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.95.0",
     "@sveltejs/adapter-static": "^3.0.10",
     "@sveltejs/kit": "^2.55.0",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
@@ -20,7 +22,8 @@
     "tslib": "^2.4.1",
     "typescript": "^5.0.0",
     "typescript-svelte-plugin": "^0.3.51",
-    "vite": "^8.0.3"
+    "vite": "^8.0.3",
+    "zod": "^4.3.6"
   },
   "type": "module"
 }
