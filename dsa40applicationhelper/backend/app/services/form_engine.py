@@ -1,0 +1,205 @@
+from pathlib import Path
+from typing import Any, Callable, Generic, TypeVar
+
+from pydantic import BaseModel, TypeAdapter, ValidationError
+from pydantic_core import ErrorDetails
+
+from app.models import UnifiedQuestion
+from app.services.mapping import (
+    CustomStuffs,
+    PlatformMapping,
+    PlatformMappingComplex,
+    get_custom_stuffs_for,
+)
+
+DEBUG = False
+#
+# class MapperService:  # not relaly a service lul
+#     def __init__(self) -> None:
+#         pass
+#
+#     def map_question_to(self, question: UnifiedQuestion, vlopse: str):
+#         pass
+#
+#     def map_questions_to(self, questions: list[UnifiedQuestion], vlopse: str):
+#         pass
+
+
+class REMOVEMEJUSTVALIDATION(BaseModel):
+    thissucks: list[UnifiedQuestion]
+
+
+someadapter = TypeAdapter(list[UnifiedQuestion])
+
+
+def dEBUGLOAD():
+    path = Path("app/data/questions.json")
+    data = path.read_text()
+    result = someadapter.validate_json(data)
+    return result
+
+
+class VlopseAnswer(BaseModel):
+    id: str
+    value: str
+
+
+class Answer(BaseModel):
+    question_id: str
+    value: str
+
+
+
+ta = TypeAdapter(CustomStuffs)
+
+
+def find_inputs_for_multiple(candidates: dict[str, Any], keys: list[str]):
+    print(f"Finding multiple {keys} in {candidates}")
+    return {k: v for k, v in candidates.items() if k in keys}
+
+
+A = TypeVar("A")
+B = TypeVar("B")
+
+
+class Operator(Generic[A, B]):
+    name: str
+    func: Callable[A, B]
+    inputs: A
+
+    def __init__(self, src: A, operation: str) -> None:
+        self.name = operation
+        if operation == "join-space":
+            self.func = lambda x: " ".join(x)
+            self.inputs = src
+        elif operation == "no-op":
+            self.func = lambda x: x
+            self.inputs = src
+
+        else:
+            raise NotImplementedError(f"Operation {operation} not implemented yet.")
+
+    def _validate_args(self, args: dict[str, A]):
+        if isinstance(args, dict):
+            missing = [i for i in self.inputs if i not in args.keys()]
+            if len(missing):
+                raise TypeError(f"Missing argument(s) {missing} for {self.name}")
+
+    def __repr__(self) -> str:
+        args = (
+            ", ".join(self.inputs.keys())
+            if isinstance(self.inputs, dict)
+            else self.inputs
+        )
+        return f"{self.name}({args})"
+
+    @property
+    def arguments(self) -> list[str]:
+        if isinstance(self.inputs, dict):
+            return self.inputs.keys()
+        elif isinstance(self.inputs, str):
+            return [self.inputs]
+        else:
+            return self.inputs
+
+    def apply(self, inputs: dict[str, Any] | A) -> Any:
+        self._validate_args(inputs)
+        if isinstance(inputs, dict):
+            return self.func([v for k, v in inputs.items()])
+        else:
+            return self.func(inputs)
+
+
+def _hydrate_operator(operator: PlatformMapping):
+    if isinstance(operator, str):
+        return Operator[str, str](operator, "no-op")
+    elif isinstance(operator, PlatformMappingComplex):
+        if isinstance(operator.src, list):
+            return Operator[list[str], str](operator.src, operator.operation)
+            ...
+        elif isinstance(operator.src, str):
+            return Operator[str, str](operator.src, operator.operation)
+            ...
+        else:
+            raise TypeError(f"unknown operator {operator}")
+
+    else:
+        raise TypeError(f"unknown operator {operator}")
+
+
+class QuestionMapper:
+    _mapping: dict[str, dict[str, PlatformMapping]]
+    questions: Any
+
+    @classmethod
+    def from_vlopse_names(cls, vlopses: list[str]):
+        mapping = {vlopse: get_custom_stuffs_for(vlopse).mappings for vlopse in vlopses}
+        return cls(mapping)
+
+    def __init__(self, mapping: dict[str, dict[str, PlatformMapping]]) -> None:
+        self._mapping = mapping
+        self.questions = dEBUGLOAD()
+
+    def _map(self):
+        result = set()
+        for vlopse, mapping in self._mapping.items():
+            for src, operator in mapping.items():  # FIXME: src name is confusing??
+                op = _hydrate_operator(operator)
+                print(f"FIGURE OUT INPUT FOR {operator} TO GET {src}")
+                print(f"=> {op.arguments}")
+                for a in op.arguments:
+                    result.add(a)
+
+        print(result)
+        return result
+
+    def map(self):
+        unified_question_ids = self._map()
+        # FIXME: this should ask the db
+
+        return [q for q in self.questions if q.id in unified_question_ids]
+        result = []
+        # op = self._hydrate_operator(operator)
+
+class AnswerTransformer:
+    _mapping: dict[str, PlatformMapping]
+
+    @classmethod
+    def from_vlopse_name(cls, vlopse: str):
+        mapping = get_custom_stuffs_for(vlopse).mappings
+        return cls(mapping)
+
+    def __init__(self, mapping: dict[str, PlatformMapping]) -> None:
+        self._mapping = mapping
+
+    def _get_mapping_operator(self, id: str):
+        operator = self._mapping.get(id)
+        return operator
+
+    def apply_operator(self, operator: Operator[A, B], inputs: A) -> B:
+        print(f"{operator}({inputs})")
+        return operator.apply(inputs)
+        return None
+
+    def map(self, answers: list[Answer]):
+        answer_map = {a.question_id: a.value for a in answers}
+        for src, operator in self._mapping.items():  # FIXME: src name is confusing??
+            print(f"FIGURE OUT INPUT FOR {operator} TO GET {src}")
+            op = _hydrate_operator(operator)
+            if isinstance(operator, str):
+                inputs = answer_map.get(src)
+            elif isinstance(operator.src, list):
+                inputs = find_inputs_for_multiple(answer_map, operator.src)
+            elif isinstance(operator.src, str):
+                inputs = answer_map.get(operator.src)
+
+            else:
+                print(f"Unknown operation {operator}")
+                raise TypeError()
+            print(f"SOLUTION CANDIDATE {inputs}")
+            output = self.apply_operator(op, inputs)
+        print(f"MAPPED RESULT: {result}")
+
+        return result
+
+
