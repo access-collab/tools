@@ -1,8 +1,4 @@
-from app.database import (
-    add_vlopse_question,
-    get_question,
-    get_questions_for,
-)
+from app.database import SessionLocal
 from app.models import VLOPSEQuestion
 from app.schemas import InputTypeWithOptions
 
@@ -29,14 +25,21 @@ class QuestionService:
             input_type=i_type,
             options=options,
         )
-        print(f"Adding {question}")
-        add_vlopse_question(question)
+        db = SessionLocal()
+        db.add(question)
+        db.commit()
 
     def get_all_for_vlopse(self, vlopse: str):
-        questions = get_questions_for([vlopse])
-        return questions
+        db = SessionLocal()
+        result = db.query(VLOPSEQuestion).where(VLOPSEQuestion.vlopse == vlopse).all()
 
-    def get(self, id: str):
-        question = get_question(id)
+        return result
+
+    def get(self, question_id: str):
+        db = SessionLocal()
+        question = (
+            db.query(VLOPSEQuestion).where(VLOPSEQuestion.id == question_id).first()
+        )
+
         print(f"Gotted{question}")
         return question

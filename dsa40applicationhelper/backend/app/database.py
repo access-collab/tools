@@ -29,20 +29,3 @@ def get_db() -> Generator[Session, None, None]:
 
 def init_db() -> None:
     Base.metadata.create_all(bind=engine)
-
-def get_questions_for(vlopses: list[str]):
-    db = SessionLocal()
-    result = db.query(VLOPSEQuestion).where(VLOPSEQuestion.vlopse.in_(vlopses)).all()
-    return result
-
-
-def get_question(question_id: str):
-    db = SessionLocal()
-    result = db.query(VLOPSEQuestion).where(VLOPSEQuestion.id == question_id).first()
-    return result
-
-
-def add_vlopse_question(question: VLOPSEQuestion):
-    db = SessionLocal()
-    db.add(question)
-    db.commit()
