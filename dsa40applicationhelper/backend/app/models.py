@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Literal
+from typing import Any
 
 from pydantic import BaseModel
 from sqlalchemy import (
@@ -25,10 +25,6 @@ class Condition(BaseModel):
     operator: Operator
     value: Any
 
-
-class Granularity(str, Enum):
-    general = "general"
-    platform_specific = "platform_specific"
 class InputType(str, Enum):
     text = "text"
     file_upload = "file_upload"
@@ -39,23 +35,13 @@ class InputType(str, Enum):
 
 class UnifiedQuestion(BaseModel):
     id: str
-    text_en: str
-    category: str
-    type: InputType
-    options: list[str] | None = None  # TODO: Aren't these dymanic?
-    help_text: str | None = None
-    granularity: Granularity
+    ...
 
 
 class Base(DeclarativeBase):
     pass
 
 
-class Frage(BaseModel):
-    id: str
-    text_en: str
-    sources: list[VLOPSEQuestion]
-    help_text: str | None = None
 class ReprMixing:
     def __repr__(self) -> str:
         return self._repr(id=self.id)
