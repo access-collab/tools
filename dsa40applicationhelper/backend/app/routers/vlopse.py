@@ -56,4 +56,3 @@ async def delete_vlopse(name: str) -> JSONResponse:
     except VlopseDoesNotExistException:
         raise HTTPException(status_code=404, detail="Item not found")
     return JSONResponse({"success": True})
-

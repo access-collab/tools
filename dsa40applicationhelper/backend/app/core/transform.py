@@ -1,13 +1,10 @@
 from pydantic import ValidationError
 
-from .config import (
-    get_vlopse_configuration_for
-)
-from .models import (
-    PlatformMapping
-)
 from app.core.operator import hydrate_operator
 from app.core.util import find_inputs_for_multiple
+
+from .config import get_vlopse_configuration_for
+from .models import Answer, MappedAnswer, MappingError, PlatformMapping
 
 
 class AnswerTransformer:
@@ -24,11 +21,6 @@ class AnswerTransformer:
     def _get_mapping_operator(self, id: str):
         operator = self._mapping.get(id)
         return operator
-
-    def apply_operator(self, operator: Operator[A, B], inputs: A) -> B:
-        print(f"{operator}({inputs})")
-        return operator.apply(inputs)
-        return None
 
     def map(self, answers: list[Answer]):
         answer_map = {a.question_id: a.value for a in answers}
@@ -47,7 +39,7 @@ class AnswerTransformer:
                 print(f"Unknown operation {operator}")
                 raise TypeError()
             print(f"SOLUTION CANDIDATE {inputs}")
-            output = self.apply_operator(op, inputs)
+            output = op.apply(inputs)
             try:
                 answer = MappedAnswer(question_id=src, value=output)
             except ValidationError as e:

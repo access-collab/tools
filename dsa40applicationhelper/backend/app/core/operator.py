@@ -1,9 +1,6 @@
 from typing import Any, Callable, Generic, TypeVar
 
-from app.core.models import (
-    PlatformMapping,
-    PlatformMappingComplex,
-)
+from app.core.models import PlatformMapping, PlatformMappingComplex
 
 A = TypeVar("A")
 B = TypeVar("B")
