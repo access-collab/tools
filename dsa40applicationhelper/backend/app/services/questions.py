@@ -1,9 +1,9 @@
 from app.database import (
-    VLOPSEQuestion,
     add_vlopse_question,
     get_question,
     get_questions_for,
 )
+from app.models import VLOPSEQuestion
 from app.schemas import InputTypeWithOptions
 
 
