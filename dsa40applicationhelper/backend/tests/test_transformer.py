@@ -1,7 +1,7 @@
 import pytest
 
-from app.services.form_engine import Answer, AnswerTransformer
-from app.services.mapping import PlatformMapping, PlatformMappingComplex
+from app.core.models import Answer, PlatformMapping, PlatformMappingComplex
+from app.core.transform import AnswerTransformer
 
 mapping: dict[str, PlatformMapping] = {
     "T1": PlatformMappingComplex(
