@@ -4,7 +4,7 @@ from app.database import (
     get_question,
     get_questions_for,
 )
-from app.models import InputTypeWithOptions
+from app.schemas import InputTypeWithOptions
 
 
 class QuestionService:

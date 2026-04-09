@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
-from app.models import UnifiedQuestion
 from app.services.form_engine import (
     Answer,
     AnswerTransformer,
@@ -11,15 +10,15 @@ from app.services.form_engine import (
 )
 from app.services.vlopse import VlopseConfigService
 
+from .schemas.form import DSAQuestion
+
 router = APIRouter()
 
 service = VlopseConfigService()
 
 
 @router.get("/api/questions")
-async def applicable_questions(
-    vlopse: list[str] = Query(...), kek: int = 1
-) -> list[UnifiedQuestion]:
+async def applicable_questions(vlopse: list[str] = Query(...)) -> list[DSAQuestion]:
     selected_vlopses = vlopse or []
     vlopses = service.get_all()
     print(f"Asking for {vlopse}")
