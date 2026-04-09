@@ -1,12 +1,8 @@
 from pathlib import Path
 
-from pydantic import BaseModel, TypeAdapter, ValidationError
-from pydantic_core import ErrorDetails
 
 from app.models import UnifiedQuestion
 from app.services.mapping import (
-    PlatformMapping,
-    PlatformMappingComplex,
     get_vlopse_configuration_for,
 )
 
@@ -14,38 +10,6 @@ someadapter = TypeAdapter(list[UnifiedQuestion])
 
 
 _DATA_DIR = Path(__file__).parent.parent / "data"
-
-
-def dEBUGLOAD():
-    path = _DATA_DIR / "questions.json"
-    data = path.read_text()
-    result = someadapter.validate_json(data)
-    return result
-
-
-class VlopseAnswer(BaseModel):
-    id: str
-    value: str
-
-
-class Answer(BaseModel):
-    question_id: str
-    value: str
-
-
-class MappedAnswer(BaseModel):
-    question_id: str
-    value: str
-
-
-class MappingError(BaseModel):
-    question_id: str
-    errors: list[ErrorDetails]
-
-
-ta = TypeAdapter(VLOPSEConfiguration)
-
-
 def find_inputs_for_multiple(candidates: dict[str, Any], keys: list[str]):
     print(f"Finding multiple {keys} in {candidates}")
     return {k: v for k, v in candidates.items() if k in keys}
