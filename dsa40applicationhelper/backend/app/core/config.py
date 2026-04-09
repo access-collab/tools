@@ -4,15 +4,9 @@ from pydantic import BaseModel
 
 from app.models import Condition
 
-_DATA_DIR = Path(__file__).parent.parent / "data" / "vlopses"
+from .models import PlatformMapping
 
-
-class PlatformMappingComplex(BaseModel):
-    src: str | list[str]
-    operation: str
-
-
-PlatformMapping = str | PlatformMappingComplex
+_VLOPSE_CONFIG_DIR = Path(__file__).parent.parent / "data" / "vlopses"
 
 
 class VLOPSEConfiguration(BaseModel):
@@ -21,13 +15,13 @@ class VLOPSEConfiguration(BaseModel):
 
 
 def _load_json(filename: str) -> VLOPSEConfiguration:
-    path = _DATA_DIR / filename
+    path = _VLOPSE_CONFIG_DIR / filename
     data = path.read_text()
     return VLOPSEConfiguration.model_validate_json(data)
 
 
 def _write_json(filename: str, value: VLOPSEConfiguration):
-    path = _DATA_DIR / filename
+    path = _VLOPSE_CONFIG_DIR / filename
     serialized = value.model_dump_json()
     with open(path, "w") as f:
         f.write(serialized)
