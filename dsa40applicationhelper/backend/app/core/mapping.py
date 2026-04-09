@@ -2,6 +2,7 @@ from typing import Any
 
 from app.core.config import get_vlopse_configuration_for
 from app.core.models import PlatformMapping
+from app.core.operator import hydrate_operator
 from app.core.util import dEBUGLOAD
 
 
@@ -24,7 +25,7 @@ class QuestionMapper:
         result = set()
         for vlopse, mapping in self._mapping.items():
             for src, operator in mapping.items():  # FIXME: src name is confusing??
-                op = _hydrate_operator(operator)
+                op = hydrate_operator(operator)
                 print(f"FIGURE OUT INPUT FOR {operator} TO GET {src}")
                 print(f"=> {op.arguments}")
                 for a in op.arguments:
