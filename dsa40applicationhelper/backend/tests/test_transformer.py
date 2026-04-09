@@ -13,20 +13,25 @@ transformer = AnswerTransformer(mapping)
 
 def test_missing_arguments():
     with pytest.raises(TypeError, match=r"Missing arg.*'last-name'"):
-        _ = transformer.map([Answer(question_id="first-name", value="Loiz")])
+        _ = transformer.map([Answer(question_id="first-name", value="Joseph")])
 
 
 def test_valid_join_spaces():
     res = transformer.map(
         [
-            Answer(question_id="first-name", value="Loiz"),
-            Answer(question_id="last-name", value="Ziegler"),
+            Answer(question_id="first-name", value="Joseph"),
+            Answer(question_id="last-name", value="Weizenbaum"),
         ]
     )
-    assert res[0].value == "Loiz Ziegler"
+    assert res[0].value == "Joseph Weizenbaum"
 
 
-# def test_invalid_arguments():
-#
-#     with pytest.raises(TypeError, match=r"Missing arg.*'last-name'"):
-#         res = mapper.map([Answer(question_id="first-name", value="Loiz"), Answer(question_id="last-name", value=)])
+@pytest.mark.skip(reason="Not implemented yet")
+def test_invalid_arguments():
+    with pytest.raises(TypeError, match=r"Missing arg.*'last-name'"):
+        res = transformer.map(
+            [
+                Answer(question_id="first-name", value="Joseph"),
+                Answer(question_id="last-name", value=None),
+            ]
+        )
