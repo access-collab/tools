@@ -1,8 +1,9 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles
-from pathlib import Path
 
 from app.database import init_db
 from app.routers import health
