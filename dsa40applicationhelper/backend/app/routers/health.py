@@ -1,20 +1,12 @@
-from enum import Enum
+
 from fastapi import APIRouter
-from pydantic import BaseModel
 from sqlalchemy import text
+
 from app.database import SessionLocal
 
+from .schemas.health import HealthResponse, Status
+
 router = APIRouter()
-
-
-class Status(str, Enum):
-    OK = "ok"
-    ERROR = "error"
-
-
-class HealthResponse(BaseModel):
-    api: Status
-    db: Status
 
 
 @router.get("/health")
