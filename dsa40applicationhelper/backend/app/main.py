@@ -6,9 +6,7 @@ from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles
 
 from app.database import init_db
-from app.routers import health
-from app.routers import form
-from app.routers import vlopse
+from app.routers import form, health, questions, vlopse
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -25,6 +23,7 @@ init_db()
 app.include_router(health.router)
 app.include_router(form.router)
 app.include_router(vlopse.router)
+app.include_router(questions.router)
 
 STATIC_DIR = Path(__file__).parent / "static"
 
