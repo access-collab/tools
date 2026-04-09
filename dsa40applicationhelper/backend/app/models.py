@@ -1,7 +1,6 @@
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel
 from sqlalchemy import (
     JSON,
     Boolean,
@@ -15,27 +14,12 @@ from sqlalchemy import (
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
-class Operator(str, Enum):
-    eq = "eq"
-    neq = "neq"
-
-
-class Condition(BaseModel):
-    vlopse_question_id: str
-    operator: Operator
-    value: Any
-
 class InputType(str, Enum):
     text = "text"
     file_upload = "file_upload"
     date_select = "date_select"
     selection = "selection"
     multi_select = "multi_select"
-
-
-class UnifiedQuestion(BaseModel):
-    id: str
-    ...
 
 
 class Base(DeclarativeBase):

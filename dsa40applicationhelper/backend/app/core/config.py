@@ -2,9 +2,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from app.models import Condition
-
-from .models import PlatformMapping
+from .models import Condition, PlatformMapping
 
 _VLOPSE_CONFIG_DIR = Path(__file__).parent.parent / "data" / "vlopses"
 

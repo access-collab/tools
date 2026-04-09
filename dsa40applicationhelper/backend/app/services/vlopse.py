@@ -1,5 +1,6 @@
 from pathlib import Path
-from app.services.mapping import (
+
+from app.core.config import (
     VLOPSEConfiguration,
     get_vlopse_configuration_for,
     write_vlopse_configuration_for,

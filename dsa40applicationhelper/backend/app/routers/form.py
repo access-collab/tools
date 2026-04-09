@@ -1,12 +1,8 @@
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
-from app.services.form_engine import (
-    Answer,
-    MappedAnswer,
-    MappingError,
-)
 from app.core.mapping import QuestionMapper
+from app.core.models import Answer, MappedAnswer, MappingError
 from app.core.transform import AnswerTransformer
 from app.services.vlopse import VlopseConfigService
 

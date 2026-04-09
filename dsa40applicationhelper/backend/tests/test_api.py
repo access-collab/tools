@@ -1,9 +1,9 @@
 from fastapi.testclient import TestClient
 import pytest
 
+from app.core.models import Answer
 from app.main import app
 from app.routers.form import AnswerRequest
-from app.services.form_engine import Answer
 
 client = TestClient(app)
 
