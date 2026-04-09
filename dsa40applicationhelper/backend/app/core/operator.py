@@ -57,7 +57,7 @@ class Operator(Generic[A, B]):
             return self.func(inputs)
 
 
-def _hydrate_operator(operator: PlatformMapping):
+def hydrate_operator(operator: PlatformMapping):
     if isinstance(operator, str):
         return Operator[str, str](operator, "no-op")
     elif isinstance(operator, PlatformMappingComplex):
