@@ -6,8 +6,9 @@ from app.services.form_engine import (
     AnswerTransformer,
     MappedAnswer,
     MappingError,
-    QuestionMapper,
 )
+from app.core.mapping import QuestionMapper
+from app.core.transform import AnswerTransformer
 from app.services.vlopse import VlopseConfigService
 
 from .schemas.form import DSAQuestion
