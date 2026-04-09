@@ -1,13 +1,15 @@
-from pathlib import Path
+from pydantic import ValidationError
 
-from pydantic import TypeAdapter
+from .config import (
+    get_vlopse_configuration_for
+)
+from .models import (
+    PlatformMapping
+)
+from app.core.operator import hydrate_operator
+from app.core.util import find_inputs_for_multiple
 
-from app.models import UnifiedQuestion
 
-someadapter = TypeAdapter(list[UnifiedQuestion])
-
-
-_DATA_DIR = Path(__file__).parent.parent / "data"
 class AnswerTransformer:
     _mapping: dict[str, PlatformMapping]
 
@@ -33,7 +35,7 @@ class AnswerTransformer:
         result: list[MappedAnswer | MappingError] = []
         for src, operator in self._mapping.items():  # FIXME: src name is confusing??
             print(f"FIGURE OUT INPUT FOR {operator} TO GET {src}")
-            op = _hydrate_operator(operator)
+            op = hydrate_operator(operator)
             if isinstance(operator, str):
                 inputs = answer_map.get(src)
             elif isinstance(operator.src, list):
@@ -54,12 +56,3 @@ class AnswerTransformer:
         print(f"MAPPED RESULT: {result}")
 
         return result
-
-
-def to_frage(question: UnifiedQuestion, vlopse: str):
-    stuff = get_vlopse_configuration_for(vlopse)
-    q_id = question.id
-
-    stuff["mapping"]
-
-    # Frage(id=q_id, question.text_en, help_text=question.help_text)
