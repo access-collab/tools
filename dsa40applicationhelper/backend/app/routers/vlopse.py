@@ -2,7 +2,6 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from app.database import VLOPSEQuestion
 from app.models import InputTypeWithOptions
 from app.services.questions import QuestionService
 from app.services.vlopse import (

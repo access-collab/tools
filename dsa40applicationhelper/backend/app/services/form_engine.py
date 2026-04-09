@@ -6,7 +6,6 @@ from pydantic_core import ErrorDetails
 
 from app.models import UnifiedQuestion
 from app.services.mapping import (
-    VLOPSEConfiguration,
     PlatformMapping,
     PlatformMappingComplex,
     get_vlopse_configuration_for,
