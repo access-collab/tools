@@ -4,44 +4,39 @@ from pathlib import Path
 
 import requests
 
-vlopse_name = sys.argv[1]
-vlopse_path = sys.argv[2]
+questions_path = sys.argv[1]
 
-json_qs = Path(vlopse_path)
+json_qs = Path(questions_path)
 BASE_URL = "http://localhost:8000"
-URL = f"{BASE_URL}/api/vlopse/{vlopse_name}/question"
+URL = f"{BASE_URL}/api/question"
 
 
 def build_request_data(q: dict):
+    print(f"BUILDING {q}")
     req_data = {
         "id": q["id"],
-        "text": q["Question"],
-        "required": q["Required"],
-        "details": q["Details"],
+        "text": q["text_en"],
+        "input_type": q["type"],
+        "options": q.get("options"),
+        "help_text": q.get("help_text"),
     }
-    i_type = None
-    match q["Type"]:
-        case "free form":
-            # class Text(BaseModel):
-            #     i_type: Literal["text"]
-            #     max_length: int | None = None
-            req_data["input_type"] = "text"
-        case "selection":
-            # class Selection(BaseModel):
-            #     i_type: Literal["selection"]
-            #     options: list[str]
-            opts = q["Options"]
-            opts = opts.split(", ")
-            if len(opts) <= 1:
-                opts = opts[0].split("; ")
-            if len(opts) <= 1:
-                print(opts)
-                raise TypeError("selections should have more than 1 value!")
-            req_data["input_type"] = "selection"
-            i_type = {"type": "selection", "options": opts}
-        case "multi-select" | "file upload" | "date-select":
-            raise NotImplementedError(f"{q['Type']} not yet implemented!")
-
+    # i_type = None
+    # match q["type"]:
+    #     case "text":
+    #         # class Text(BaseModel):
+    #         #     i_type: Literal["text"]
+    #         #     max_length: int | None = None
+    #         req_data["type"] = "text"
+    #     case "selection":
+    #         # class Selection(BaseModel):
+    #         #     i_type: Literal["selection"]
+    #         #     options: list[str]
+    #         opts = q["Options"]
+    #         opts = opts.split(", ")
+    #         i_type = {"i_type": "selection", "options": opts}
+    #     case "multi-select" | "file upload" | "date-select":
+    #         raise NotImplementedError(f"{q['Type']} not yet implemented!")
+    #
     # {
     #   "id": "T1",
     #   "text": "Your name as shown on your professional profile (e.g. your university or research organisation profile",
@@ -50,7 +45,7 @@ def build_request_data(q: dict):
     #     "i_type": "text"
     #   }
     # },
-    req_data["config"] = i_type
+    # req_data["input_type"] = i_type
     return req_data
 
 
@@ -77,10 +72,14 @@ with open(json_qs) as f:
         except Exception as e:
             print(f"{q['id']} caused {e}")
             continue
+        print(f"SENDING {req_data}")
         res = requests.post(URL, json=req_data, timeout=5)
         if res.status_code != 200:
             if res.status_code == 422:
                 print(f"[ERR]: {res.json()}")
+                break
+            if res.status_code == 500:
+                print(f"[ERR]: {res.text}")
                 break
             if res.status_code == 409:
                 continue
