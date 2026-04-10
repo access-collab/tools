@@ -1,9 +1,11 @@
+import sqlite3
 from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.exc import IntegrityError
 
 from app.database import init_db
 from app.routers import form, health, questions, vlopse
@@ -17,6 +19,18 @@ app = FastAPI(
     title="DSA40 Application Helper",
     generate_unique_id_function=custom_generate_unique_id,
 )
+
+
+@app.exception_handler(IntegrityError)
+async def http_exception_handler(request, exc: IntegrityError):
+    orig = exc.orig
+    if isinstance(orig, sqlite3.IntegrityError):
+        if "UNIQUE constraint failed: vlopse_question.id" in orig.args:
+            return JSONResponse(
+                status_code=409,
+                content={"message": "Duplicate VLOPSE question id"},
+            )
+
 
 init_db()
 
