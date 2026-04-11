@@ -9,7 +9,7 @@ _VLOPSE_CONFIG_DIR = Path(__file__).parent.parent / "data" / "vlopses"
 
 class VLOPSEConfiguration(BaseModel):
     mappings: dict[str, PlatformMapping]
-    conditions: dict[str, Condition]
+    conditions: dict[str, list[Condition]]
 
 
 def _load_json(filename: str) -> VLOPSEConfiguration:
