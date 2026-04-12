@@ -1,3 +1,4 @@
+from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
@@ -61,7 +62,18 @@ async def applicable_questions(vlopse: list[str] = Query(...)) -> list[DSAQuesti
 
     return response
 
-    return qs
+
+class MappedAnswerWithText(MappedAnswer):
+    text: str
+
+
+class MappingErrorWithText(MappingError):
+    text: str
+
+
+MappingResultWithText = Annotated[
+    MappedAnswerWithText | MappingErrorWithText, Field(discriminator="type")
+]
 
 
 class AnswerRequest(BaseModel):
@@ -70,11 +82,30 @@ class AnswerRequest(BaseModel):
 
 class TransformResponseForVlopse(BaseModel):
     name: str
-    answers: list[MappedAnswer | MappingError]
+    answers: list[MappingResultWithText]
 
 
 class TransformResponse(BaseModel):
     by_vlopse: list[TransformResponseForVlopse]
+
+
+class ValidationResponse(BaseModel):
+    errors: dict[str, str]
+    ok: bool
+
+
+@router.post("/api/validate")
+async def validate_answers(
+    answers: AnswerRequest, vlopse: list[str] = Query(...)
+) -> ValidationResponse:
+    answers_inner = answers.answers
+    print("Checking answers..")
+    result = form_service.validate_unified_question(answers_inner)
+    ok = len(result) == 0
+    # print(f"Ok: {ok}")
+    # if ok:
+    #     result = form_service.map_unified_to_vlopse_and_validate(answers_inner, vlopse)
+    return ValidationResponse(errors=result, ok=ok)
 
 
 @router.post("/api/transform")

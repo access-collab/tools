@@ -1,57 +1,59 @@
 import { fail } from "@sveltejs/kit";
 import type { Actions } from "./$types";
-import { apiTransformTransformAnswers } from "@api";
+import { apiTransformTransformAnswers, apiValidateValidateAnswers } from "@api";
 import { apiQuestionsApplicableQuestions } from "@api";
-import type { UnifiedQuestion } from "@api";
+import type { DsaQuestion } from "@api";
+const validate = async ({ answers, vlopses }) => {
+  const call = await apiValidateValidateAnswers({
+    baseUrl: "http://localhost:5173",
+    body: { answers: answers },
+    query: { vlopse: vlopses },
+  });
+  const res = call.response;
+
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  let { ok, errors } = call.data;
+  if (ok) {
+    return { ok: true };
+  }
+  let err = Object.entries(errors).map(([key, value]) => ({
+    question_id: key,
+    description: value,
+  }));
+  return { ok: false, errors: err };
+};
+const transform = async ({ answers, vlopses }) => {
+  const call = await apiTransformTransformAnswers({
+    baseUrl: "http://localhost:5173",
+    body: { answers: answers },
+    query: { vlopse: vlopses },
+  });
+  const res = call.response;
+
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  let by_vlopse = call.data.by_vlopse;
+  console.log(by_vlopse);
+  return {ok: true, by_vlopse};
+};
 export const actions = {
   default: async ({ url, cookies, request, fetch }) => {
     // TODO log the user in
     const vlopses = url.searchParams.getAll("vlopses");
     const data = await request.formData();
-
-    console.log(data);
-
-    // @router.post("/api/transform")
-    // async def transform_answers(answers: AnswerRequest, vlopse: list[str] = Query(...)):
-    //     response = {klops: [] for klops in vlopse}
-    // for klops in vlopse:
-
-    // import { applicableQuestionsApiQuestionsGet } from "../../../client/sdk.gen";
     const answers = [...data.entries()].map(([key, value]) => ({
       question_id: key,
       value: value,
     }));
-    const call = await apiTransformTransformAnswers({
-      baseUrl: "http://localhost:5173",
-      body: { answers: answers },
-      query: { vlopse: vlopses },
-    });
-    console.log(response);
-    if (response.status != 200) {
-      return fail(response.status, data);
-      // return fail(400, { email, missing: true });
+    let x = 1;
+
+    var { ok, errors } = await validate({ answers, vlopses });
+    if (!ok) {
+      return fail(400, { errors: errors });
     }
-    const res = call.response;
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    console.log(res);
-    // const call = await healthCheckHealthGet({
-    //   baseUrl: "http://localhost:5173",
-    // });
-    // const response = call.response;
-    //
-    // if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    // health = call.data;
-    // const call = await transformAnswersApiTransformPost({
-    //   baseUrl: "http://localhost:5173",
-    // });
-    // const response = call.response;
-    // const result = await response.json();
-    // console.log(result)
-    let validated = call.data.by_vlopse;
+    var { ok, by_vlopse } = await transform({ answers, vlopses });
 
-    return { success: true, answers: result };
-    return { success: true, answers: validated };
+    return { success: true, by_vlopse };
 
     // if (!email) {
     // 	return fail(400, { email, missing: true });
