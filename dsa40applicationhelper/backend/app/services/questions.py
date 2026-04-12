@@ -1,10 +1,10 @@
 from app.database import SessionLocal
-from app.models import VLOPSEQuestion
-from app.schemas import InputTypeWithOptions
+from app.models import DSAQuestion, VLOPSEQuestion
 
 
 class QuestionService:
-    def __init__(self, db):
+    def __init__(self):
+        # TODO: self, app=.. then app.async session lala
         pass
 
     def add(
@@ -13,17 +13,18 @@ class QuestionService:
         text: str,
         vlopse: str,
         required: bool,
-        input_type_with_options: InputTypeWithOptions,
+        input_type: str,
+        details: str | None,
+        config: dict[str, str] | None = None,
     ):
-        i_type = input_type_with_options.i_type
-        options = input_type_with_options.model_dump(exclude=["i_type"])
         question = VLOPSEQuestion(
             id=id,
             text=text,
             vlopse=vlopse,
             required=required,
-            input_type=i_type,
-            options=options,
+            input_type=input_type,
+            details=details,
+            config=config,
         )
         db = SessionLocal()
         db.add(question)
@@ -40,6 +41,47 @@ class QuestionService:
         question = (
             db.query(VLOPSEQuestion).where(VLOPSEQuestion.id == question_id).first()
         )
+
+        print(f"Gotted{question}")
+        return question
+
+    def add_unified(
+        self,
+        id: str | None,
+        text: str,
+        input_type: str,
+        help_text: str | None,
+        config: dict[str, str] | None = None,
+    ):
+        question = DSAQuestion(
+            id=id, text=text, input_type=input_type, help_text=help_text, config=config
+        )
+        # id = Column(String, primary_key=True, index=True)
+        # text = Column(Text)
+        # help_text = Column(Text, nullable=True)
+        # input_type = Column(SQLAlchemyEnum(InputType))
+        # config: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+        db = SessionLocal()
+        db.add(question)
+        db.commit()
+
+    def get_unified(self, question_id: str):
+        db = SessionLocal()
+        question = db.query(DSAQuestion).where(DSAQuestion.id == question_id).first()
+
+        print(f"Gotted{question}")
+        return question
+
+    def get_all_unified_for(self, question_ids: list[str]):
+        db = SessionLocal()
+        result = db.query(DSAQuestion).where(DSAQuestion.id.in_(question_ids)).all()
+
+        return result
+
+    def get_all_unified(self):
+        db = SessionLocal()
+        print("Selecting all DSA..")
+        question = db.query(DSAQuestion).all()
 
         print(f"Gotted{question}")
         return question

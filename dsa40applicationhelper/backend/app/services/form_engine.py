@@ -5,6 +5,7 @@ from app.core.transform import AnswerTransformer
 
 class FormService:
     def __init__(self) -> None:
+        self.question_service = QuestionService()
         pass
 
     def get_required_questions_for(self, vlopses: list[str]):

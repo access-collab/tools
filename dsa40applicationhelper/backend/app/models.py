@@ -1,3 +1,4 @@
+from app.schemas import ConstraintConfig, config_adapter
 from enum import Enum
 from typing import Any
 
@@ -20,6 +21,7 @@ class InputType(str, Enum):
     date_select = "date_select"
     selection = "selection"
     multi_select = "multi_select"
+    ISO_3166_1 = "iso-3166-1"
 
 
 class Base(DeclarativeBase):
@@ -73,11 +75,21 @@ class DSAQuestion(Base, ReprMixing):
     __tablename__ = "dsa_question"
     id = Column(String, primary_key=True, index=True)
     text = Column(Text)
-    category = Column(String(255))
     help_text = Column(Text, nullable=True)
+    input_type = Column(SQLAlchemyEnum(InputType))
+    config: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 
     def __repr__(self):
         # easy to override, and it'll honor __repr__ in foreign relationships
         return self._repr(
-            id=self.id, text=self.text, category=self.category, help_text=self.help_text
+            id=self.id,
+            text=self.text,
+            input_type=self.input_type,
+            config=self.config,
+            help_text=self.help_text,
         )
+
+    @property
+    def parsed_config(self) -> ConstraintConfig | None:
+        if self.config:
+            return config_adapter.validate_python(self.config)
