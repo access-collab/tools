@@ -12,14 +12,6 @@ vlopse_service = VlopseConfigService()
 question_service = QuestionService()
 
 
-class PostVlopseQuestionRequest(BaseModel):
-    id: str
-    text: str
-    input_type: InputType
-    details: str | None = None
-    required: bool
-
-
 class VlopseQuestion(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: str
@@ -27,7 +19,12 @@ class VlopseQuestion(BaseModel):
     required: bool
     input_type: InputType
     config: ConstraintConfig | None = None
+    details: str | None = None
     vlopse: str
+
+
+class PostVlopseQuestionRequest(VlopseQuestion):
+    vlopse: str | None = None
 
 
 @router.get("/api/vlopse/{name}/question")
@@ -52,8 +49,8 @@ async def get_question(vlopse_name: str, question_id: str) -> VlopseQuestion:
 
 @router.post("/api/vlopse/{name}/question")
 async def add_question(name: str, question: PostVlopseQuestionRequest) -> JSONResponse:
+    question.vlopse = name
     question_service.add(
-        vlopse=name,
         **question.model_dump(),
     )
 

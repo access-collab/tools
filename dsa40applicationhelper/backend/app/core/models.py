@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from pydantic_core import ErrorDetails
 
 from app.models import InputType
+from app.schemas import ConstraintConfig, config_adapter
 
 
 class PlatformMappingComplex(BaseModel):
@@ -38,11 +39,37 @@ class MappingError(BaseModel):
 class UnifiedQuestion(BaseModel):
     id: str
     text_en: str
-    category: str
     type: InputType
-    granularity: str
-    options: list[str] | None = None  # FIXME: use InputTypeWithOptions
     help_text: str | None = None
+    config: ConstraintConfig | None = None
+
+    @property
+    def parsed_config(self) -> ConstraintConfig | None:
+        return self.config
+        if self.config:
+            # TODO: reintroduced once this goes into the db
+            return config_adapter.validate_python(self.config)
+
+
+# class InputType(str, Enum):
+#     text = "text"
+#     file_upload = "file_upload"
+#     date_select = "date_select"
+#     selection = "selection"
+#     multi_select = "multi_select"
+# @computed_field
+# def input_type(self):
+#     match self.type:
+#         case InputType.text:
+#             ...
+#         case InputType.file_upload:
+#             ...
+#         case InputType.date_select:
+#             ...
+#         case InputType.selection:
+#             ...
+#         case InputType.multi_select:
+#             ...
 
 
 class Operator(str, Enum):
@@ -51,6 +78,6 @@ class Operator(str, Enum):
 
 
 class Condition(BaseModel):
-    vlopse_question_id: str
+    question_id: str
     operator: Operator
     value: Any
