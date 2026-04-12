@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict
 
 from app.models import InputType
 from app.schemas import ConstraintConfig
@@ -12,16 +12,6 @@ vlopse_service = VlopseConfigService()
 question_service = QuestionService()
 
 
-def to_pydantic(question: VLOPSEQuestion):
-    i_type = {"i_type": question.input_type}
-    i_type.update(question.options)
-    return VlopseQuestion(
-        id=question.id,
-        text=question.text,
-        required=question.required,
-        vlopse=question.vlopse,
-        input_type=i_type,
-    )
 class PostVlopseQuestionRequest(BaseModel):
     id: str
     text: str
@@ -31,6 +21,7 @@ class PostVlopseQuestionRequest(BaseModel):
 
 
 class VlopseQuestion(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: str
     text: str
     required: bool
@@ -44,7 +35,8 @@ async def get_questions(name: str) -> JSONResponse:
     questions = question_service.get_all_for_vlopse(vlopse=name)
     result = []
     for q in questions:
-        result.append(to_pydantic(q))
+        qq = VlopseQuestion.model_validate(q)
+        result.append(qq)
 
     return result
 
@@ -55,19 +47,14 @@ async def get_question(vlopse_name: str, question_id: str) -> VlopseQuestion:
     if question is None:
         raise HTTPException(status_code=404, detail="question not found")
 
-    return to_pydantic(question)
-
-    res = PostVlopseQuestionRequest.model_validate(question)
-
-    return JSONResponse(res)
+    return VlopseQuestion.model_validate(question)
 
 
 @router.post("/api/vlopse/{name}/question")
 async def add_question(name: str, question: PostVlopseQuestionRequest) -> JSONResponse:
     question_service.add(
         vlopse=name,
-        **question.model_dump(exclude={"input_type"}),
-        input_type_with_options=question.input_type,
+        **question.model_dump(),
     )
 
     return JSONResponse({"success": True})
