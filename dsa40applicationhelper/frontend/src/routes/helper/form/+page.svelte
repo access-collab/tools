@@ -3,6 +3,7 @@
 
   import { enhance } from "$app/forms";
   import Question from "$lib/Question.svelte";
+    import ResultViewer from "$lib/ResultViewer.svelte";
   let { data, form }: PageProps = $props();
 </script>
 
@@ -24,19 +25,8 @@
   <button>Submit</button>
 </form>
 {#if form?.success}
-  <h1>Result</h1>
-  {#each form.answers as vlopse}
-    <h2>{vlopse.name}</h2>
-    {#each vlopse.answers as answer}
-      <p>{answer.question_id}</p>
-      :
-      {#if answer.errors}
-        <p>{answer.errors[0].msg}</p>
-      {:else}
-        <p>{answer.value}</p>
-      {/if}
-    {/each}
-  {/each}
+  <h1 style:color="green">Result</h1>
+  <ResultViewer results={form.by_vlopse}/>
 {:else}
-  No Success
+  <p style:color="red">No Success</p>
 {/if}
