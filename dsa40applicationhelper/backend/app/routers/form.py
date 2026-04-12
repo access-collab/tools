@@ -1,5 +1,6 @@
+
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.core.models import Answer, MappedAnswer, MappingError
 from app.models import InputType
@@ -50,7 +51,15 @@ async def applicable_questions(vlopse: list[str] = Query(...)) -> list[DSAQuesti
         raise HTTPException(status_code=322, detail=f"Unknown vlopse(s): {missing}")
     qs = form_service.get_required_questions_for(vlopse)
 
-    print(f"Returning {qs}")
+    response: list[DSAQuestion] = []
+    for q in qs:
+        res = DSAQuestion.model_validate(q)
+        res.options = form_service.compute_options(q, vlopse)
+        response.append(res)
+
+    print(f"Returning {response}")
+
+    return response
 
     return qs
 
