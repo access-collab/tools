@@ -30,6 +30,12 @@ async def http_exception_handler(request, exc: IntegrityError):
                 status_code=409,
                 content={"message": "Duplicate VLOPSE question id"},
             )
+        elif "UNIQUE constraint failed: dsa_question.id" in orig.args:
+            return JSONResponse(
+                status_code=409,
+                content={"message": "Duplicate DSA40 question id"},
+            )
+    return JSONResponse(status_code=500, content={"message": "Unknown integrity error"})
 
 
 init_db()

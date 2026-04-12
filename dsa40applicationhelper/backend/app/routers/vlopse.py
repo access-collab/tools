@@ -11,7 +11,7 @@ from app.services.vlopse import (
 
 router = APIRouter()
 vlopse_service = VlopseConfigService()
-question_service = QuestionService(None)
+question_service = QuestionService()
 
 
 @router.get("/api/vlopse", response_model=list[str])

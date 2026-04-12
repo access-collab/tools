@@ -2,7 +2,9 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from app.core.models import Answer, MappedAnswer, MappingError
+from app.models import InputType
 from app.services.form_engine import FormService
+from app.services.questions import QuestionService
 from app.services.vlopse import VlopseConfigService
 
 from .schemas.form import DSAQuestion
@@ -11,6 +13,31 @@ router = APIRouter()
 
 service = VlopseConfigService()
 form_service = FormService()
+question_service = QuestionService()
+
+
+class PostDSAQuestionRequest(BaseModel):
+    id: str
+    text: str
+    input_type: InputType
+    help_text: str | None = None
+    config: dict[str, str] | None = None
+
+
+@router.post("/api/question")
+async def add_dsa_question(question: PostDSAQuestionRequest):
+    question_service.add_unified(**question.model_dump())
+    return {"success": True}
+
+
+@router.get("/api/question/{id}")
+async def get_dsa_question(id: str):
+    return question_service.get_unified(id)
+
+
+@router.get("/api/question")
+async def get_all_dsa_questions():
+    return question_service.get_all_unified()
 
 
 @router.get("/api/questions")
