@@ -56,8 +56,9 @@ class VLOPSEQuestion(Base, ReprMixing):
     text = Column(Text)
     vlopse = Column(String(255))
     required = Column(Boolean)
-    options: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
     input_type = Column(SQLAlchemyEnum(InputType))
+    details = Column(Text, nullable=True)
+    config: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 
     def __repr__(self):
         # easy to override, and it'll honor __repr__ in foreign relationships
@@ -66,8 +67,8 @@ class VLOPSEQuestion(Base, ReprMixing):
             text=self.text,
             vlopse=self.vlopse,
             required=self.required,
-            options=self.options,
-            input_type=self.input_type,
+            details=self.details,
+            options=self.config,
         )
 
 
