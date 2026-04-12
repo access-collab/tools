@@ -1,5 +1,6 @@
 from typing import Any, Callable, Generic, TypeVar
 
+from pycountry import countries
 from app.core.models import PlatformMapping, PlatformMappingComplex
 
 A = TypeVar("A")
@@ -20,6 +21,9 @@ class Operator(Generic[A, B]):
             self.func = lambda x: x
             self.inputs = src
 
+        elif operation == "make-iso":
+            self.func = lambda x: countries.get(name=x).alpha_3
+            self.inputs = src
         else:
             raise NotImplementedError(f"Operation {operation} not implemented yet.")
 
