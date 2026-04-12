@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel
 from pydantic_core import ErrorDetails
@@ -23,17 +23,25 @@ class VlopseAnswer(BaseModel):
 
 class Answer(BaseModel):
     question_id: str
+    value: str | None
+
+
+class MappingResult(BaseModel):
+    question_id: str
+
+
+class MappedAnswer(MappingResult):
+    type: Literal["result"] = "result"
     value: str
 
 
-class MappedAnswer(BaseModel):
-    question_id: str
-    value: str
-
-
-class MappingError(BaseModel):
-    question_id: str
+class MappingError(MappingResult):
+    type: Literal["error"] = "error"
     errors: list[ErrorDetails]
+
+
+class WithText(MappingError, MappingResult):
+    text: str
 
 
 class UnifiedQuestion(BaseModel):

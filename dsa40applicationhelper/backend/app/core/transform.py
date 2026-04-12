@@ -4,7 +4,7 @@ from app.core.operator import hydrate_operator
 from app.core.util import find_inputs_for_multiple
 
 from .config import get_vlopse_configuration_for
-from .models import Answer, MappedAnswer, MappingError, PlatformMapping
+from .models import Answer, MappedAnswer, MappingError, MappingResult, PlatformMapping
 
 
 class AnswerTransformer:
@@ -24,7 +24,7 @@ class AnswerTransformer:
 
     def map(self, answers: list[Answer]):
         answer_map = {a.question_id: a.value for a in answers}
-        result: list[MappedAnswer | MappingError] = []
+        result: list[MappingResult] = []
         for src, operator in self._mapping.items():  # FIXME: src name is confusing??
             print(f"FIGURE OUT INPUT FOR {operator} TO GET {src}")
             op = hydrate_operator(operator)
