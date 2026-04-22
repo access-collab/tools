@@ -1,4 +1,3 @@
-from app.schemas import ConstraintConfig, config_adapter
 from enum import Enum
 from typing import Any
 
@@ -13,6 +12,8 @@ from sqlalchemy import (
     Enum as SQLAlchemyEnum,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+from app.schemas import ConstraintConfig, config_adapter
 
 
 class InputType(str, Enum):

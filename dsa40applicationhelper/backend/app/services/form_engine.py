@@ -7,7 +7,7 @@ from app.core.models import (
     MappingResult,
 )
 from app.core.transform import AnswerTransformer
-from app.models import InputType, VLOPSEQuestion, DSAQuestion
+from app.models import DSAQuestion, InputType, VLOPSEQuestion
 from app.services.questions import QuestionService
 
 
@@ -84,7 +84,7 @@ class FormService:
     ):
         result = []
         for klops in vlopses:
-            # TODO: AnswerTransformer should not load questions or mappings but receive them
+            # TODO: should not load questions or mappings but receive them
             transformer = AnswerTransformer.from_vlopse_name(klops)
             transformed = [self.enhance_with_text(t) for t in transformer.map(answers)]
             result.append((klops, transformed))

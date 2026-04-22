@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Any
 
-
 _DATA_DIR = Path(__file__).parent.parent / "data"
 
 
