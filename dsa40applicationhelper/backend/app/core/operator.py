@@ -8,11 +8,31 @@ from app.core.models import PlatformMapping
 Inputs = str | list[str] | None
 
 
+class OperatorExecutionError(Exception):
+    def __init__(self, message: str, inputs: Inputs) -> None:
+        if isinstance(inputs, list):
+            list_inputs = inputs
         else:
-            return self.func(inputs)
+            list_inputs = [inputs]
+        super().__init__({"message": message, "inputs": list_inputs})
+
+
 class AbstractOperator(ABC):
     @abstractmethod
     def _apply(self, inputs: Inputs) -> str: ...
+
+    def apply(self, inputs: Inputs):
+        try:
+            result = self._apply(inputs)
+            return result
+        except TypeError as e:
+            message = e.args[0]
+            raise OperatorExecutionError(message, inputs) from None
+
+        except ValueError as e:
+            message = e.args[0]
+            raise OperatorExecutionError(message, inputs) from None
+
 
 class MakeISOOperator(AbstractOperator):
     @override

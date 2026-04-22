@@ -3,11 +3,21 @@ from pydantic import ValidationError
 from app.core.mapping import Mapping, hydrate_mapping
 from app.core.operator import (
     AbstractOperator,
+    OperatorExecutionError,
     hydrate_operator,
 )
 
 from .config import get_vlopse_configuration_for
 from .models import Answer, MappedAnswer, MappingError, MappingResult, PlatformMapping
+
+
+class TransformationError(Exception):
+    def __init__(
+        self, message: str, loc: tuple[str, ...], inputs: list[str], cause: str
+    ) -> None:
+        super().__init__(
+            {"message": message, "loc": loc, "inputs": inputs, "cause": cause}
+        )
 
 
 class Transformation:
@@ -25,10 +35,23 @@ class Transformation:
         ]
 
     def transform(self, args: list[Answer]):
+        try:
             if len(args) == 1:
                 result = self.operator.apply(args[0].value)
             else:
                 result = self.operator.apply([a.value for a in args])
+        except OperatorExecutionError as e:
+            cause = e.args[0]
+            loc = tuple([a.question_id for a in args])
+            raise TransformationError(
+                message="transformation failed",
+                inputs=cause["inputs"],
+                loc=loc,
+                cause=cause["message"],
+            ) from e
+        return result
+
+
 class AnswerTransformer:
     _mapping: dict[str, PlatformMapping]
 
