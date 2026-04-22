@@ -1,75 +1,69 @@
-from typing import Any, Callable, Generic, TypeVar
+from abc import ABC, abstractmethod
 
 from pycountry import countries
-from app.core.models import PlatformMapping, PlatformMappingComplex
+from typing_extensions import override
 
-A = TypeVar("A")
-B = TypeVar("B")
+from app.core.models import PlatformMapping
+
+Inputs = str | list[str] | None
 
 
-class Operator(Generic[A, B]):
-    name: str
-    func: Callable[A, B]
-    inputs: A
-
-    def __init__(self, src: A, operation: str) -> None:
-        self.name = operation
-        if operation == "join-space":
-            self.func = lambda x: " ".join(x)
-            self.inputs = src
-        elif operation == "no-op":
-            self.func = lambda x: x
-            self.inputs = src
-
-        elif operation == "make-iso":
-            self.func = lambda x: countries.get(name=x).alpha_3
-            self.inputs = src
-        else:
-            raise NotImplementedError(f"Operation {operation} not implemented yet.")
-
-    def _validate_args(self, args: dict[str, A]):
-        if isinstance(args, dict):
-            missing = [i for i in self.inputs if i not in args.keys()]
-            if len(missing):
-                raise TypeError(f"Missing argument(s) {missing} for {self.name}")
-
-    def __repr__(self) -> str:
-        args = (
-            ", ".join(self.inputs.keys())
-            if isinstance(self.inputs, dict)
-            else self.inputs
-        )
-        return f"{self.name}({args})"
-
-    @property
-    def arguments(self) -> list[str]:
-        if isinstance(self.inputs, dict):
-            return self.inputs.keys()
-        elif isinstance(self.inputs, str):
-            return [self.inputs]
-        else:
-            return self.inputs
-
-    def apply(self, inputs: dict[str, Any] | A) -> Any:
-        self._validate_args(inputs)
-        if isinstance(inputs, dict):
-            return self.func([v for k, v in inputs.items()])
         else:
             return self.func(inputs)
+class AbstractOperator(ABC):
+    @abstractmethod
+    def _apply(self, inputs: Inputs) -> str: ...
+
+class MakeISOOperator(AbstractOperator):
+    @override
+    def _apply(self, inputs: Inputs):
+        if inputs is None:
+            raise TypeError("Cannot create ISO from None argument.")
+        if isinstance(inputs, list):
+            raise TypeError("Cannot create ISO from list argument.")
+        result = countries.get(name=inputs)
+        if not result:
+            raise ValueError(f"Unknown country {inputs}")
+        return result.alpha_3
+
+
+class JoinOperator(AbstractOperator):
+    delimiter: str
+
+    def __init__(self, delimiter: str):
+        self.delimiter = delimiter
+
+    @override
+    def _apply(self, inputs: Inputs):
+        if inputs is None:
+            raise TypeError("Cannot join None type")
+        if isinstance(inputs, str):
+            raise TypeError("Cannot join str type")
+        return self.delimiter.join(inputs)
+
+
+class NoopOperator(AbstractOperator):
+    @override
+    def _apply(self, inputs: Inputs):
+        if isinstance(inputs, list):
+            raise TypeError("Cannot transform lists")
+        if inputs is None:
+            raise TypeError("Cannot transform None")
+        return inputs
 
 
 def hydrate_operator(operator: PlatformMapping):
+    # FIXME: No-Op is simply a mapping. So we don't really want this here? or it's more elegant, let's see
     if isinstance(operator, str):
-        return Operator[str, str](operator, "no-op")
-    elif isinstance(operator, PlatformMappingComplex):
-        if isinstance(operator.src, list):
-            return Operator[list[str], str](operator.src, operator.operation)
-            ...
-        elif isinstance(operator.src, str):
-            return Operator[str, str](operator.src, operator.operation)
-            ...
-        else:
-            raise TypeError(f"unknown operator {operator}")
+        print(f"DEBUG no-op {operator}")
 
-    else:
-        raise TypeError(f"unknown operator {operator}")
+        return NoopOperator()
+    match operator.operation:
+        case "make-iso":
+            return MakeISOOperator()
+        case "join-space":
+            return JoinOperator(" ")
+        case "join-comma":
+            return JoinOperator(", ")
+        case _:
+            raise ValueError(f"Invalid operator description: {operator}")
