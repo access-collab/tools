@@ -1,5 +1,3 @@
-from pydantic import ValidationError
-
 from app.core.mapping import Mapping, hydrate_mapping
 from app.core.operator import (
     AbstractOperator,
@@ -9,6 +7,16 @@ from app.core.operator import (
 
 from .config import get_vlopse_configuration_for
 from .models import Answer, MappedAnswer, MappingError, MappingResult, PlatformMapping
+
+
+class OperatorValidationError(Exception):
+    def __init__(self, message: str, loc: tuple[str, ...]) -> None:
+        super().__init__({"message": message, "loc": loc})
+
+
+class ValidationErrors(ExceptionGroup):
+    def derive(self, excs):
+        return ValidationErrors(self.message, excs)
 
 
 class TransformationError(Exception):
@@ -27,12 +35,20 @@ class Transformation:
     def __init__(self, mapping: Mapping, operator: AbstractOperator) -> None:
         self.mapping = mapping
         self.operator = operator
+
     def validate_args(self, args: list[Answer]):
         missing = [
             dsa_question
             for dsa_question in self.mapping.dsa_ids
             if dsa_question not in [a.question_id for a in args]
         ]
+
+        if len(missing):
+            es = [
+                OperatorValidationError(message="missing required argument", loc=(m,))
+                for m in missing
+            ]
+            raise ValidationErrors("missing arguments for {vlopse_question_id}", es)
 
     def transform(self, args: list[Answer]):
         try:
@@ -75,6 +91,41 @@ class AnswerTransformer:
         transformation.validate_args(answers)
         output = transformation.transform(answers)
         answer = MappedAnswer(question_id=mapper.vlopse_id, value=output)
+
+        return answer
+
+    def transform_safe(
+        self, answers: list[Answer], mapper: Mapping, op: AbstractOperator
+    ):
+        transformation = Transformation(mapper, op)
+        question_id = mapper.vlopse_id
+        try:
+            transformation.validate_args(answers)
+            output = transformation.transform(answers)
+            answer = MappedAnswer(question_id=question_id, value=output)
+        except ValidationErrors as e:
+            errors = [
+                {
+                    "type": "type_error",
+                    "loc": (question_id, *err.args[0]["loc"]),
+                    "message": err.args[0]["message"],
+                }
+                for err in e.exceptions
+            ]
+            answer = MappingError(question_id=question_id, errors=errors)
+        except TransformationError as e:
+            e = e.args[0]
+            loc = (*e["loc"], question_id)
+            errors = [
+                {
+                    "type": "type_error",  # TODO: this could be more specific?
+                    "loc": loc,
+                    "message": e["message"],
+                    "input": e["inputs"],
+                }
+            ]
+            answer = MappingError(question_id=question_id, errors=errors)
+            return answer
 
         return answer
 

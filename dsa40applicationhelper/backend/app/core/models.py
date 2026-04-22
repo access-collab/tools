@@ -2,7 +2,6 @@ from enum import Enum
 from typing import Any, Literal
 
 from pydantic import BaseModel
-from pydantic_core import ErrorDetails
 
 from app.models import InputType
 from app.schemas import ConstraintConfig, config_adapter
@@ -33,6 +32,12 @@ class MappingResult(BaseModel):
 class MappedAnswer(MappingResult):
     type: Literal["result"] = "result"
     value: str
+
+
+class ErrorDetails(BaseModel):
+    type: Literal["type_error", "value_error"]
+    loc: list[str]
+    message: str
 
 
 class MappingError(MappingResult):
