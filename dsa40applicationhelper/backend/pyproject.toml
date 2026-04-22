@@ -25,6 +25,13 @@ python_version = "3.11"
 strict = true
 files = ["*.py"]
 
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "T20"]
+
+ignore = [
+    "T201",
+]
+
 
 [tool.basedpyright]
 venvPath = "."
