@@ -1,7 +1,7 @@
-from app.schemas import ConstraintConfig
 from pydantic import BaseModel, ConfigDict
 
 from app.models import InputType
+from app.schemas import ConstraintConfig
 
 
 class DSAQuestion(BaseModel):
