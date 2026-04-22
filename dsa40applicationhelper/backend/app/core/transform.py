@@ -1,6 +1,5 @@
 from pydantic import ValidationError
 
-from app.core.util import find_inputs_for_multiple
 from app.core.mapping import Mapping, hydrate_mapping
 from app.core.operator import (
     AbstractOperator,
@@ -57,21 +56,19 @@ class AnswerTransformer:
         return answer
 
     def map(self, answers: list[Answer]):
-        answer_map = {a.question_id: a.value for a in answers}
+        answer_map = {a.question_id: a for a in answers}
         result: list[MappingResult] = []
         for vlopse_question, operator in self._mapping.items():
             mapper = hydrate_mapping(vlopse_question, operator)
             op = hydrate_operator(operator)
             if isinstance(operator, str):
-                inputs = answer_map.get(src)
+                inputs = [answer_map.get(vlopse_question)]
             elif isinstance(operator.src, list):
-                inputs = find_inputs_for_multiple(answer_map, operator.src)
+                inputs = [a for a in answers if a.question_id in operator.src]
             elif isinstance(operator.src, str):
-                inputs = answer_map.get(operator.src)
-
+                inputs = [answer_map.get(operator.src)]
             else:
-                print(f"Unknown operation {operator}")
-                raise TypeError()
+                raise TypeError(f"Unknown operation {operator}")
             output = self.transform_safe(inputs, mapper, op)
             result.append(output)
 
