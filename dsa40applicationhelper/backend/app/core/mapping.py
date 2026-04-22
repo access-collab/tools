@@ -1,6 +1,30 @@
+from typing_extensions import override
+
 from app.core.config import get_vlopse_configuration_for
 from app.core.models import PlatformMapping, UnifiedQuestion
-from app.core.operator import hydrate_operator
+
+
+class Mapping:
+    vlopse_id: str
+    dsa_ids: list[str]
+
+    def __init__(self, vlopse_id: str, dsa_ids: list[str]) -> None:
+        self.vlopse_id = vlopse_id
+        self.dsa_ids = dsa_ids
+
+    @override
+    def __repr__(self):
+        return f"DSA([{''.join(self.dsa_ids)}]) -> VLOPSE({self.vlopse_id})"
+
+
+def hydrate_mapping(vlopse_question: str, mapping_definition: PlatformMapping):
+    if isinstance(mapping_definition, str):
+        return Mapping(vlopse_question, [mapping_definition])
+    elif isinstance(mapping_definition.src, list):
+        return Mapping(vlopse_question, mapping_definition.src)
+    elif isinstance(mapping_definition.src, str):
+        return Mapping(vlopse_question, [mapping_definition.src])
+    raise ValueError(f"Invalid mapping defition {mapping_definition}")
 
 
 class QuestionMapper:
@@ -23,19 +47,15 @@ class QuestionMapper:
         self.questions = questions
 
     def _map(self):
-        result = set()
-        for vlopse, mapping in self._mapping.items():
-            for src, operator in mapping.items():  # FIXME: src name is confusing??
-                op = hydrate_operator(operator)
-                print(f"FIGURE OUT INPUT FOR {operator} TO GET {src}")
-                print(f"=> {op.arguments}")
-                for a in op.arguments:
-                    result.add(a)
+        result = set[str]()
+        for _, mapping_definitions in self._mapping.items():
+            for vlopse_question, operator in mapping_definitions.items():
+                mapping = hydrate_mapping(vlopse_question, operator)
+                result.update(mapping.dsa_ids)
 
-        print(result)
         return result
 
-    def map(self):
+    def map_vlopse_to_unified(self):
         unified_question_ids = self._map()
         print(f"Mapping to {unified_question_ids}")
         # FIXME: this should ask the db
@@ -47,5 +67,3 @@ class QuestionMapper:
                 result.append(q)
 
         return result
-        result = []
-        # op = self._hydrate_operator(operator)

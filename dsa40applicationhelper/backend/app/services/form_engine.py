@@ -36,7 +36,7 @@ class FormService:
         )
         mapper = QuestionMapper.from_vlopse_names(vlopses, unified)
         print(f"Mapping {answers} to {unified}..")
-        qs = mapper.map()
+        qs = mapper.map_vlopse_to_unified()
         print(f"Mapped {qs} for {vlopses}")
         for q in qs:
             print(q)
@@ -65,7 +65,7 @@ class FormService:
         all_questions = self.question_service.get_all_unified()
         # TODO: QuestionMapper should not load questions but receive them
         mapper = QuestionMapper.from_vlopse_names(vlopses, all_questions)
-        qs = mapper.map()
+        qs = mapper.map_vlopse_to_unified()
         print(f"Mapped {qs} for {vlopses}")
         return qs
 
