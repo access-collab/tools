@@ -1,0 +1,1107 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DSA40 Application Helper",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "operationId": "/health-health_check",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/question": {
+      "get": {
+        "summary": "Get All Dsa Questions",
+        "operationId": "/api/question-get_all_dsa_questions",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add Dsa Question",
+        "operationId": "/api/question-add_dsa_question",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostDSAQuestionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/question/{id}": {
+      "get": {
+        "summary": "Get Dsa Question",
+        "operationId": "/api/question/{id}-get_dsa_question",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions": {
+      "get": {
+        "summary": "Applicable Questions",
+        "operationId": "/api/questions-applicable_questions",
+        "parameters": [
+          {
+            "name": "vlopse",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "title": "Vlopse"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DSAQuestion"
+                  },
+                  "title": "Response /Api/Questions-Applicable Questions"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/validate": {
+      "post": {
+        "summary": "Validate Answers",
+        "operationId": "/api/validate-validate_answers",
+        "parameters": [
+          {
+            "name": "vlopse",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "title": "Vlopse"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transform": {
+      "post": {
+        "summary": "Transform Answers",
+        "operationId": "/api/transform-transform_answers",
+        "parameters": [
+          {
+            "name": "vlopse",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "title": "Vlopse"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/vlopse": {
+      "get": {
+        "summary": "Get Vlopse",
+        "operationId": "/api/vlopse-get_vlopse",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "title": "Response /Api/Vlopse-Get Vlopse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add Vlopse",
+        "operationId": "/api/vlopse-add_vlopse",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostVlopseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/vlopse/{name}": {
+      "put": {
+        "summary": "Put Vlopse",
+        "operationId": "/api/vlopse/{name}-put_vlopse",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutVlopseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Vlopse",
+        "operationId": "/api/vlopse/{name}-delete_vlopse",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/vlopse/{name}/question": {
+      "get": {
+        "summary": "Get Questions",
+        "operationId": "/api/vlopse/{name}/question-get_questions",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add Question",
+        "operationId": "/api/vlopse/{name}/question-add_question",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostVlopseQuestionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/vlopse/{vlopse_name}/question/{question_id}": {
+      "get": {
+        "summary": "Get Question",
+        "operationId": "/api/vlopse/{vlopse_name}/question/{question_id}-get_question",
+        "parameters": [
+          {
+            "name": "vlopse_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vlopse Name"
+            }
+          },
+          {
+            "name": "question_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Question Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VlopseQuestion"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Answer": {
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "title": "Question Id"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question_id",
+          "value"
+        ],
+        "title": "Answer"
+      },
+      "AnswerRequest": {
+        "properties": {
+          "answers": {
+            "items": {
+              "$ref": "#/components/schemas/Answer"
+            },
+            "type": "array",
+            "title": "Answers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "answers"
+        ],
+        "title": "AnswerRequest"
+      },
+      "DSAQuestion": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "input_type": {
+            "$ref": "#/components/schemas/InputType"
+          },
+          "help_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Help Text"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Selection"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Text"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ISO_3166_1"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "type",
+                  "mapping": {
+                    "iso-3166-1": "#/components/schemas/ISO_3166_1",
+                    "selection": "#/components/schemas/Selection",
+                    "text": "#/components/schemas/Text"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Config"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "text",
+          "input_type"
+        ],
+        "title": "DSAQuestion"
+      },
+      "ErrorDetails": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "type_error",
+              "value_error"
+            ],
+            "title": "Type"
+          },
+          "loc": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Loc"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "loc",
+          "message"
+        ],
+        "title": "ErrorDetails"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "api": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "db": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "dsa_status": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ],
+            "title": "Dsa Status"
+          },
+          "mapping_status": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ],
+            "title": "Mapping Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "api",
+          "db",
+          "dsa_status",
+          "mapping_status"
+        ],
+        "title": "HealthResponse"
+      },
+      "ISO_3166_1": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "iso-3166-1",
+            "title": "Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "title": "ISO_3166_1"
+      },
+      "InputType": {
+        "type": "string",
+        "enum": [
+          "text",
+          "file_upload",
+          "date_select",
+          "selection",
+          "multi_select",
+          "iso-3166-1"
+        ],
+        "title": "InputType"
+      },
+      "PostDSAQuestionRequest": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "input_type": {
+            "$ref": "#/components/schemas/InputType"
+          },
+          "help_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Help Text"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Config"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "text",
+          "input_type"
+        ],
+        "title": "PostDSAQuestionRequest"
+      },
+      "PostVlopseQuestionRequest": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required"
+          },
+          "input_type": {
+            "$ref": "#/components/schemas/InputType"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Selection"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Text"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ISO_3166_1"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "type",
+                  "mapping": {
+                    "iso-3166-1": "#/components/schemas/ISO_3166_1",
+                    "selection": "#/components/schemas/Selection",
+                    "text": "#/components/schemas/Text"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Config"
+          },
+          "details": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details"
+          },
+          "vlopse": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vlopse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "text",
+          "required",
+          "input_type"
+        ],
+        "title": "PostVlopseQuestionRequest"
+      },
+      "PostVlopseRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "PostVlopseRequest"
+      },
+      "PutVlopseRequest": {
+        "properties": {
+          "new_name": {
+            "type": "string",
+            "title": "New Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "new_name"
+        ],
+        "title": "PutVlopseRequest"
+      },
+      "Selection": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "selection",
+            "title": "Type"
+          },
+          "options": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Options"
+          },
+          "multiple": {
+            "type": "boolean",
+            "title": "Multiple",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "options"
+        ],
+        "title": "Selection"
+      },
+      "Status": {
+        "type": "string",
+        "enum": [
+          "ok",
+          "error"
+        ],
+        "title": "Status"
+      },
+      "Text": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "text",
+            "title": "Type"
+          },
+          "max_length": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Length"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "title": "Text"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "ValidationResponse": {
+        "properties": {
+          "errors": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/ErrorDetails"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Errors"
+          },
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          }
+        },
+        "type": "object",
+        "required": [
+          "errors",
+          "ok"
+        ],
+        "title": "ValidationResponse"
+      },
+      "VlopseQuestion": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required"
+          },
+          "input_type": {
+            "$ref": "#/components/schemas/InputType"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Selection"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Text"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ISO_3166_1"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "type",
+                  "mapping": {
+                    "iso-3166-1": "#/components/schemas/ISO_3166_1",
+                    "selection": "#/components/schemas/Selection",
+                    "text": "#/components/schemas/Text"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Config"
+          },
+          "details": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details"
+          },
+          "vlopse": {
+            "type": "string",
+            "title": "Vlopse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "text",
+          "required",
+          "input_type",
+          "vlopse"
+        ],
+        "title": "VlopseQuestion"
+      }
+    }
+  }
+}
