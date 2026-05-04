@@ -26,24 +26,25 @@ class QuestionService:
             details=details,
             config=config,
         )
-        db = SessionLocal()
-        db.add(question)
-        db.commit()
+        with SessionLocal() as db:
+            db.add(question)
+            db.commit()
 
     def get_all_for_vlopse(self, vlopse: str):
-        db = SessionLocal()
-        result = db.query(VLOPSEQuestion).where(VLOPSEQuestion.vlopse == vlopse).all()
+        with SessionLocal() as db:
+            result = (
+                db.query(VLOPSEQuestion).where(VLOPSEQuestion.vlopse == vlopse).all()
+            )
 
-        return result
+            return result
 
     def get(self, question_id: str):
-        db = SessionLocal()
-        question = (
-            db.query(VLOPSEQuestion).where(VLOPSEQuestion.id == question_id).first()
-        )
+        with SessionLocal() as db:
+            question = (
+                db.query(VLOPSEQuestion).where(VLOPSEQuestion.id == question_id).first()
+            )
 
-        print(f"Gotted{question}")
-        return question
+            return question
 
     def add_unified(
         self,
@@ -56,32 +57,26 @@ class QuestionService:
         question = DSAQuestion(
             id=id, text=text, input_type=input_type, help_text=help_text, config=config
         )
-        # id = Column(String, primary_key=True, index=True)
-        # text = Column(Text)
-        # help_text = Column(Text, nullable=True)
-        # input_type = Column(SQLAlchemyEnum(InputType))
-        # config: Mapped[dict | None] = mapped_column(JSON, nullable=True)
-        db = SessionLocal()
-        db.add(question)
-        db.commit()
+        with SessionLocal() as db:
+            db.add(question)
+            db.commit()
 
     def get_unified(self, question_id: str):
-        db = SessionLocal()
-        question = db.query(DSAQuestion).where(DSAQuestion.id == question_id).first()
+        with SessionLocal() as db:
+            question = (
+                db.query(DSAQuestion).where(DSAQuestion.id == question_id).first()
+            )
 
-        print(f"Gotted{question}")
-        return question
+            return question
 
     def get_all_unified_for(self, question_ids: list[str]):
-        db = SessionLocal()
-        result = db.query(DSAQuestion).where(DSAQuestion.id.in_(question_ids)).all()
+        with SessionLocal() as db:
+            result = db.query(DSAQuestion).where(DSAQuestion.id.in_(question_ids)).all()
 
-        return result
+            return result
 
     def get_all_unified(self):
-        db = SessionLocal()
-        print("Selecting all DSA..")
-        question = db.query(DSAQuestion).all()
+        with SessionLocal() as db:
+            question = db.query(DSAQuestion).all()
 
-        print(f"Gotted{question}")
-        return question
+            return question
