@@ -3,18 +3,22 @@
   import { Button } from "$lib/components/ui/button/index.js";
 
   import { goto } from "$app/navigation";
+  import { apiVlopseGetVlopse } from "@api";
 
-  var vlopses = $state([]);
+  let vlopses: string[] = $state([]);
   let error: string | null = null;
 
   let selected = $state([]);
 
   onMount(async () => {
     try {
-      const res = await fetch("/api/vlopse");
-      console.log(res);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      vlopses = await res.json();
+      const call = await apiVlopseGetVlopse({
+        baseUrl: "http://localhost:5173",
+      });
+      const response = call.response;
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      vlopses = call.data;
     } catch (e) {
       error = e instanceof Error ? e.message : String(e);
     }
