@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from app.core.models import Answer, MappedAnswer, MappingError
+from app.core.models import Answer, ErrorDetails, MappedAnswer, MappingError
 from app.models import InputType
 from app.services.form_engine import FormService
 from app.services.questions import QuestionService
@@ -58,7 +58,7 @@ async def applicable_questions(vlopse: list[str] = Query(...)) -> list[DSAQuesti
         res.options = form_service.compute_options(q, vlopse)
         response.append(res)
 
-    print(f"Returning {response}")
+    print(f"Returning {len(response)} DSA questions..")
 
     return response
 
@@ -90,7 +90,7 @@ class TransformResponse(BaseModel):
 
 
 class ValidationResponse(BaseModel):
-    errors: dict[str, str]
+    errors: dict[str, list[ErrorDetails]]
     ok: bool
 
 
@@ -101,10 +101,13 @@ async def validate_answers(
     answers_inner = answers.answers
     print("Checking answers..")
     result = form_service.validate_unified_question(answers_inner)
+    print(result)
     ok = len(result) == 0
-    # print(f"Ok: {ok}")
-    # if ok:
-    #     result = form_service.map_unified_to_vlopse_and_validate(answers_inner, vlopse)
+    print(f"Ok: {ok}")
+    if ok:
+        ok, result = form_service.map_unified_to_vlopse_and_validate(
+            answers_inner, vlopse
+        )
     return ValidationResponse(errors=result, ok=ok)
 
 
@@ -114,6 +117,8 @@ async def transform_answers(answers: AnswerRequest, vlopse: list[str] = Query(..
     result = form_service.transform_answers_to_vlopse_answers(vlopse, answers_inner)
     res = [TransformResponseForVlopse(name=name, answers=res) for name, res in result]
 
-    print(f"Returning {result}")
+    print(f"TRANSFORM RESULT {result}")
+
     response = TransformResponse(by_vlopse=res)
+
     return response

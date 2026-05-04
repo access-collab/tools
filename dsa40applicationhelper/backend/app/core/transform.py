@@ -136,11 +136,11 @@ class AnswerTransformer:
             mapper = hydrate_mapping(vlopse_question, operator)
             op = hydrate_operator(operator)
             if isinstance(operator, str):
-                inputs = [answer_map.get(vlopse_question)]
+                inputs = [answer_map[operator]]
             elif isinstance(operator.src, list):
                 inputs = [a for a in answers if a.question_id in operator.src]
             elif isinstance(operator.src, str):
-                inputs = [answer_map.get(operator.src)]
+                inputs = [answer_map[operator.src]]
             else:
                 raise TypeError(f"Unknown operation {operator}")
             output = self.transform_safe(inputs, mapper, op)

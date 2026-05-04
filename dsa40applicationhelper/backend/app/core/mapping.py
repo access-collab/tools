@@ -32,7 +32,7 @@ class MappingValidationError(Exception):
 
 
 class QuestionMapper:
-    _mapping: dict[str, dict[str, PlatformMapping]]
+    _mapping: dict[str, list[Mapping]]
     questions: list[UnifiedQuestion]
 
     @classmethod
@@ -65,14 +65,19 @@ class QuestionMapper:
         mapping: dict[str, dict[str, PlatformMapping]],
         questions: list[UnifiedQuestion],
     ) -> None:
-        self._mapping = mapping
+        self._mapping = {
+            vlopse: [
+                hydrate_mapping(vlopse_question, operator)
+                for vlopse_question, operator in mapping_definitions.items()
+            ]
+            for vlopse, mapping_definitions in mapping.items()
+        }
         self.questions = questions
 
     def _map(self):
         result = set[str]()
-        for _, mapping_definitions in self._mapping.items():
-            for vlopse_question, operator in mapping_definitions.items():
-                mapping = hydrate_mapping(vlopse_question, operator)
+        for _, mappings in self._mapping.items():
+            for mapping in mappings:
                 result.update(mapping.dsa_ids)
 
         return result
