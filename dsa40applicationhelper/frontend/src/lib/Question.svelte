@@ -23,7 +23,7 @@
 </script>
 
 <div>
-  <label>Q: {text} <input name={id} {id} type="text" bind:value /></label>
+  <label>Q ({id}): {text} <input name={id} {id} type="text" bind:value /></label>
   {#if help_text}
     {help_text}
   {/if}
