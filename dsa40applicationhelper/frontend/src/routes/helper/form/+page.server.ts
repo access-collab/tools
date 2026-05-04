@@ -14,13 +14,19 @@ const validate = async ({ answers, vlopses }) => {
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   let { ok, errors } = call.data;
   if (ok) {
-    return { ok: true };
+    return { ok: true, errors: [] };
   }
-  let err = Object.entries(errors).map(([key, value]) => ({
-    question_id: key,
-    description: value,
-  }));
-  return { ok: false, errors: err };
+
+  let err = Array.isArray(errors)
+    ? {
+        validation_errors: Object.entries(errors).map(([key, value]) => ({
+          question_id: key,
+          description: value,
+        })),
+      }
+    : { transformation_errors: errors };
+
+  return { ok: false, ...err };
 };
 const transform = async ({ answers, vlopses }) => {
   const call = await apiTransformTransformAnswers({
@@ -32,8 +38,7 @@ const transform = async ({ answers, vlopses }) => {
 
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   let by_vlopse = call.data.by_vlopse;
-  console.log(by_vlopse);
-  return {ok: true, by_vlopse};
+  return { ok: true, by_vlopse };
 };
 export const actions = {
   default: async ({ url, cookies, request, fetch }) => {
@@ -44,14 +49,19 @@ export const actions = {
       question_id: key,
       value: value,
     }));
-    let x = 1;
 
-    var { ok, errors } = await validate({ answers, vlopses });
+    var { ok, ...rest } = await validate({ answers, vlopses });
     if (!ok) {
-      return fail(400, { errors: errors });
+      console.log("error validating DSA answers.");
+      console.log(rest);
+      return fail(400, { ...rest });
     }
 
     var { ok, by_vlopse } = await transform({ answers, vlopses });
+    if (!ok) {
+      console.log("error transforming to VLOPSE questions.");
+      return fail(400, { errors: by_vlopse });
+    }
 
     return { success: true, by_vlopse };
 
