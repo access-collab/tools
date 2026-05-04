@@ -3,6 +3,7 @@ from pycountry import countries
 from app.core.mapping import QuestionMapper
 from app.core.models import (
     Answer,
+    ErrorDetails,
     MappingError,
     MappingResult,
 )
@@ -31,21 +32,32 @@ class FormService:
     def map_unified_to_vlopse_and_validate(
         self, answers: list[Answer], vlopses: list[str]
     ):
-        unified = self.question_service.get_all_unified_for(
-            [a.question_id for a in answers]
-        )
-        mapper = QuestionMapper.from_vlopse_names(vlopses, unified)
-        print(f"Mapping {answers} to {unified}..")
-        qs = mapper.map_vlopse_to_unified()
-        print(f"Mapped {qs} for {vlopses}")
-        for q in qs:
-            print(q)
-        return []
+        # unified = self.question_service.get_all_unified_for(
+        #     [a.question_id for a in answers]
+        # )
+        ok = True
+        errors: dict[str, list[ErrorDetails]] = {}
+        for klops in vlopses:
+            # TODO: should not load questions or mappings but receive them
+            transformer = AnswerTransformer.from_vlopse_name(klops)
+            transformed = transformer.map(answers)
+            # for t in transformed:
+            # if isinstance(t, MappingError):
+            #     message =
+            if any(isinstance(t, MappingError) for t in transformed):
+                ok = False
+                for t in transformed:
+                    if isinstance(t, MappingError):
+                        errors[t.question_id] = t.errors
+            # result.append((klops, transformed))
+
+        return ok, errors
 
     def validate_unified_question(self, answers: list[Answer]):
         result = {}
         unifieds = self.question_service.get_all_unified()
         for a in answers:
+            # TODO: this should ask the db seperately.
             qs = [q for q in unifieds if q.id == a.question_id]
 
             if not len(qs):
