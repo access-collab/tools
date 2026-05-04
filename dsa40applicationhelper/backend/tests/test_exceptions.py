@@ -3,6 +3,7 @@ import pytest
 from app.core.mapping import Mapping
 from app.core.models import (
     Answer,
+    UnifiedQuestion,
 )
 from app.core.operator import JoinOperator, MakeISOOperator
 from app.core.transform import (
@@ -10,8 +11,25 @@ from app.core.transform import (
     TransformationError,
     ValidationErrors,
 )
+from app.schemas import Selection
 
 
+def test_invalid_selection():
+    answer = Answer(question_id="prev-experience", value="hehe")
+    q = UnifiedQuestion(
+        id="X1",
+        type="selection",
+        text_en="Previous experience?",
+        config=Selection.model_validate(
+            {"type": "selection", "options": ["Yes", "No"]}
+        ),
+    )
+    q.config.validate_answer(answer.value)
+
+    pass
+
+
+### TRANSFORMATION BASED EXCEPTIONS ###
 def test_validating_missing_argument():
     mapper = Mapping("V1", ["first-name", "last-name"])
     op = JoinOperator(" ")
