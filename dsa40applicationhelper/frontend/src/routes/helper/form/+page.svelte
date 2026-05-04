@@ -17,7 +17,7 @@
       help_text={question.help_text}
       options={question.options}
       value={question.value}
-      validation={form?.errors?.find((item) => {
+      validation={form?.validation_errors?.find((item) => {
         return item.question_id == question.id;
       })?.description}
     />
@@ -29,4 +29,13 @@
   <ResultViewer results={form.by_vlopse}/>
 {:else}
   <p style:color="red">No Success</p>
+{/if}
+{#if form?.transformation_errors}
+  <h3>Transformation Errors</h3>
+  {#each Object.entries(form.transformation_errors) as [key, errors]}
+    <h4>Vlopse Question {key}</h4>
+    {#each errors as { type, message }}
+      {message}
+    {/each}
+  {/each}
 {/if}
