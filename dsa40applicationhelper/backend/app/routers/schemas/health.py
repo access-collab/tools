@@ -11,3 +11,5 @@ class Status(str, Enum):
 class HealthResponse(BaseModel):
     api: Status
     db: Status
+    dsa_status: int | Status
+    mapping_status: int | Status

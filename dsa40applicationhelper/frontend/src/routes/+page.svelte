@@ -2,8 +2,8 @@
   import { onMount } from "svelte";
   import { healthHealthCheck, type HealthResponse } from "@api";
 
-  let health: HealthResponse | null = null;
-  let error: string | null = null;
+  let health: HealthResponse | undefined = $state(undefined);
+  let error: string | undefined = $state(undefined);
 
   onMount(async () => {
     try {
@@ -31,8 +31,10 @@
     <h2>Backend health</h2>
     {#if health}
       <p>
-        Status: <strong>{health.status}</strong> &nbsp;|&nbsp; DB:
+        API: <strong>{health.api}</strong> &nbsp;|&nbsp; DB:
         <strong>{health.db}</strong>
+        DSA Questions: <strong>{health.dsa_status}</strong>
+        Mappings: <strong>{health.mapping_status}</strong>
       </p>
       <p><a href="/helper">Start</a></p>
     {:else if error}

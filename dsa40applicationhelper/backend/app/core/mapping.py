@@ -27,6 +27,10 @@ def hydrate_mapping(vlopse_question: str, mapping_definition: PlatformMapping):
     raise ValueError(f"Invalid mapping defition {mapping_definition}")
 
 
+class MappingValidationError(Exception):
+    pass
+
+
 class QuestionMapper:
     _mapping: dict[str, dict[str, PlatformMapping]]
     questions: list[UnifiedQuestion]
@@ -37,6 +41,24 @@ class QuestionMapper:
             vlopse: get_vlopse_configuration_for(vlopse).mappings for vlopse in vlopses
         }
         return cls(mapping, questions)
+
+    def _validate(self):
+        question_ids = [q.id for q in self.questions]
+        invalid_mappings: set[Mapping] = set()
+        # TODO: Check if a mapping refers to a question not defined by the vlopse
+        for vlopse, mappings in self._mapping.items():
+            print(f"Validating {vlopse}..")
+            for mapping in mappings:
+                for u_id in mapping.dsa_ids:
+                    if u_id not in question_ids:
+                        invalid_mappings.add(mapping)
+                        print(
+                            f"[WARN] {mapping} for {vlopse} refers to {u_id}, which is undefined!"
+                        )
+
+        if len(invalid_mappings):
+            msg = f"[ERROR] {len(invalid_mappings)} invalid mappings found.: {invalid_mappings}"
+            raise MappingValidationError(msg)
 
     def __init__(
         self,
