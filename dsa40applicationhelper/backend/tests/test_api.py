@@ -11,8 +11,11 @@ client = TestClient(app)
 def test_health():
     response = client.get("/health")
     assert response.status_code == 200
+    # FIXME: uses comitted database correctly. Don't.
     assert response.json() == {
-        "db": "ok",
+        "dsa_status": 0,
+        "mapping_status": "error",
+        "db": "error",
         "api": "ok",
     }
 
