@@ -1,6 +1,6 @@
 [project]
 name = "backend"
-version = "0.2.0"
+version = "0.2.1"
 description = "DSA40 Application Helper — FastAPI backend"
 readme = "README.md"
 authors = [{ name = "Luis Glaser", email = "l.glaser@comprensio.ai" }]
