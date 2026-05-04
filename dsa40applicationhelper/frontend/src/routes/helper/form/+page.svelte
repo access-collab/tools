@@ -3,7 +3,7 @@
 
   import { enhance } from "$app/forms";
   import Question from "$lib/Question.svelte";
-    import ResultViewer from "$lib/ResultViewer.svelte";
+  import ResultViewer from "$lib/ResultViewer.svelte";
   let { data, form }: PageProps = $props();
 </script>
 
@@ -26,7 +26,7 @@
 </form>
 {#if form?.success}
   <h1 style:color="green">Result</h1>
-  <ResultViewer results={form.by_vlopse}/>
+  <ResultViewer results={form.by_vlopse} />
 {:else}
   <p style:color="red">No Success</p>
 {/if}
