@@ -7,24 +7,20 @@
     options: string[];
   };
 
-  let { id, value = $bindable(), options }: Props = $props();
+  let { id, value = $bindable(""), options }: Props = $props();
   const triggerContent = $derived(
-    options.find((o) => o === value) ?? "Select a country",
+    options.find((o) => o === value) ?? "Select an option",
   );
 </script>
 
-<Select.Root type="single" name="favoriteFruit" bind:value>
+<Select.Root type="single" name={id} bind:value>
   <Select.Trigger class="w-[180px]">
     {triggerContent}
   </Select.Trigger>
   <Select.Content>
     <Select.Group>
-      <Select.Label>Fruits</Select.Label>
       {#each options as opt}
-        <Select.Item
-          value={opt}
-          label={opt}
-        >
+        <Select.Item value={opt} label={opt}>
           {opt}
         </Select.Item>
       {/each}

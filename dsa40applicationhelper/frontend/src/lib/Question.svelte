@@ -19,9 +19,19 @@
     text,
     input_type,
     help_text,
+    config,
+    options,
     value = $bindable(""),
     validation,
   }: Props = $props();
+
+  const selectOptions = $derived(
+    config?.type === "selection" ? config.options : (options ?? []),
+  );
+
+  const validationErrors = $derived(
+    Array.isArray(validation) ? validation : validation ? [validation] : [],
+  );
 </script>
 
 <div>
@@ -38,6 +48,13 @@
       <Input {id} name={id} type="text" bind:value class="max-w-xs" />
     {:else if input_type === "date_select"}
       <Input {id} name={id} type="text" bind:value class="max-w-xs" />
+    {:else if input_type === "selection"}
+      <Select {id} bind:value options={selectOptions} />
+    {:else if input_type === "multi_select"}
+        {#each selectOptions as opt}
+            <input type="checkbox" name={id} value={opt} />
+            {opt}
+        {/each}
     {:else if input_type === "iso-3166-1"}
       <Input
         {id}
