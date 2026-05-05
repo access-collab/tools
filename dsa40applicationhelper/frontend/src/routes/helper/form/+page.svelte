@@ -13,7 +13,7 @@
     <Question
       id={question.id}
       text={question.text}
-      type={question.type}
+      input_type={question.input_type}
       help_text={question.help_text}
       options={question.options}
       value={question.value}

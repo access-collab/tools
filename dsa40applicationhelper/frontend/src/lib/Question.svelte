@@ -5,7 +5,7 @@
   type Props = {
     id: string;
     text: string;
-    type: InputType;
+    input_type: InputType;
     help_text: string | null | undefined;
     value: string;
     validation: string | undefined;
@@ -14,7 +14,7 @@
   let {
     id,
     text,
-    type,
+    input_type,
     help_text,
     value = $bindable(),
     validation,
