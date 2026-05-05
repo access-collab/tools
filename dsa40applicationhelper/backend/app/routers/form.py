@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
@@ -90,8 +90,9 @@ class TransformResponse(BaseModel):
 
 
 class ValidationResponse(BaseModel):
-    errors: dict[str, list[ErrorDetails]]
+    errors: dict[str, list[ErrorDetails] | str]
     ok: bool
+    kind: Literal["validation", "transformation"]
 
 
 @router.post("/api/validate")
@@ -102,13 +103,15 @@ async def validate_answers(
     print("Checking answers..")
     result = form_service.validate_unified_question(answers_inner)
     print(result)
+    kind = "validation"
     ok = len(result) == 0
     print(f"Ok: {ok}")
     if ok:
         ok, result = form_service.map_unified_to_vlopse_and_validate(
             answers_inner, vlopse
         )
-    return ValidationResponse(errors=result, ok=ok)
+        kind = "transformation"
+    return ValidationResponse(errors=result, ok=ok, kind=kind)
 
 
 @router.post("/api/transform")

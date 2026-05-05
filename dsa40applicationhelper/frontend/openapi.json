@@ -1010,10 +1010,17 @@
         "properties": {
           "errors": {
             "additionalProperties": {
-              "items": {
-                "$ref": "#/components/schemas/ErrorDetails"
-              },
-              "type": "array"
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/components/schemas/ErrorDetails"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "string"
+                }
+              ]
             },
             "type": "object",
             "title": "Errors"
@@ -1021,12 +1028,21 @@
           "ok": {
             "type": "boolean",
             "title": "Ok"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "validation",
+              "transformation"
+            ],
+            "title": "Kind"
           }
         },
         "type": "object",
         "required": [
           "errors",
-          "ok"
+          "ok",
+          "kind"
         ],
         "title": "ValidationResponse"
       },
