@@ -12,19 +12,20 @@ const validate = async ({ answers, vlopses }) => {
   const res = call.response;
 
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  let { ok, errors } = call.data;
+  let { ok, errors, kind } = call.data;
   if (ok) {
     return { ok: true, errors: [] };
   }
 
-  let err = Array.isArray(errors)
-    ? {
-        validation_errors: Object.entries(errors).map(([key, value]) => ({
-          question_id: key,
-          description: value,
-        })),
-      }
-    : { transformation_errors: errors };
+  let err =
+    kind == "validation"
+      ? {
+          validation_errors: Object.entries(errors).map(([key, value]) => ({
+            question_id: key,
+            description: value,
+          })),
+        }
+      : { transformation_errors: errors };
 
   return { ok: false, ...err };
 };
