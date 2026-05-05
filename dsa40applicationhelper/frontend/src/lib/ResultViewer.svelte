@@ -20,8 +20,12 @@
       <h2>{vlopse.name}</h2>
       <Tabs.Content value={vlopse.name}>
         {#each vlopse.answers as answer}
-          <div class="grid gap-3">
-            <p>{answer.question_id}</p><p>{answer.text}</p><p>{answer.value}</p>
+          <div class="py-3">
+            <p class="mt-1 text-sm text-muted-foreground">
+              {answer.question_id}
+            </p>
+            <p class="font-medium">{answer.text}</p>
+            <p class="mt-2 font-medium">{answer.value}</p>
           </div>
         {/each}
       </Tabs.Content>
