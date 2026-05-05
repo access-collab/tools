@@ -6,9 +6,9 @@
     id: string;
     text: string;
     input_type: InputType;
-    help_text: string | null | undefined;
-    value: string;
-    validation: string | undefined;
+    help_text?: string | null;
+    value?: string;
+    validation?: string | string[] | null;
   };
 
   let {
@@ -16,9 +16,8 @@
     text,
     input_type,
     help_text,
-    value = $bindable(),
+    value = $bindable(""),
     validation,
-    // TODO: Ensure the default value is null not '' in FORM
   }: Props = $props();
 </script>
 
