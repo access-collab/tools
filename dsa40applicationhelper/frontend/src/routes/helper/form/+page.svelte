@@ -15,8 +15,8 @@
       text={question.text}
       input_type={question.input_type}
       help_text={question.help_text}
+      config={question.config}
       options={question.options}
-      value={question.value}
       validation={form?.validation_errors?.find((item) => {
         return item.question_id == question.id;
       })?.description}
