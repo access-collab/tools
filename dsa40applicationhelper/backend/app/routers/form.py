@@ -55,7 +55,9 @@ async def applicable_questions(vlopse: list[str] = Query(...)) -> list[DSAQuesti
     response: list[DSAQuestion] = []
     for q in qs:
         res = DSAQuestion.model_validate(q)
-        res.options = form_service.compute_options(q, vlopse)
+        opts = form_service.compute_options(q, vlopse)
+        if opts is not None and res.options is None:
+            res.options = opts
         response.append(res)
 
     print(f"Returning {len(response)} DSA questions..")
