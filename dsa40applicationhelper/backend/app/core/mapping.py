@@ -14,7 +14,7 @@ class Mapping:
 
     @override
     def __repr__(self):
-        return f"DSA([{''.join(self.dsa_ids)}]) -> VLOPSE({self.vlopse_id})"
+        return f"DSA([{', '.join(self.dsa_ids)}]) -> VLOPSE({self.vlopse_id})"
 
 
 def hydrate_mapping(vlopse_question: str, mapping_definition: PlatformMapping):
