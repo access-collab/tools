@@ -6,6 +6,7 @@
   type Props = {
     id: string;
     text: string;
+    visible: boolean;
     input_type: InputType;
     help_text?: string | null;
     config?: DsaQuestion["config"];
@@ -17,6 +18,7 @@
   let {
     id,
     text,
+    visible,
     input_type,
     help_text,
     config,
@@ -32,10 +34,11 @@
   const validationErrors = $derived(
     Array.isArray(validation) ? validation : validation ? [validation] : [],
   );
+  const hidden = $derived(!required && !visible);
 </script>
 
-<div class="py-3">
   <p class="font-medium">{text}</p>
+<div class={hidden ? "hidden" : "py-3"}>
   {#if help_text}
     <p class="mt-1 text-sm text-muted-foreground">{help_text}</p>
   {/if}
@@ -79,3 +82,9 @@
   {/if}
   <hr class="mt-3" />
 </div>
+
+<style>
+  .hidden {
+    display: none;
+  }
+</style>

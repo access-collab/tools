@@ -258,6 +258,46 @@
         }
       }
     },
+    "/api/condition": {
+      "get": {
+        "summary": "Get Conditions",
+        "operationId": "/api/condition-get_conditions",
+        "parameters": [
+          {
+            "name": "vlopse",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "title": "Vlopse"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/vlopse": {
       "get": {
         "summary": "Get Vlopse",

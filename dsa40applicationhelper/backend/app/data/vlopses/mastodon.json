@@ -1,11 +1,7 @@
-
 {
   "mappings": {
     "X1": {
-      "src": [
-        "first-name",
-        "last-name"
-      ],
+      "src": ["first-name", "last-name"],
       "operation": "join-space"
     },
     "X2": "email-inst",
@@ -19,117 +15,11 @@
     "X7": "prev-experience"
   },
   "conditions": {
-    "research-outcomes": [
+    "data-acc-end": [
       {
-        "question_id": "M29",
+        "question_id": "data-acc-start",
         "operator": "eq",
-        "value": "Other"
-      }
-    ],
-    "org-role": [
-      {
-        "question_id": "M18",
-        "operator": "eq",
-        "value": "Other"
-      }
-    ],
-    "technical experience": [
-      {
-        "question_id": "M2",
-        "operator": "eq",
-        "value": "Content Library API"
-      }
-    ],
-    "tech-preference": [
-      {
-        "question_id": "M2",
-        "operator": "eq",
-        "value": "Content Library API"
-      }
-    ],
-    "ethics experience": [
-      {
-        "question_id": "M2",
-        "operator": "eq",
-        "value": "Content Library API"
-      }
-    ],
-    "research-ethics": [
-      {
-        "question_id": "M2",
-        "operator": "eq",
-        "value": "Content Library API"
-      }
-    ],
-    "legal-consent": [
-      {
-        "question_id": "M2",
-        "operator": "eq",
-        "value": "Content Library API"
-      }
-    ],
-    "prev-experience": [
-      {
-        "question_id": "M2",
-        "operator": "eq",
-        "value": "Content Library API"
-      }
-    ],
-    "birthday": [
-      {
-        "question_id": "M2",
-        "operator": "eq",
-        "value": "Content Library API"
-      },
-      {
-        "question_id": "M42",
-        "operator": "eq",
-        "value": "No"
-      }
-    ],
-    "phone": [
-      {
-        "question_id": "M2",
-        "operator": "eq",
-        "value": "Content Library API"
-      },
-      {
-        "question_id": "M42",
-        "operator": "eq",
-        "value": "No"
-      }
-    ],
-    "tech-training": [
-      {
-        "question_id": "M2",
-        "operator": "eq",
-        "value": "Content Library API"
-      },
-      {
-        "question_id": "M42",
-        "operator": "eq",
-        "value": "No"
-      }
-    ],
-    "legal-authority-name": [
-      {
-        "question_id": "M46",
-        "operator": "eq",
-        "value": "Yes"
-      }
-    ],
-    "legal-authority-title": [
-      {
-        "question_id": "M46",
-        "operator": "eq",
-        "value": "Yes"
-      }
-    ],
-    "legal-authority-email": [
-      {
-        "question_id": "M46",
-        "operator": "eq",
-        "value": "Yes"
+        "value": "01-07-1992"
       }
     ]
   }

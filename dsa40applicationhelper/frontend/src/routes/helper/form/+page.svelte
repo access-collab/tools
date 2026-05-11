@@ -4,15 +4,30 @@
   import { enhance } from "$app/forms";
   import Question from "$lib/Question.svelte";
   import ResultViewer from "$lib/ResultViewer.svelte";
+  import { isVisible, type FormValues } from "$lib/conditions";
   let { data, form }: PageProps = $props();
+
+  let values = $state<FormValues>(
+    Object.fromEntries(data.questions.map((q) => [q.id, ""])),
+  );
+
+  let visibility = $derived(
+    Object.fromEntries(
+      data.questions.map((q) => [
+        q.id,
+        isVisible(q.id, data.conditions, values),
+      ]),
+    ),
+  );
 </script>
 
-<h1>VLOPSE selection: {data.vlopses}</h1>
 <form method="POST" use:enhance>
-  {#each data.questions as question}
+  {#each data.questions as question (question.id)}
     <Question
       id={question.id}
       text={question.text}
+      visible={visibility[question.id]}
+      bind:value={values[question.id]}
       input_type={question.input_type}
       help_text={question.help_text}
       config={question.config}
