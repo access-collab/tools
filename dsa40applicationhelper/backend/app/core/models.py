@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Literal
+from typing import Literal
 
 from pydantic import BaseModel
 
@@ -93,4 +93,4 @@ class Operator(str, Enum):
 class Condition(BaseModel):
     question_id: str
     operator: Operator
-    value: Any
+    value: str
