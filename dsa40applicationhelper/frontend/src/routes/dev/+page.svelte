@@ -7,6 +7,7 @@
     id: "test",
     text: "This is what I'm asking for: ",
     input_type: "text",
+    visible: true,
   };
   const invalid: DsaQuestion = { validation: ["error"], ...question };
   const with_help_text: DsaQuestion = {

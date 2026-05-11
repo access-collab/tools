@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 from app.core.models import Answer, ErrorDetails, MappedAnswer, MappingError
 from app.models import InputType
+from app.services.condition_service import ConditionService
 from app.services.form_engine import FormService
 from app.services.questions import QuestionService
 from app.services.vlopse import VlopseConfigService
@@ -16,6 +17,7 @@ router = APIRouter()
 service = VlopseConfigService()
 form_service = FormService()
 question_service = QuestionService()
+condition_service = ConditionService()
 
 
 class PostDSAQuestionRequest(BaseModel):
@@ -127,3 +129,9 @@ async def transform_answers(answers: AnswerRequest, vlopse: list[str] = Query(..
     response = TransformResponse(by_vlopse=res)
 
     return response
+
+
+@router.get("/api/condition")
+async def get_conditions(vlopse: list[str] = Query(...)):
+    conditions = condition_service.get_merged_conditions(vlopse)
+    return conditions
