@@ -39,7 +39,11 @@ def build_request_data(q: dict):
                 raise TypeError("selections should have more than 1 value!")
             req_data["input_type"] = "selection"
             i_type = {"type": "selection", "options": opts}
-        case "multi-select" | "file upload" | "date-select":
+        case "file upload":
+            req_data["input_type"] = "file_upload"
+
+
+        case "multi-select" | "date-select":
             raise NotImplementedError(f"{q['Type']} not yet implemented!")
 
     # {
