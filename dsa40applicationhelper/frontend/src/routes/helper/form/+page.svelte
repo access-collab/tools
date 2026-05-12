@@ -21,7 +21,7 @@
   );
 </script>
 
-<form method="POST" use:enhance>
+<form method="POST" use:enhance enctype="multipart/form-data">
   {#each data.questions as question (question.id)}
     <Question
       id={question.id}

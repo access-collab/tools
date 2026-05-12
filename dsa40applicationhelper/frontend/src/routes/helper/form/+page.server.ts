@@ -3,6 +3,8 @@ import type { Actions } from "./$types";
 import { apiTransformTransformAnswers, apiValidateValidateAnswers } from "@api";
 import { apiQuestionsApplicableQuestions } from "@api";
 import type { DsaQuestion } from "@api";
+import { writeFile, mkdir } from "fs/promises";
+import { join } from "path";
 const validate = async ({ answers, vlopses }) => {
   const call = await apiValidateValidateAnswers({
     baseUrl: "http://localhost:5173",
@@ -46,10 +48,18 @@ export const actions = {
     // TODO log the user in
     const vlopses = url.searchParams.getAll("vlopses");
     const data = await request.formData();
-    const answers = [...data.entries()].map(([key, value]) => ({
-      question_id: key,
-      value: value,
-    }));
+    const uploadDir = "/tmp/dsa_uploads";
+    await mkdir(uploadDir, { recursive: true });
+    const answers = await Promise.all(
+      [...data.entries()].map(async ([key, value]) => {
+        if (value instanceof File && value.size > 0) {
+          const filename = `${Date.now()}_${value.name}`;
+          await writeFile(join(uploadDir, filename), Buffer.from(await value.arrayBuffer()));
+          return { question_id: key, value: join(uploadDir, filename) };
+        }
+        return { question_id: key, value: value as string };
+      }),
+    );
 
     var { ok, ...rest } = await validate({ answers, vlopses });
     if (!ok) {
