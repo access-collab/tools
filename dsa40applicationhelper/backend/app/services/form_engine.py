@@ -54,7 +54,7 @@ class FormService:
         return ok, errors
 
     def validate_unified_question(self, answers: list[Answer], vlopses: list[str]):
-        result = {}
+        result: dict[str, str] = {}
         mapper = QuestionMapper.from_vlopse_names(vlopses, self.question_service)
         mapped = mapper.map_vlopse_to_unified()
 
@@ -70,7 +70,8 @@ class FormService:
                 result[q.id] = "None or empty string not allowed"
                 continue
             config = q.parsed_config
-            if config:
+
+            if config and a.value is not None:
                 error = config.validate_answer(a.value)
                 if error:
                     result[q.id] = error
