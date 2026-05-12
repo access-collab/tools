@@ -37,6 +37,7 @@
         Mappings: <strong>{health.mapping_status}</strong>
       </p>
       <p><a href="/helper">Start</a></p>
+      <p><a href="/admin">Admin</a></p>
     {:else if error}
       <p style="color: red">Could not reach /health — {error}</p>
     {:else}
