@@ -52,6 +52,7 @@ class WithText(MappingError, MappingResult):
 class UnifiedQuestion(BaseModel):
     id: str
     text_en: str
+    required: bool
     type: InputType
     help_text: str | None = None
     config: ConstraintConfig | None = None

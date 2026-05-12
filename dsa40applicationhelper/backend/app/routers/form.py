@@ -52,14 +52,16 @@ async def applicable_questions(vlopse: list[str] = Query(...)) -> list[DSAQuesti
     missing = [s for s in selected_vlopses if s not in vlopses]
     if len(missing):
         raise HTTPException(status_code=322, detail=f"Unknown vlopse(s): {missing}")
-    qs = form_service.get_required_questions_for(vlopse)
+
+    qs = form_service.get_mapped_questions_for(vlopse)
 
     response: list[DSAQuestion] = []
-    for q in qs:
+    for req, q in qs:
         res = DSAQuestion.model_validate(q)
         opts = form_service.compute_options(q, vlopse)
         if opts is not None and res.options is None:
             res.options = opts
+        res.required = req
         response.append(res)
 
     print(f"Returning {len(response)} DSA questions..")
@@ -105,7 +107,7 @@ async def validate_answers(
 ) -> ValidationResponse:
     answers_inner = answers.answers
     print("Checking answers..")
-    result = form_service.validate_unified_question(answers_inner)
+    result = form_service.validate_unified_question(answers_inner, vlopse)
     print(result)
     kind = "validation"
     ok = len(result) == 0

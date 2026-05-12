@@ -1,7 +1,10 @@
+from collections import defaultdict
+
 from typing_extensions import override
 
 from app.core.config import get_vlopse_configuration_for
 from app.core.models import PlatformMapping, UnifiedQuestion
+from app.services.questions import QuestionService
 
 
 class Mapping:
@@ -33,10 +36,10 @@ class MappingValidationError(Exception):
 
 class QuestionMapper:
     _mapping: dict[str, list[Mapping]]
-    questions: list[UnifiedQuestion]
+    questions: QuestionService
 
     @classmethod
-    def from_vlopse_names(cls, vlopses: list[str], questions: list[UnifiedQuestion]):
+    def from_vlopse_names(cls, vlopses: list[str], questions: QuestionService):
         mapping = {
             vlopse: get_vlopse_configuration_for(vlopse).mappings for vlopse in vlopses
         }
@@ -61,9 +64,7 @@ class QuestionMapper:
             raise MappingValidationError(msg)
 
     def __init__(
-        self,
-        mapping: dict[str, dict[str, PlatformMapping]],
-        questions: list[UnifiedQuestion],
+        self, mapping: dict[str, dict[str, PlatformMapping]], questions: QuestionService
     ) -> None:
         self._mapping = {
             vlopse: [
@@ -75,22 +76,33 @@ class QuestionMapper:
         self.questions = questions
 
     def _map(self):
-        result = set[str]()
+        result: dict[str, list[str]] = defaultdict(list)
         for _, mappings in self._mapping.items():
             for mapping in mappings:
-                result.update(mapping.dsa_ids)
+                for dsa_id in mapping.dsa_ids:
+                    result[dsa_id].append(mapping.vlopse_id)
 
         return result
 
     def map_vlopse_to_unified(self):
-        unified_question_ids = self._map()
-        print(f"Mapping to {unified_question_ids}")
+        map_traces = self._map()
+        print(f"Mapped to {map_traces}")
         # FIXME: this should ask the db
-        result: list[UnifiedQuestion] = []
-        for q in self.questions:
-            if q.id not in unified_question_ids:
-                print(f"WARNING {q.id} not MAPPED TO ANYTHING")
-            else:
-                result.append(q)
+        result: list[tuple[bool, UnifiedQuestion]] = []
+        for dsa_id, vlopse_ids in map_traces.items():
+            dsa = self.questions.get_unified(dsa_id)
+            if dsa is None:
+                print(f"WARNING {dsa_id} MAPPED TO UNKNOWN DSA QUESTION")
+                continue
+            required = False
+            for vlopse_id in vlopse_ids:
+                vlopse = self.questions.get(vlopse_id)
+                if vlopse is None:
+                    print(f"WARNING {vlopse_id} MAPPED TO UNKNOWN VLOPSE QUESTION")
+                    continue
+                # FIXME: Typing err
+                if vlopse.required:
+                    required = True
+            result.append((required, dsa))
 
         return result

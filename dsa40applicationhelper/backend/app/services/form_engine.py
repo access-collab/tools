@@ -53,17 +53,20 @@ class FormService:
 
         return ok, errors
 
-    def validate_unified_question(self, answers: list[Answer]):
+    def validate_unified_question(self, answers: list[Answer], vlopses: list[str]):
         result = {}
-        unifieds = self.question_service.get_all_unified()
+        mapper = QuestionMapper.from_vlopse_names(vlopses, self.question_service)
+        mapped = mapper.map_vlopse_to_unified()
+
         for a in answers:
             # TODO: this should ask the db seperately.
-            qs = [q for q in unifieds if q.id == a.question_id]
+            qs = [(req, q) for req, q in mapped if q.id == a.question_id]
 
             if not len(qs):
                 raise AnswerToUnknownQuestion(f"{a.question_id} not defined!")
-            q = qs[0]
-            if a.value is None or a.value == "":
+            is_required, q = qs[0]
+
+            if is_required and (a.value is None or a.value == ""):
                 result[q.id] = "None or empty string not allowed"
                 continue
             config = q.parsed_config
@@ -73,10 +76,10 @@ class FormService:
                     result[q.id] = error
         return result
 
-    def get_required_questions_for(self, vlopses: list[str]):
+    def get_mapped_questions_for(self, vlopses: list[str]):
         all_questions = self.question_service.get_all_unified()
-        # TODO: QuestionMapper should not load questions but receive them
-        mapper = QuestionMapper.from_vlopse_names(vlopses, all_questions)
+        # FIXME: Question mapper should just build a mapping and provide traces, can be annotated in a amapper service later. this form engine is way too huge anyhow
+        mapper = QuestionMapper.from_vlopse_names(vlopses, self.question_service)
         qs = mapper.map_vlopse_to_unified()
         print(f"Mapped {qs} for {vlopses}")
         return qs
