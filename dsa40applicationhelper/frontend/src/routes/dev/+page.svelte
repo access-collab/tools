@@ -17,6 +17,7 @@
   const selection: DsaQuestion = {
     ...question,
     input_type: "selection",
+    required: true,
     config: { type: "selection", options: ["Apple", "Pear", "Banana"] },
   };
   const boolean: DsaQuestion = {
