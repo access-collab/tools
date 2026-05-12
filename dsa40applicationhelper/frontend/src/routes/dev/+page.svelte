@@ -1,7 +1,6 @@
 <script lang="ts">
   import Question from "$lib/Question.svelte";
   import { type DsaQuestion } from "@api/types.gen";
-  // export type InputType = 'text' | 'file_upload' | 'date_select' | 'selection' | 'multi_select' | 'iso-3166-1';
 
   const question: DsaQuestion = {
     id: "test",
@@ -9,7 +8,6 @@
     input_type: "text",
     visible: true,
   };
-  const invalid: DsaQuestion = { validation: ["error"], ...question };
   const with_help_text: DsaQuestion = {
     help_text:
       "Please be very speicfic in how you answer this. Use your keyboard to type the input, ideally. If not you might be able to use your voice to text",
@@ -43,4 +41,7 @@
 <Question {...boolean} />
 
 <h2>Error during validation</h2>
-<Question {...invalid} />
+<Question
+  {...question}
+  validation={["This field is required", "Must be at least 10 characters"]}
+/>
