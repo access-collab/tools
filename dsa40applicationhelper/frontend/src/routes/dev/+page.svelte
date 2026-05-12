@@ -20,6 +20,14 @@
     required: true,
     config: { type: "selection", options: ["Apple", "Pear", "Banana"] },
   };
+  const multi_select: DsaQuestion = {
+    ...question,
+    input_type: "multi_select",
+    config: {
+      type: "selection",
+      options: ["Option A", "Option B", "Option C"],
+    },
+  };
   const boolean: DsaQuestion = {
     ...question,
     input_type: "selection",
@@ -37,6 +45,9 @@
 <Question {...file_upload} />
 <h2>selection</h2>
 <Question {...selection} />
+
+<h2>multi_select</h2>
+<Question {...multi_select} />
 
 <h2>boolean</h2>
 <Question {...boolean} />
