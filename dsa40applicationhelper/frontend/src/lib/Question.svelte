@@ -52,7 +52,7 @@
     {#if input_type === "text"}
       <Input {id} name={id} type="text" bind:value class="max-w-xs" />
     {:else if input_type === "file_upload"}
-      <Input {id} name={id} type="text" bind:value class="max-w-xs" />
+      <Input {id} name={id} type="file" class="max-w-xs" />
     {:else if input_type === "date_select"}
       <Input {id} name={id} type="text" bind:value class="max-w-xs" />
     {:else if input_type === "selection"}
