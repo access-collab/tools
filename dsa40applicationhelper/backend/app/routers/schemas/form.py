@@ -8,6 +8,7 @@ class DSAQuestion(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: str
     text: str
+    required: bool = True
     input_type: InputType
     help_text: str | None = None
     config: ConstraintConfig | None = None
