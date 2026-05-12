@@ -620,6 +620,11 @@
             "type": "string",
             "title": "Text"
           },
+          "required": {
+            "type": "boolean",
+            "title": "Required",
+            "default": true
+          },
           "input_type": {
             "$ref": "#/components/schemas/InputType"
           },
