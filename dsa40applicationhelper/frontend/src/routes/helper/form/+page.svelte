@@ -26,6 +26,7 @@
     <Question
       id={question.id}
       text={question.text}
+      required={question.required}
       visible={visibility[question.id]}
       bind:value={values[question.id]}
       input_type={question.input_type}
