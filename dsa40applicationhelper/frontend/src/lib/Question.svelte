@@ -6,6 +6,7 @@
   type Props = {
     id: string;
     text: string;
+    required: boolean;
     visible: boolean;
     input_type: InputType;
     help_text?: string | null;
@@ -18,6 +19,7 @@
   let {
     id,
     text,
+    required,
     visible,
     input_type,
     help_text,
@@ -31,14 +33,17 @@
     config?.type === "selection" ? config.options : (options ?? []),
   );
 
+
   const validationErrors = $derived(
     Array.isArray(validation) ? validation : validation ? [validation] : [],
   );
   const hidden = $derived(!required && !visible);
 </script>
-
-  <p class="font-medium">{text}</p>
 <div class={hidden ? "hidden" : "py-3"}>
+  <p class="font-medium">
+    {text}
+    {#if required}(required){:else}(optional){/if}
+  </p>
   {#if help_text}
     <p class="mt-1 text-sm text-muted-foreground">{help_text}</p>
   {/if}
