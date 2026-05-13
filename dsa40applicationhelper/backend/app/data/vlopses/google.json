@@ -1,0 +1,10 @@
+{
+  "info": {
+    "name": "Google",
+    "account_required": "False",
+    "application_link": "https://requestrecords.google.com/researcher/form",
+    "modality": "form"
+  },
+  "mappings": {},
+  "conditions": {}
+}

@@ -1,1 +1,0 @@
-	Platform Information	https://developers.facebook.com/docs/content-library-api/get-access	Link to Form	https://icpsr.atlassian.net/servicedesk/customer/portal/53/group/80/create/251	Account Required	TRUE	Modality	Form
