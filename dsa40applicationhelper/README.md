@@ -1,5 +1,14 @@
 # DSA 40 Application Helper
 
+## Installation
+
+For usage, use docker.
+`docker compose build`
+`docker compose up`
+
+The service will be available at `localhost:3000`. Swagger API under `localhost:8000/docs`
+
+
 ## Development
 
 ### Requirements
