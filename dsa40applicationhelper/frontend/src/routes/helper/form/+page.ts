@@ -24,8 +24,7 @@ export const load: PageLoad = async ({ url }) => {
   const res = call.response;
 
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  let questions =
-    call.data?.map((e) => e && { validation: null, ...e }) ?? [];
+  let questions = call.data?.map((e) => e && { validation: null, ...e }) ?? [];
   let conditions = await loadConditions(vlopses);
   return { questions: questions, conditions: conditions };
 };
