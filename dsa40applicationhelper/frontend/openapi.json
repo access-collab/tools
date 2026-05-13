@@ -309,7 +309,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "type": "string"
+                    "$ref": "#/components/schemas/GetVlopseResponse"
                   },
                   "type": "array",
                   "title": "Response /Api/Vlopse-Get Vlopse"
@@ -610,6 +610,14 @@
         ],
         "title": "AnswerRequest"
       },
+      "ApplicationModality": {
+        "type": "string",
+        "enum": [
+          "form",
+          "email"
+        ],
+        "title": "ApplicationModality"
+      },
       "DSAQuestion": {
         "properties": {
           "id": {
@@ -721,6 +729,23 @@
         ],
         "title": "ErrorDetails"
       },
+      "GetVlopseResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "info": {
+            "$ref": "#/components/schemas/PlatformInformation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "info"
+        ],
+        "title": "GetVlopseResponse"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -799,6 +824,44 @@
           "iso-3166-1"
         ],
         "title": "InputType"
+      },
+      "PlatformInformation": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "platform_information": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Platform Information"
+          },
+          "account_required": {
+            "type": "boolean",
+            "title": "Account Required"
+          },
+          "application_link": {
+            "type": "string",
+            "title": "Application Link"
+          },
+          "modality": {
+            "$ref": "#/components/schemas/ApplicationModality"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "account_required",
+          "application_link",
+          "modality"
+        ],
+        "title": "PlatformInformation"
       },
       "PostDSAQuestionRequest": {
         "properties": {
@@ -927,14 +990,18 @@
       },
       "PostVlopseRequest": {
         "properties": {
-          "name": {
+          "id": {
             "type": "string",
-            "title": "Name"
+            "title": "Id"
+          },
+          "info": {
+            "$ref": "#/components/schemas/PlatformInformation"
           }
         },
         "type": "object",
         "required": [
-          "name"
+          "id",
+          "info"
         ],
         "title": "PostVlopseRequest"
       },
