@@ -1,5 +1,5 @@
 services:
-  app:
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
@@ -7,4 +7,22 @@ services:
       - "8000:8000"
     volumes:
       - ./backend/app/data:/app/backend/data
-      - ./backend/app/uploads:/app/backend/uploads
+      - uploads:/app/backend/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      BACKEND_URL: "http://backend:8000"
+      ORIGIN: "http://localhost:3000"
+      BODY_SIZE_LIMIT: "Infinity"
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      - backend
+
+volumes:
+  uploads:
