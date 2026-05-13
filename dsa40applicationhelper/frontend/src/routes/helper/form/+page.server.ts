@@ -3,9 +3,13 @@ import type { Actions } from "./$types";
 import { apiTransformTransformAnswers, apiValidateValidateAnswers } from "@api";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
+import { env } from "$env/dynamic/private";
+
+const getBaseUrl = () => env.BACKEND_URL ?? "http://localhost:8000";
+
 const validate = async ({ answers, vlopses }) => {
   const call = await apiValidateValidateAnswers({
-    baseUrl: "http://localhost:5173",
+    baseUrl: getBaseUrl(),
     body: { answers: answers },
     query: { vlopse: vlopses },
   });
@@ -32,7 +36,7 @@ const validate = async ({ answers, vlopses }) => {
 
 const transform = async ({ answers, vlopses }) => {
   const call = await apiTransformTransformAnswers({
-    baseUrl: "http://localhost:5173",
+    baseUrl: getBaseUrl(),
     body: { answers: answers },
     query: { vlopse: vlopses },
   });

@@ -7,9 +7,7 @@
 
   onMount(async () => {
     try {
-      const call = await healthHealthCheck({
-        baseUrl: "http://localhost:5173",
-      });
+      const call = await healthHealthCheck();
       const response = call.response;
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
