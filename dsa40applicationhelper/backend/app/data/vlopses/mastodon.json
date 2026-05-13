@@ -1,4 +1,11 @@
 {
+  "info": {
+    "name": "Mastodon",
+    "platform_information": "https://joinmastodon.org/",
+    "account_required": "False",
+    "application_link": "https://joinmastodon.org/hosting",
+    "modality": "form"
+  },
   "mappings": {
     "X1": {
       "src": ["first-name", "last-name"],

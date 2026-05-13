@@ -1,3 +1,4 @@
+from enum import Enum
 from pathlib import Path
 
 from pydantic import BaseModel
@@ -7,7 +8,21 @@ from .models import Condition, PlatformMapping
 _VLOPSE_CONFIG_DIR = Path(__file__).parent.parent / "data" / "vlopses"
 
 
+class ApplicationModality(str, Enum):
+    form = "form"
+    email = "email"
+
+
+class PlatformInformation(BaseModel):
+    name: str
+    platform_information: str | None = None
+    account_required: bool
+    application_link: str
+    modality: ApplicationModality
+
+
 class VLOPSEConfiguration(BaseModel):
+    info: PlatformInformation
     mappings: dict[str, PlatformMapping]
     conditions: dict[str, list[Condition]]
 

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from app.core.config import (
+    PlatformInformation,
     VLOPSEConfiguration,
     get_vlopse_configuration_for,
     write_vlopse_configuration_for,
@@ -18,11 +19,11 @@ class VlopseDoesNotExistException(BaseException):
 
 
 class VlopseConfigService:
-    def add(self, name: str):
+    def add(self, name: str, info: PlatformInformation):
         current = self.get(name)
         if current:
             raise VlopseExistsException()
-        empty = VLOPSEConfiguration(mappings={}, conditions={})
+        empty = VLOPSEConfiguration(info=info, mappings={}, conditions={})
         write_vlopse_configuration_for(name, empty)
 
     def get(self, name: str):
@@ -34,7 +35,7 @@ class VlopseConfigService:
     def get_all(self):
         return [p.stem for p in _DATA_DIR.glob("*.json")]
 
-    def delete(self, name):
+    def delete(self, name: str):
         path = [p for p in _DATA_DIR.glob("*json") if p.stem == name]
 
         if not len(path):
@@ -49,11 +50,12 @@ class VlopseConfigService:
         new = self.get(new_name)
         if new:
             raise VlopseExistsException()
+
         self.delete(old_name)
-        self.add(new_name)
+        self.add(new_name, current.info)
         self.update(new_name, current)
 
-    def update(self, name, value: VLOPSEConfiguration):
+    def update(self, name: str, value: VLOPSEConfiguration):
         if self.get(name) is None:
             raise VlopseDoesNotExistException()
         write_vlopse_configuration_for(name, value)

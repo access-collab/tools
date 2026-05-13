@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
+from app.core.config import PlatformInformation
 from app.services.questions import QuestionService
 from app.services.vlopse import (
     VlopseConfigService,
@@ -14,20 +15,31 @@ vlopse_service = VlopseConfigService()
 question_service = QuestionService()
 
 
-@router.get("/api/vlopse", response_model=list[str])
-async def get_vlopse() -> JSONResponse:
+class GetVlopseResponse(BaseModel):
+    id: str
+    info: PlatformInformation
+
+
+@router.get("/api/vlopse", response_model=list[GetVlopseResponse])
+async def get_vlopse():
     vlopses = vlopse_service.get_all()
-    return JSONResponse(vlopses)
+    result: list[GetVlopseResponse] = []
+    for vlopse in vlopses:
+        config = vlopse_service.get(vlopse)
+        if config:
+            result.append(GetVlopseResponse(id=vlopse, info=config.info))
+    return result
 
 
 class PostVlopseRequest(BaseModel):
-    name: str
+    id: str
+    info: PlatformInformation
 
 
 @router.post("/api/vlopse")
 async def add_vlopse(new_vlopse: PostVlopseRequest) -> JSONResponse:
     try:
-        vlopse_service.add(new_vlopse.name)
+        vlopse_service.add(new_vlopse.id, new_vlopse.info)
     except VlopseExistsException:
         raise HTTPException(status_code=409, detail="vlopse already exists")
 
