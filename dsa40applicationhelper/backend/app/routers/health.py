@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from pydantic import ValidationError
 from sqlalchemy import text
 
 from app.core.mapping import MappingValidationError, QuestionMapper
@@ -25,6 +26,12 @@ def health_check() -> HealthResponse:
         questions = question_service.get_all_unified()
         dsa_status = len(questions)
         vlopses = vlopse_service.get_all()
+        for vlopse in vlopses:
+            try:
+                _is_it_loadable = vlopse_service.get(vlopse)
+            except ValidationError as e:
+                print(f"INVALID VLOPSE CONFIG FOR {vlopse}")
+                print(f"REASON: {e}")
         mapper = QuestionMapper.from_vlopse_names(vlopses, questions)
         mapper._validate()
         mapping_status = Status.OK
