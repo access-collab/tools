@@ -5,9 +5,8 @@ import {
   apiConditionGetConditions,
 } from "@api";
 
-const loadConditions: { vlopses: string[] } = async (vlopses) => {
+const loadConditions = async (vlopses: string[]) => {
   const call = await apiConditionGetConditions({
-    baseUrl: "http://localhost:5173",
     query: { vlopse: vlopses },
   });
   const res = call.response;
@@ -20,7 +19,6 @@ export const load: PageLoad = async ({ url }) => {
   const vlopses = url.searchParams.getAll("vlopses");
 
   const call = await apiQuestionsApplicableQuestions({
-    baseUrl: "http://localhost:5173",
     query: { vlopse: vlopses },
   });
   const res = call.response;
