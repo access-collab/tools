@@ -3,9 +3,9 @@
   import { Button } from "$lib/components/ui/button/index.js";
 
   import { goto } from "$app/navigation";
-  import { apiVlopseGetVlopse } from "@api";
+  import { apiVlopseGetVlopse, type PlatformInformation } from "@api";
 
-  let vlopses: string[] = $state([]);
+  let vlopses: { id: string; info: PlatformInformation }[] = $state([]);
   let error: string | null = null;
 
   let selected = $state([]);
@@ -16,7 +16,7 @@
       const response = call.response;
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      vlopses = call.data;
+      vlopses = call.data ?? [];
     } catch (e) {
       error = e instanceof Error ? e.message : String(e);
     }
@@ -39,15 +39,20 @@
 
   <section>
     {#if vlopses}
-      {#each vlopses as vlopse}
+      {#each vlopses as vlopse (vlopse.id)}
+        <div>
+          {vlopse.info.name}
+          {vlopse.info.platform_information}
+          {vlopse.info.account_required}
+          {vlopse.info.application_link}
+        </div>
         <label
           ><input
             type="checkbox"
             name="vlopses"
-            value={vlopse}
+            value={vlopse.id}
             bind:group={selected}
           />
-          {vlopse}
         </label>
       {/each}
 
