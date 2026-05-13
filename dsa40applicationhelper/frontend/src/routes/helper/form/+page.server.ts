@@ -52,10 +52,16 @@ export const actions = {
     await mkdir(uploadDir, { recursive: true });
     const answers = await Promise.all(
       [...data.entries()].map(async ([key, value]) => {
-        if (value instanceof File && value.size > 0) {
-          const filename = `${Date.now()}_${value.name}`;
-          await writeFile(join(uploadDir, filename), Buffer.from(await value.arrayBuffer()));
-          return { question_id: key, value: join(uploadDir, filename) };
+        if (value instanceof File) {
+          if (value.size > 0) {
+            const filename = `${Date.now()}_${value.name}`;
+            await writeFile(
+              join(uploadDir, filename),
+              Buffer.from(await value.arrayBuffer()),
+            );
+            return { question_id: key, value: join(uploadDir, filename) };
+          }
+          return { question_id: key, value: "" };
         }
         return { question_id: key, value: value as string };
       }),
