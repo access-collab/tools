@@ -4,7 +4,6 @@ import {
   apiQuestionsApplicableQuestions,
   apiConditionGetConditions,
 } from "@api";
-import type { DsaQuestion } from "@api";
 
 const loadConditions: { vlopses: string[] } = async (vlopses) => {
   const call = await apiConditionGetConditions({
@@ -16,9 +15,9 @@ const loadConditions: { vlopses: string[] } = async (vlopses) => {
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return call.data;
 };
+
 export const load: PageLoad = async ({ url }) => {
   const vlopses = url.searchParams.getAll("vlopses");
-  // vlopses is string[] → ["tiktok", "meta"]
 
   const call = await apiQuestionsApplicableQuestions({
     baseUrl: "http://localhost:5173",

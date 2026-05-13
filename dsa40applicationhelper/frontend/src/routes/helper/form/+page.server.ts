@@ -1,8 +1,6 @@
 import { fail } from "@sveltejs/kit";
 import type { Actions } from "./$types";
 import { apiTransformTransformAnswers, apiValidateValidateAnswers } from "@api";
-import { apiQuestionsApplicableQuestions } from "@api";
-import type { DsaQuestion } from "@api";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 const validate = async ({ answers, vlopses }) => {
@@ -31,6 +29,7 @@ const validate = async ({ answers, vlopses }) => {
 
   return { ok: false, ...err };
 };
+
 const transform = async ({ answers, vlopses }) => {
   const call = await apiTransformTransformAnswers({
     baseUrl: "http://localhost:5173",
@@ -43,9 +42,9 @@ const transform = async ({ answers, vlopses }) => {
   let by_vlopse = call.data.by_vlopse;
   return { ok: true, by_vlopse };
 };
+
 export const actions = {
   default: async ({ url, cookies, request, fetch }) => {
-    // TODO log the user in
     const vlopses = url.searchParams.getAll("vlopses");
     const data = await request.formData();
     const uploadDir = "/tmp/dsa_uploads";
@@ -81,9 +80,5 @@ export const actions = {
     }
 
     return { success: true, by_vlopse };
-
-    // if (!email) {
-    // 	return fail(400, { email, missing: true });
-    // }
   },
 } satisfies Actions;
