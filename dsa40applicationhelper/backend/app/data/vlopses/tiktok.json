@@ -1,10 +1,7 @@
 {
   "mappings": {
     "T1": {
-      "src": [
-        "first-name",
-        "last-name"
-      ],
+      "src": ["first-name", "last-name"],
       "operation": "join-space"
     },
     "T2": "commercial-purpose",
@@ -32,10 +29,7 @@
     "T28": "cv",
     "T29": "research-keywords",
     "T31": {
-      "src": [
-        "research-summary",
-        "research-sysrisk"
-      ],
+      "src": ["research-summary", "research-sysrisk"],
       "operation": "join-comma"
     },
     "T32": "research-method",

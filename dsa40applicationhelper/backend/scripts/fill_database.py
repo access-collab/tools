@@ -42,7 +42,6 @@ def build_request_data(q: dict):
         case "file upload":
             req_data["input_type"] = "file_upload"
 
-
         case "multi-select" | "date-select":
             raise NotImplementedError(f"{q['Type']} not yet implemented!")
 
