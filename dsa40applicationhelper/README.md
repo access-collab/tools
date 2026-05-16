@@ -26,7 +26,7 @@ You can interact with the backend either via the frontend (as far as functionali
 
 #### Frontend
 
-in `frontend` run `npm run dev` (make sure port 5173 is not in use)
+in `frontend` run `npm run generate` and `npm run dev` (make sure port 5173 is not in use)
 Browse to `http://localhost:5173` to use the DSA40 Application Helper
 
 #### API
