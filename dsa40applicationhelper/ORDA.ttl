@@ -1,0 +1,1265 @@
+@prefix : <http://www.semanticweb.org/orda/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@base <http://www.semanticweb.org/orda/> .
+
+<https://w3id.org/orda> rdf:type owl:Ontology ;
+                         owl:imports <http://xmlns.com/foaf/0.1/> ;
+                         <http://purl.org/dc/terms/description> "Models data access processes under the DSA: Art. 40(4) non-public data (DSC-mediated, with completeness check, vetting, amendment, and mediation) and Art. 40(12) publicly accessible data (platform-vetted, with optional repeated requests for additional information)."@en ;
+                         <http://purl.org/dc/terms/license> <https://creativecommons.org/licenses/by/4.0/> ;
+                         <http://purl.org/dc/terms/title> "ORDA — Ontology for Research Data Access"@en .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://purl.org/dc/terms/description
+<http://purl.org/dc/terms/description> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/license
+<http://purl.org/dc/terms/license> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/title
+<http://purl.org/dc/terms/title> rdf:type owl:AnnotationProperty .
+
+
+###  https://w3id.org/orda#hasLegalBasis
+:hasLegalBasis rdf:type owl:AnnotationProperty ;
+               rdfs:comment "Cites the legal provision governing this class or property, e.g. Art. 40(4) DSA."@en ;
+               rdfs:label "has legal basis"@en .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.w3.org/2006/time#after
+<http://www.w3.org/2006/time#after> rdf:type owl:ObjectProperty .
+
+
+###  http://www.w3.org/2006/time#hasBeginning
+<http://www.w3.org/2006/time#hasBeginning> rdf:type owl:ObjectProperty ;
+                                           rdfs:domain <http://www.w3.org/2006/time#Interval> ;
+                                           rdfs:range <http://www.w3.org/2006/time#Instant> .
+
+
+###  http://www.w3.org/2006/time#hasEnd
+<http://www.w3.org/2006/time#hasEnd> rdf:type owl:ObjectProperty ;
+                                     rdfs:domain <http://www.w3.org/2006/time#Interval> ;
+                                     rdfs:range <http://www.w3.org/2006/time#Instant> .
+
+
+###  http://www.w3.org/2006/vcard/ns#hasAddress
+vcard:hasAddress rdf:type owl:ObjectProperty ;
+                 rdfs:domain <http://xmlns.com/foaf/0.1/Person> ;
+                 rdfs:range vcard:Address .
+
+
+###  http://www.w3.org/ns/prov#wasAssociatedWith
+<http://www.w3.org/ns/prov#wasAssociatedWith> rdf:type owl:ObjectProperty .
+
+
+###  https://w3id.org/orda#communicationBetween
+:communicationBetween rdf:type owl:ObjectProperty ;
+                      rdfs:domain :CommunicationEvent ;
+                      rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
+                      rdfs:label "communication between"@en .
+
+
+###  https://w3id.org/orda#concerns
+:concerns rdf:type owl:ObjectProperty ;
+          rdfs:comment "Links a document or action to the dataset or resource it pertains to."@en ;
+          rdfs:label "concerns"@en .
+
+
+###  https://w3id.org/orda#decisionMadeBy
+:decisionMadeBy rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf <http://www.w3.org/ns/prov#wasAssociatedWith> ;
+                rdfs:domain :Decision ;
+                rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
+                rdfs:label "decision made by"@en .
+
+
+###  https://w3id.org/orda#documentStage
+:documentStage rdf:type owl:ObjectProperty ;
+               rdfs:domain <http://xmlns.com/foaf/0.1/Document> ;
+               rdfs:range :DocumentStage ;
+               rdfs:comment "Links a document to its procedural stage (a DocumentStage individual). Permitted stages depend on document type — see owl:allValuesFrom restrictions on DataAccessApplication and ReasonedRequest. Use together with dcterms:isVersionOf to link versions."@en ;
+               rdfs:label "document stage"@en .
+
+
+###  https://w3id.org/orda#hasCommunication
+:hasCommunication rdf:type owl:ObjectProperty ;
+                  rdfs:range :CommunicationEvent ;
+                  rdfs:label "has communication"@en .
+
+
+###  https://w3id.org/orda#hasDecision
+:hasDecision rdf:type owl:ObjectProperty ;
+             rdfs:domain <http://www.w3.org/2006/time#Interval> ;
+             rdfs:range :Decision ;
+             rdfs:comment "Links a process phase to a formal Decision recorded during that phase."@en ;
+             rdfs:label "has decision"@en .
+
+
+###  https://w3id.org/orda#hasDuration
+:hasDuration rdf:type owl:ObjectProperty ;
+             rdfs:domain <http://www.w3.org/2006/time#Interval> ;
+             rdfs:range <http://www.w3.org/2006/time#Duration> ;
+             rdfs:label "has duration"@en .
+
+
+###  https://w3id.org/orda#hasEventType
+:hasEventType rdf:type owl:ObjectProperty ;
+              rdfs:domain :ProcessEvent ;
+              rdfs:range :EventType ;
+              rdfs:comment "Classifies a ProcessEvent using a controlled vocabulary of EventType individuals."@en ;
+              rdfs:label "has event type"@en .
+
+
+###  https://w3id.org/orda#hasOutput
+:hasOutput rdf:type owl:ObjectProperty ;
+           rdfs:domain <http://www.w3.org/2006/time#Interval> ;
+           rdfs:range <http://xmlns.com/foaf/0.1/Document> ;
+           rdfs:comment "Links a process phase to its document output."@en ;
+           rdfs:label "has output"@en .
+
+
+###  https://w3id.org/orda#hasSubPhase
+:hasSubPhase rdf:type owl:ObjectProperty ;
+             rdfs:domain <http://www.w3.org/2006/time#Interval> ;
+             rdfs:range <http://www.w3.org/2006/time#Interval> ;
+             rdfs:label "has sub-phase"@en .
+
+
+###  https://w3id.org/orda#isTriggeredBy
+:isTriggeredBy rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf <http://www.w3.org/2006/time#hasBeginning> ;
+               rdfs:domain <http://www.w3.org/2006/time#Interval> ;
+               rdfs:range :ProcessEvent ;
+               rdfs:comment "Links a process phase to the ProcessEvent that marks its beginning. Subproperty of time:hasBeginning, aligning with OWL Time's interval/instant model. Permitted triggering events are constrained per phase class via owl:allValuesFrom typed ProcessEvent subclasses."@en ;
+               rdfs:label "is triggered by"@en .
+
+
+###  https://w3id.org/orda#issuedBy
+:issuedBy rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf :performedBy ;
+          rdfs:label "issued by"@en .
+
+
+###  https://w3id.org/orda#occursWithin
+:occursWithin rdf:type owl:ObjectProperty ;
+              rdfs:domain :ProcessEvent ;
+              rdfs:range <http://www.w3.org/2006/time#Interval> ;
+              rdfs:comment "Links a ProcessEvent or document to the process phase in which it occurs."@en ;
+              rdfs:label "occurs within"@en .
+
+
+###  https://w3id.org/orda#performedBy
+:performedBy rdf:type owl:ObjectProperty ;
+             rdfs:domain :ProcessEvent ;
+             rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
+             rdfs:comment "Links a ProcessEvent to the agent who performed it. Permitted performers for each event type are constrained via owl:allValuesFrom restrictions on typed ProcessEvent subclasses."@en ;
+             rdfs:label "performed by"@en .
+
+
+###  https://w3id.org/orda#produces
+:produces rdf:type owl:ObjectProperty ;
+          rdfs:domain :ProcessEvent ;
+          rdfs:range <http://xmlns.com/foaf/0.1/Document> ;
+          rdfs:comment "Links a ProcessEvent to the document it produces as output."@en ;
+          rdfs:label "produces"@en .
+
+
+###  https://w3id.org/orda#submittedBy
+:submittedBy rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf :performedBy ;
+             rdfs:label "submitted by"@en .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.w3.org/2006/time#inXSDDateTimeStamp
+<http://www.w3.org/2006/time#inXSDDateTimeStamp> rdf:type owl:DatatypeProperty ;
+                                                 rdfs:domain <http://www.w3.org/2006/time#Instant> ;
+                                                 rdfs:range xsd:dateTimeStamp ;
+                                                 rdfs:comment "The timestamp of a time:Instant, expressed as an XSD dateTimeStamp."@en ;
+                                                 rdfs:label "in XSD dateTimeStamp"@en .
+
+
+###  http://www.w3.org/2006/vcard/ns#street-address
+vcard:street-address rdf:type owl:DatatypeProperty ;
+                     rdfs:domain vcard:Address .
+
+
+###  http://www.w3.org/2006/vcard/ns#postal-code
+vcard:postal-code rdf:type owl:DatatypeProperty ;
+                  rdfs:domain vcard:Address .
+
+
+###  http://www.w3.org/2006/vcard/ns#country-name
+vcard:country-name rdf:type owl:DatatypeProperty ;
+                   rdfs:domain vcard:Address .
+
+
+###  http://www.w3.org/2006/vcard/ns#locality
+vcard:locality rdf:type owl:DatatypeProperty ;
+               rdfs:domain vcard:Address .
+
+
+###  http://www.w3.org/2006/vcard/ns#region
+vcard:region rdf:type owl:DatatypeProperty ;
+             rdfs:domain vcard:Address .
+
+
+###  https://w3id.org/orda#decisionDate
+:decisionDate rdf:type owl:DatatypeProperty ;
+              rdfs:domain :Decision ;
+              rdfs:range xsd:dateTime ;
+              rdfs:label "decision date"@en .
+
+
+###  https://w3id.org/orda#decisionOutcome
+:decisionOutcome rdf:type owl:DatatypeProperty ;
+                 rdfs:domain :Decision ;
+                 rdfs:range xsd:string ;
+                 rdfs:comment "The result of a Decision: accepted, rejected, conditional."@en ;
+                 rdfs:label "decision outcome"@en .
+
+
+###  https://w3id.org/orda#maxWorkingDays
+:maxWorkingDays rdf:type owl:DatatypeProperty ;
+                rdfs:domain <http://www.w3.org/2006/time#Interval> ;
+                rdfs:range xsd:integer ;
+                rdfs:comment "Statutory time limit for a process phase, expressed in working days."@en ;
+                rdfs:label "maximum working days"@en .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.w3.org/2006/time#Duration
+<http://www.w3.org/2006/time#Duration> rdf:type owl:Class .
+
+
+###  http://www.w3.org/2006/time#Instant
+<http://www.w3.org/2006/time#Instant> rdf:type owl:Class .
+
+
+###  http://www.w3.org/2006/time#Interval
+<http://www.w3.org/2006/time#Interval> rdf:type owl:Class .
+
+
+###  http://www.w3.org/2006/vcard/ns#Address
+vcard:Address rdf:type owl:Class .
+
+
+###  http://www.w3.org/ns/odrl/2/Request
+<http://www.w3.org/ns/odrl/2/Request> rdf:type owl:Class .
+
+
+###  http://www.w3.org/ns/prov#Activity
+<http://www.w3.org/ns/prov#Activity> rdf:type owl:Class .
+
+
+###  https://w3id.org/orda#AcceptedPlatformVettingPhase
+:AcceptedPlatformVettingPhase rdf:type owl:Class ;
+                              owl:equivalentClass [ owl:intersectionOf ( :PlatformVettingPhase
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasDecision ;
+                                                                           owl:someValuesFrom :ApplicationAccepted
+                                                                         ]
+                                                                       ) ;
+                                                    rdf:type owl:Class
+                                                  ] ;
+                              rdfs:comment "Art. 40(12). A :PlatformVettingPhase whose outcome is :ApplicationAccepted. Required predecessor for access grant."@en ;
+                              rdfs:label "Accepted Platform Vetting Phase"@en .
+
+
+###  https://w3id.org/orda#AcceptedVettingPhase
+:AcceptedVettingPhase rdf:type owl:Class ;
+                      owl:equivalentClass [ owl:intersectionOf ( :VettingPhase
+                                                                 [ rdf:type owl:Restriction ;
+                                                                   owl:onProperty :hasDecision ;
+                                                                   owl:someValuesFrom :ApplicationAccepted
+                                                                 ]
+                                                               ) ;
+                                            rdf:type owl:Class
+                                          ] ;
+                      rdfs:comment "A :VettingPhase whose outcome is :ApplicationAccepted. Required predecessor for amendment, mediation, or access grant."@en ;
+                      rdfs:label "Accepted Vetting Phase"@en .
+
+
+###  https://w3id.org/orda#AccessGranted
+:AccessGranted rdf:type owl:Class ;
+               rdfs:subClassOf :Decision ;
+               owl:disjointWith :AccessRejected ,
+                                :AccessRevoked ;
+               rdfs:comment "Decision to grant data access during the Data Access Phase."@en ;
+               rdfs:label "Access Granted"@en .
+
+
+###  https://w3id.org/orda#AccessGrantedProcessEvent
+:AccessGrantedProcessEvent rdf:type owl:Class ;
+                           rdfs:subClassOf :ProcessEvent ,
+                                           [ rdf:type owl:Restriction ;
+                                             owl:onProperty :performedBy ;
+                                             owl:allValuesFrom :DataProvider
+                                           ] ,
+                                           [ rdf:type owl:Restriction ;
+                                             owl:onProperty :hasEventType ;
+                                             owl:hasValue :AccessGrantedEvent
+                                           ] ;
+                           rdfs:comment "Access granted event. Must be performed by a Data Provider."@en ;
+                           rdfs:label "Access Granted Process Event"@en .
+
+
+###  https://w3id.org/orda#AccessRejected
+:AccessRejected rdf:type owl:Class ;
+                rdfs:subClassOf :Decision ;
+                owl:disjointWith :AccessRevoked ;
+                rdfs:comment "Decision to reject or revoke data access during or after the Data Access Phase. Distinct from :ApplicationRejected at vetting."@en ;
+                rdfs:label "Access Rejected"@en .
+
+
+###  https://w3id.org/orda#AccessRevoked
+:AccessRevoked rdf:type owl:Class ;
+               rdfs:subClassOf :Decision ;
+               rdfs:label "Access Revoked"@en .
+
+
+###  https://w3id.org/orda#AdditionalInformationPhase
+:AdditionalInformationPhase rdf:type owl:Class ;
+                            rdfs:subClassOf <http://www.w3.org/2006/time#Interval> ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty <http://www.w3.org/2006/time#after> ;
+                                              owl:someValuesFrom :PlatformVettingPhase
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty :isTriggeredBy ;
+                                              owl:allValuesFrom :AdditionalInformationRequestedProcessEvent
+                                            ] ;
+                            rdfs:comment "Optional. Art. 40(12). Researcher supplies information requested by the platform. May occur zero or more times before a final vetting decision. Triggered by :AdditionalInformationRequestedProcessEvent."@en ;
+                            rdfs:label "Additional Information Phase"@en ;
+                            :hasLegalBasis "Art. 40(12) DSA"@en .
+
+
+###  https://w3id.org/orda#AdditionalInformationProvidedProcessEvent
+:AdditionalInformationProvidedProcessEvent rdf:type owl:Class ;
+                                           rdfs:subClassOf :ProcessEvent ,
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :performedBy ;
+                                                             owl:allValuesFrom :PrincipalResearcher
+                                                           ] ,
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :hasEventType ;
+                                                             owl:hasValue :AdditionalInformationProvidedEvent
+                                                           ] ;
+                                           rdfs:comment "Art. 40(12). Researcher provides requested supplementary information. Must be performed by a Principal Researcher. Triggers a further :PlatformVettingPhase."@en ;
+                                           rdfs:label "Additional Information Provided Process Event"@en .
+
+
+###  https://w3id.org/orda#AdditionalInformationRequest
+:AdditionalInformationRequest rdf:type owl:Class ;
+                              rdfs:subClassOf <http://xmlns.com/foaf/0.1/Document> ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty :issuedBy ;
+                                                owl:someValuesFrom :DataProvider
+                                              ] ;
+                              rdfs:comment "A platform request for supplementary information during Art. 40(12) platform vetting. May be issued repeatedly before a final acceptance or rejection decision."@en ;
+                              rdfs:label "Additional Information Request"@en ;
+                              :hasLegalBasis "Art. 40(12) DSA"@en .
+
+
+###  https://w3id.org/orda#AdditionalInformationRequestedProcessEvent
+:AdditionalInformationRequestedProcessEvent rdf:type owl:Class ;
+                                            rdfs:subClassOf :ProcessEvent ,
+                                                            [ rdf:type owl:Restriction ;
+                                                              owl:onProperty :performedBy ;
+                                                              owl:allValuesFrom :DataProvider
+                                                            ] ,
+                                                            [ rdf:type owl:Restriction ;
+                                                              owl:onProperty :hasEventType ;
+                                                              owl:hasValue :AdditionalInformationRequestedEvent
+                                                            ] ;
+                                            rdfs:comment "Art. 40(12). Platform requests supplementary information. Must be performed by a Data Provider. Triggers :AdditionalInformationPhase."@en ;
+                                            rdfs:label "Additional Information Requested Process Event"@en .
+
+
+###  https://w3id.org/orda#AmendmentAccepted
+:AmendmentAccepted rdf:type owl:Class ;
+                   rdfs:subClassOf :Decision ;
+                   owl:disjointWith :AmendmentRejected ;
+                   rdfs:comment "DSC-E accepts an amendment request during the Amendment Phase. Art. 40(4) only."@en ;
+                   rdfs:label "Amendment Accepted"@en .
+
+
+###  https://w3id.org/orda#AmendmentAcceptedProcessEvent
+:AmendmentAcceptedProcessEvent rdf:type owl:Class ;
+                               rdfs:subClassOf :ProcessEvent ,
+                                               [ rdf:type owl:Restriction ;
+                                                 owl:onProperty :performedBy ;
+                                                 owl:allValuesFrom :DigitalServicesCoordinatorOfEstablishment
+                                               ] ,
+                                               [ rdf:type owl:Restriction ;
+                                                 owl:onProperty :hasEventType ;
+                                                 owl:hasValue :AmendmentAcceptedEvent
+                                               ] ;
+                               rdfs:comment "Art. 40(4). DSC-E accepts an amendment during the Amendment Phase. Must be performed by :DigitalServicesCoordinatorOfEstablishment."@en ;
+                               rdfs:label "Amendment Accepted Process Event"@en .
+
+
+###  https://w3id.org/orda#AmendmentPhase
+:AmendmentPhase rdf:type owl:Class ;
+                rdfs:subClassOf <http://www.w3.org/2006/time#Interval> ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty <http://www.w3.org/2006/time#after> ;
+                                  owl:someValuesFrom :AcceptedVettingPhase
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :hasDecision ;
+                                  owl:someValuesFrom [ rdf:type owl:Class ;
+                                                       owl:unionOf ( :AmendmentAccepted
+                                                                     :AmendmentRejected
+                                                                   )
+                                                     ]
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :hasDecision ;
+                                  owl:allValuesFrom [ rdf:type owl:Class ;
+                                                      owl:unionOf ( :AmendmentAccepted
+                                                                    :AmendmentRejected
+                                                                  )
+                                                    ]
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :isTriggeredBy ;
+                                  owl:allValuesFrom :AmendmentRequestedProcessEvent
+                                ] ;
+                rdfs:comment "Optional. Art. 40(4) only. May follow an accepted vetting outcome only. Data provider may submit amendment requests; DSC-E records :AmendmentAccepted or :AmendmentRejected. Max. 15 days. Triggered by a :AmendmentRequestedProcessEvent."@en ;
+                rdfs:label "Amendment Phase"@en ;
+                :hasLegalBasis "Art. 40(5) DSA"@en .
+
+
+###  https://w3id.org/orda#AmendmentRejected
+:AmendmentRejected rdf:type owl:Class ;
+                   rdfs:subClassOf :Decision ;
+                   rdfs:comment "DSC-E rejects an amendment request during the Amendment Phase. Art. 40(4) only."@en ;
+                   rdfs:label "Amendment Rejected"@en .
+
+
+###  https://w3id.org/orda#AmendmentRejectedProcessEvent
+:AmendmentRejectedProcessEvent rdf:type owl:Class ;
+                               rdfs:subClassOf :ProcessEvent ,
+                                               [ rdf:type owl:Restriction ;
+                                                 owl:onProperty :performedBy ;
+                                                 owl:allValuesFrom :DigitalServicesCoordinatorOfEstablishment
+                                               ] ,
+                                               [ rdf:type owl:Restriction ;
+                                                 owl:onProperty :hasEventType ;
+                                                 owl:hasValue :AmendmentRejectedEvent
+                                               ] ;
+                               rdfs:comment "Art. 40(4). DSC-E rejects an amendment during the Amendment Phase. Must be performed by :DigitalServicesCoordinatorOfEstablishment."@en ;
+                               rdfs:label "Amendment Rejected Process Event"@en .
+
+
+###  https://w3id.org/orda#AmendmentRequest
+:AmendmentRequest rdf:type owl:Class ;
+                  rdfs:subClassOf <http://xmlns.com/foaf/0.1/Document> ;
+                  rdfs:comment "Submitted during the Amendment Phase by researcher or data provider."@en ;
+                  rdfs:label "Amendment Request"@en .
+
+
+###  https://w3id.org/orda#AmendmentRequestedProcessEvent
+:AmendmentRequestedProcessEvent rdf:type owl:Class ;
+                                rdfs:subClassOf :ProcessEvent ,
+                                                [ rdf:type owl:Restriction ;
+                                                  owl:onProperty :performedBy ;
+                                                  owl:allValuesFrom :DataProvider
+                                                ] ,
+                                                [ rdf:type owl:Restriction ;
+                                                  owl:onProperty :hasEventType ;
+                                                  owl:hasValue :AmendmentRequestedEvent
+                                                ] ;
+                                rdfs:comment "Amendment request event. Must be performed by a Data Provider."@en ;
+                                rdfs:label "Amendment Requested Process Event"@en .
+
+
+###  https://w3id.org/orda#ApplicantResearcher
+:ApplicantResearcher rdf:type owl:Class ;
+                     rdfs:subClassOf :RequestingResearcher ;
+                     rdfs:comment "A collaborating researcher that is part of the principal researcher's data access application."@en ;
+                     rdfs:label "Applicant Researcher"@en .
+
+
+###  https://w3id.org/orda#ApplicationAccepted
+:ApplicationAccepted rdf:type owl:Class ;
+                     rdfs:subClassOf :Decision ;
+                     owl:disjointWith :ApplicationRejected ;
+                     rdfs:comment "Vetting decision accepting the data access application. Art. 40(4): recorded by DSC-E. Art. 40(12): recorded by the platform. Required for access grant; enables amendment and mediation under Art. 40(4) only."@en ;
+                     rdfs:label "Application Accepted"@en .
+
+
+###  https://w3id.org/orda#ApplicationAcceptedProcessEvent
+:ApplicationAcceptedProcessEvent rdf:type owl:Class ;
+                                 rdfs:subClassOf :ProcessEvent ,
+                                                 [ rdf:type owl:Restriction ;
+                                                   owl:onProperty :performedBy ;
+                                                   owl:allValuesFrom :DigitalServicesCoordinatorOfEstablishment
+                                                 ] ,
+                                                 [ rdf:type owl:Restriction ;
+                                                   owl:onProperty :hasEventType ;
+                                                   owl:hasValue :ApplicationAcceptedEvent
+                                                 ] ;
+                                 rdfs:comment "Application acceptance event during Art. 40(4) DSC vetting. Must be performed by DSC-E. Enables amendment, mediation, or access grant to follow."@en ;
+                                 rdfs:label "Application Accepted Process Event"@en .
+
+
+###  https://w3id.org/orda#ApplicationDraftingPhase
+:ApplicationDraftingPhase rdf:type owl:Class ;
+                          rdfs:subClassOf <http://www.w3.org/2006/time#Interval> ;
+                          rdfs:comment "Formulation and submission of the data access application by the Principal Researcher."@en ;
+                          rdfs:label "Application Drafting Phase"@en .
+
+
+###  https://w3id.org/orda#ApplicationRejected
+:ApplicationRejected rdf:type owl:Class ;
+                     rdfs:subClassOf :Decision ;
+                     rdfs:comment "Vetting decision rejecting the data access application. Art. 40(4): recorded by DSC-E. Art. 40(12): recorded by the platform. Precludes access grant and (under Art. 40(4)) amendment and mediation."@en ;
+                     rdfs:label "Application Rejected"@en .
+
+
+###  https://w3id.org/orda#ApplicationRejectedProcessEvent
+:ApplicationRejectedProcessEvent rdf:type owl:Class ;
+                                 rdfs:subClassOf :ProcessEvent ,
+                                                 [ rdf:type owl:Restriction ;
+                                                   owl:onProperty :performedBy ;
+                                                   owl:allValuesFrom :DigitalServicesCoordinatorOfEstablishment
+                                                 ] ,
+                                                 [ rdf:type owl:Restriction ;
+                                                   owl:onProperty :hasEventType ;
+                                                   owl:hasValue :ApplicationRejectedEvent
+                                                 ] ;
+                                 rdfs:comment "Application rejection event during Art. 40(4) DSC vetting. Must be performed by DSC-E. Precludes amendment, mediation, and access grant."@en ;
+                                 rdfs:label "Application Rejected Process Event"@en .
+
+
+###  https://w3id.org/orda#ApplicationSubmittedProcessEvent
+:ApplicationSubmittedProcessEvent rdf:type owl:Class ;
+                                  rdfs:subClassOf :ProcessEvent ,
+                                                  [ rdf:type owl:Restriction ;
+                                                    owl:onProperty :performedBy ;
+                                                    owl:allValuesFrom :PrincipalResearcher
+                                                  ] ,
+                                                  [ rdf:type owl:Restriction ;
+                                                    owl:onProperty :hasEventType ;
+                                                    owl:hasValue :ApplicationSubmittedEvent
+                                                  ] ;
+                                  rdfs:comment "Application submission event. Must be performed by a Principal Researcher. Specialised by :Art40_4ApplicationSubmittedProcessEvent and :Art40_12ApplicationSubmittedProcessEvent."@en ;
+                                  rdfs:label "Application Submitted Process Event"@en .
+
+
+###  https://w3id.org/orda#Art40_12ApplicationSubmittedProcessEvent
+:Art40_12ApplicationSubmittedProcessEvent rdf:type owl:Class ;
+                                          rdfs:subClassOf :ApplicationSubmittedProcessEvent ;
+                                          rdfs:comment "Application submission event under Art. 40(12), sent directly to the platform. Must be performed by a Principal Researcher. Triggers :PlatformVettingPhase."@en ;
+                                          rdfs:label "Art. 40(12) Application Submitted Process Event"@en .
+
+
+###  https://w3id.org/orda#Art40_12DataAccessApplication
+:Art40_12DataAccessApplication rdf:type owl:Class ;
+                               rdfs:subClassOf :DataAccessApplication ;
+                               owl:disjointWith :Art40_4AccessApplication ;
+                               rdfs:comment "Application for publicly accessible platform data under Art. 40(12) DSA."@en ;
+                               rdfs:label "Art. 40(12) Public Data Access Application"@en ;
+                               :hasLegalBasis "Art. 40(12) DSA"@en .
+
+
+###  https://w3id.org/orda#Art40_4AccessApplication
+:Art40_4AccessApplication rdf:type owl:Class ;
+                          rdfs:subClassOf :DataAccessApplication ;
+                          rdfs:comment "Application for non-public platform data under Art. 40(4) DSA."@en ;
+                          rdfs:label "Art. 40(4) Data Access Application"@en ;
+                          :hasLegalBasis "Art. 40(4) DSA"@en .
+
+
+###  https://w3id.org/orda#Art40_4ApplicationSubmittedProcessEvent
+:Art40_4ApplicationSubmittedProcessEvent rdf:type owl:Class ;
+                                         rdfs:subClassOf :ApplicationSubmittedProcessEvent ;
+                                         rdfs:comment "Application submission event under Art. 40(4), via the DSA Data Access Portal. Must be performed by a Principal Researcher. Triggers :CompletenessCheckPhase."@en ;
+                                         rdfs:label "Art. 40(4) Application Submitted Process Event"@en .
+
+
+###  https://w3id.org/orda#CommunicationEvent
+:CommunicationEvent rdf:type owl:Class ;
+                    rdfs:subClassOf <http://www.w3.org/ns/prov#Activity> ;
+                    rdfs:comment "An exchange between the platform and a researcher, modelled using schema:CommunicateAction semantics."@en ;
+                    rdfs:label "Communication Event"@en .
+
+
+###  https://w3id.org/orda#CompletenessCheckPassedProcessEvent
+:CompletenessCheckPassedProcessEvent rdf:type owl:Class ;
+                                     rdfs:subClassOf :ProcessEvent ,
+                                                     [ rdf:type owl:Restriction ;
+                                                       owl:onProperty :performedBy ;
+                                                       owl:allValuesFrom [ rdf:type owl:Class ;
+                                                                           owl:oneOf ( :DigitalServicesCoordinatorOfEstablishment
+                                                                                       :DigitalServicesCoordinatorOfMemberState
+                                                                                     )
+                                                                         ]
+                                                     ] ,
+                                                     [ rdf:type owl:Restriction ;
+                                                       owl:onProperty :hasEventType ;
+                                                       owl:hasValue :CompletenessCheckPassedEvent
+                                                     ] ;
+                                     rdfs:comment "Completeness check passed event. Must be performed by DSC-M or DSC-E."@en ;
+                                     rdfs:label "Completeness Check Passed Process Event"@en .
+
+
+###  https://w3id.org/orda#CompletenessCheckPhase
+:CompletenessCheckPhase rdf:type owl:Class ;
+                        rdfs:subClassOf <http://www.w3.org/2006/time#Interval> ,
+                                        [ rdf:type owl:Restriction ;
+                                          owl:onProperty <http://www.w3.org/2006/time#after> ;
+                                          owl:someValuesFrom :ApplicationDraftingPhase
+                                        ] ,
+                                        [ rdf:type owl:Restriction ;
+                                          owl:onProperty :isTriggeredBy ;
+                                          owl:allValuesFrom :Art40_4ApplicationSubmittedProcessEvent
+                                        ] ;
+                        rdfs:comment "Art. 40(4) only. DSC-M and DSC-E verify completeness of the application. Triggered by a ProcessEvent of type :ApplicationSubmittedEvent."@en ;
+                        rdfs:label "Completeness Check Phase"@en ;
+                        :hasLegalBasis "Art. 40(4) DSA; DA"@en .
+
+
+###  https://w3id.org/orda#DataAccessApplication
+:DataAccessApplication rdf:type owl:Class ;
+                       rdfs:subClassOf <http://www.w3.org/ns/odrl/2/Request> ,
+                                       <http://xmlns.com/foaf/0.1/Document> ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty :submittedBy ;
+                                         owl:someValuesFrom :PrincipalResearcher
+                                       ] ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty :documentStage ;
+                                         owl:allValuesFrom [ rdf:type owl:Class ;
+                                                             owl:oneOf ( :Amended
+                                                                         :Draft
+                                                                         :Submitted
+                                                                       )
+                                                           ]
+                                       ] ;
+                       rdfs:comment "Superclass for data access applications under DSA Art. 40. Specialised by :Art40_4DataAccessApplication (non-public data, DSC-mediated) and :Art40_12DataAccessApplication (publicly accessible data, platform-vetted)."@en ;
+                       rdfs:label "Data Access Application"@en .
+
+
+###  https://w3id.org/orda#DataAccessPhase
+:DataAccessPhase rdf:type owl:Class ;
+                 rdfs:subClassOf <http://www.w3.org/2006/time#Interval> ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <http://www.w3.org/2006/time#after> ;
+                                   owl:someValuesFrom [ rdf:type owl:Class ;
+                                                        owl:unionOf ( :AcceptedPlatformVettingPhase
+                                                                      :AcceptedVettingPhase
+                                                                      :AmendmentPhase
+                                                                      :MediationPhase
+                                                                    )
+                                                      ]
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :isTriggeredBy ;
+                                   owl:allValuesFrom :AccessGrantedProcessEvent
+                                 ] ;
+                 rdfs:comment "Period during which access is granted, exercised, ended, or revoked. Art. 40(4): may follow accepted DSC vetting, amendment, or mediation. Art. 40(12): may follow accepted platform vetting. Not reachable after :ApplicationRejected. Triggered by :AccessGrantedProcessEvent."@en ;
+                 rdfs:label "Data Access Phase"@en .
+
+
+###  https://w3id.org/orda#DataProvider
+:DataProvider rdf:type owl:Class ;
+              rdfs:subClassOf <http://xmlns.com/foaf/0.1/Organization> ;
+              rdfs:comment "The organisation holding the data subject to the access request."@en ;
+              rdfs:label "Data Provider"@en .
+
+
+###  https://w3id.org/orda#Decision
+:Decision rdf:type owl:Class ;
+          rdfs:subClassOf <http://www.w3.org/ns/prov#Activity> ;
+          rdfs:comment "A formal decision taken by an authorised agent within a process phase. Modelled separately from documents to capture provenance, conditions, and revisability."@en ;
+          rdfs:label "Decision"@en .
+
+
+###  https://w3id.org/orda#DigitalServicesCoordinator
+:DigitalServicesCoordinator rdf:type owl:Class ;
+                            rdfs:subClassOf <http://xmlns.com/foaf/0.1/Organization> ;
+                            rdfs:comment "A Digital Services Coordinator as set out in Art. 49(2) DSA."@en ;
+                            rdfs:label "Digital Services Coordinator"@en ;
+                            :hasLegalBasis "Art. 49(2) DSA"@en .
+
+
+###  https://w3id.org/orda#DigitalServicesCoordinatorOfEstablishment
+:DigitalServicesCoordinatorOfEstablishment rdf:type owl:Class ;
+                                           rdfs:subClassOf :DigitalServicesCoordinator .
+
+
+###  https://w3id.org/orda#DigitalServicesCoordinatorOfMemberState
+:DigitalServicesCoordinatorOfMemberState rdf:type owl:Class ;
+                                         rdfs:subClassOf :DigitalServicesCoordinator .
+
+
+###  https://w3id.org/orda#DocumentStage
+:DocumentStage rdf:type owl:Class ;
+               owl:equivalentClass [ rdf:type owl:Class ;
+                                     owl:oneOf ( :Amended
+                                                 :Draft
+                                                 :Initial
+                                                 :Mediated
+                                                 :Submitted
+                                               )
+                                   ] ;
+               rdfs:comment "Flat controlled vocabulary of procedural document stages (named individuals). Not every stage applies to every document type — permitted values are constrained per document class via owl:allValuesFrom restrictions."@en ;
+               rdfs:label "Document Stage"@en .
+
+
+###  https://w3id.org/orda#EventType
+:EventType rdf:type owl:Class ;
+           owl:equivalentClass [ rdf:type owl:Class ;
+                                 owl:oneOf ( :AccessEndedEvent
+                                             :AccessGrantedEvent
+                                             :AccessRevokedEvent
+                                             :AdditionalInformationProvidedEvent
+                                             :AdditionalInformationRequestedEvent
+                                             :AmendmentAcceptedEvent
+                                             :AmendmentRejectedEvent
+                                             :AmendmentRequestedEvent
+                                             :ApplicationAcceptedEvent
+                                             :ApplicationRejectedEvent
+                                             :ApplicationSubmittedEvent
+                                             :CompletenessCheckPassedEvent
+                                             :MediationAcceptedEvent
+                                             :MediationConcludedEvent
+                                             :MediationRejectedEvent
+                                             :MediationRequestedEvent
+                                             :ReasonedRequestIssuedEvent
+                                           )
+                               ] ;
+           rdfs:comment "Flat controlled vocabulary of process event types (named individuals, all with an 'Event' suffix). Permitted triggering event types and performers are constrained via typed ProcessEvent subclasses."@en ;
+           rdfs:label "Event Type"@en .
+
+
+###  https://w3id.org/orda#MediationAccepted
+:MediationAccepted rdf:type owl:Class ;
+                   rdfs:subClassOf :Decision ;
+                   owl:disjointWith :MediationRejected ;
+                   rdfs:comment "DSC-E accepts the outcome of mediation during the Mediation Phase. Art. 40(4) only."@en ;
+                   rdfs:label "Mediation Accepted"@en .
+
+
+###  https://w3id.org/orda#MediationAcceptedProcessEvent
+:MediationAcceptedProcessEvent rdf:type owl:Class ;
+                               rdfs:subClassOf :ProcessEvent ,
+                                               [ rdf:type owl:Restriction ;
+                                                 owl:onProperty :performedBy ;
+                                                 owl:allValuesFrom :DigitalServicesCoordinatorOfEstablishment
+                                               ] ,
+                                               [ rdf:type owl:Restriction ;
+                                                 owl:onProperty :hasEventType ;
+                                                 owl:hasValue :MediationAcceptedEvent
+                                               ] ;
+                               rdfs:comment "Art. 40(4). DSC-E accepts the mediation outcome during the Mediation Phase. Must be performed by :DigitalServicesCoordinatorOfEstablishment."@en ;
+                               rdfs:label "Mediation Accepted Process Event"@en .
+
+
+###  https://w3id.org/orda#MediationPhase
+:MediationPhase rdf:type owl:Class ;
+                rdfs:subClassOf <http://www.w3.org/2006/time#Interval> ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty <http://www.w3.org/2006/time#after> ;
+                                  owl:someValuesFrom :AmendmentPhase
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :hasDecision ;
+                                  owl:someValuesFrom [ rdf:type owl:Class ;
+                                                       owl:unionOf ( :MediationAccepted
+                                                                     :MediationRejected
+                                                                   )
+                                                     ]
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :hasDecision ;
+                                  owl:allValuesFrom [ rdf:type owl:Class ;
+                                                      owl:unionOf ( :MediationAccepted
+                                                                    :MediationRejected
+                                                                  )
+                                                    ]
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :isTriggeredBy ;
+                                  owl:allValuesFrom :MediationRequestedProcessEvent
+                                ] ;
+                rdfs:comment "Must follow :AmendmentPhase after an accepted vetting outcome. Art. 40(4) only. Mediation requested within max. 5 working days; conducted within max. 40 working days. DSC-E records :MediationAccepted or :MediationRejected. Triggered by :MediationRequestedProcessEvent."@en ;
+                rdfs:label "Mediation Phase"@en ;
+                :hasLegalBasis "Art. 13(1) DA"@en .
+
+
+###  https://w3id.org/orda#MediationRejected
+:MediationRejected rdf:type owl:Class ;
+                   rdfs:subClassOf :Decision ;
+                   rdfs:comment "DSC-E rejects the outcome of mediation during the Mediation Phase. Art. 40(4) only."@en ;
+                   rdfs:label "Mediation Rejected"@en .
+
+
+###  https://w3id.org/orda#MediationRejectedProcessEvent
+:MediationRejectedProcessEvent rdf:type owl:Class ;
+                               rdfs:subClassOf :ProcessEvent ,
+                                               [ rdf:type owl:Restriction ;
+                                                 owl:onProperty :performedBy ;
+                                                 owl:allValuesFrom :DigitalServicesCoordinatorOfEstablishment
+                                               ] ,
+                                               [ rdf:type owl:Restriction ;
+                                                 owl:onProperty :hasEventType ;
+                                                 owl:hasValue :MediationRejectedEvent
+                                               ] ;
+                               rdfs:comment "Art. 40(4). DSC-E rejects the mediation outcome during the Mediation Phase. Must be performed by :DigitalServicesCoordinatorOfEstablishment."@en ;
+                               rdfs:label "Mediation Rejected Process Event"@en .
+
+
+###  https://w3id.org/orda#MediationRequest
+:MediationRequest rdf:type owl:Class ;
+                  rdfs:subClassOf <http://xmlns.com/foaf/0.1/Document> ;
+                  rdfs:comment "Filed within max. 5 working days of triggering event."@en ;
+                  rdfs:label "Request for Mediation"@en ;
+                  :hasLegalBasis "Art. 13(1) DA"@en .
+
+
+###  https://w3id.org/orda#MediationRequestedProcessEvent
+:MediationRequestedProcessEvent rdf:type owl:Class ;
+                                rdfs:subClassOf :ProcessEvent ,
+                                                [ rdf:type owl:Restriction ;
+                                                  owl:onProperty :performedBy ;
+                                                  owl:allValuesFrom :DataProvider
+                                                ] ,
+                                                [ rdf:type owl:Restriction ;
+                                                  owl:onProperty :hasEventType ;
+                                                  owl:hasValue :MediationRequestedEvent
+                                                ] ;
+                                rdfs:comment "Mediation request event. Must be performed by a Data Provider."@en ;
+                                rdfs:label "Mediation Requested Process Event"@en .
+
+
+###  https://w3id.org/orda#Mediator
+:Mediator rdf:type owl:Class ;
+          rdfs:subClassOf <http://xmlns.com/foaf/0.1/Agent> ;
+          rdfs:comment "An independent agent conducting mediation between DSC-E and the data provider."@en ;
+          rdfs:label "Mediator"@en .
+
+
+###  https://w3id.org/orda#PlatformApplicationAcceptedProcessEvent
+:PlatformApplicationAcceptedProcessEvent rdf:type owl:Class ;
+                                         rdfs:subClassOf :ProcessEvent ,
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty :performedBy ;
+                                                           owl:allValuesFrom :DataProvider
+                                                         ] ,
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty :hasEventType ;
+                                                           owl:hasValue :ApplicationAcceptedEvent
+                                                         ] ;
+                                         rdfs:comment "Art. 40(12). Platform accepts the application during vetting. Must be performed by a Data Provider. Enables access grant to follow."@en ;
+                                         rdfs:label "Platform Application Accepted Process Event"@en .
+
+
+###  https://w3id.org/orda#PlatformApplicationRejectedProcessEvent
+:PlatformApplicationRejectedProcessEvent rdf:type owl:Class ;
+                                         rdfs:subClassOf :ProcessEvent ,
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty :performedBy ;
+                                                           owl:allValuesFrom :DataProvider
+                                                         ] ,
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty :hasEventType ;
+                                                           owl:hasValue :ApplicationRejectedEvent
+                                                         ] ;
+                                         rdfs:comment "Art. 40(12). Platform rejects the application during vetting. Must be performed by a Data Provider. Precludes access grant."@en ;
+                                         rdfs:label "Platform Application Rejected Process Event"@en .
+
+
+###  https://w3id.org/orda#PlatformVettingPhase
+:PlatformVettingPhase rdf:type owl:Class ;
+                      rdfs:subClassOf <http://www.w3.org/2006/time#Interval> ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty <http://www.w3.org/2006/time#after> ;
+                                        owl:someValuesFrom [ rdf:type owl:Class ;
+                                                             owl:unionOf ( :AdditionalInformationPhase
+                                                                           :ApplicationDraftingPhase
+                                                                         )
+                                                           ]
+                                      ] ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty :isTriggeredBy ;
+                                        owl:allValuesFrom [ rdf:type owl:Class ;
+                                                            owl:unionOf ( :AdditionalInformationProvidedProcessEvent
+                                                                          :Art40_12ApplicationSubmittedProcessEvent
+                                                                        )
+                                                          ]
+                                      ] ;
+                      rdfs:comment "Art. 40(12). Platform vets the application and may accept, reject, or optionally request additional information (zero or more rounds). Initial round triggered by submission; subsequent vetting rounds triggered by :AdditionalInformationProvidedProcessEvent after an optional :AdditionalInformationPhase."@en ;
+                      rdfs:label "Platform Vetting Phase"@en ;
+                      :hasLegalBasis "Art. 40(12) DSA"@en .
+
+
+###  https://w3id.org/orda#PrincipalResearcher
+:PrincipalResearcher rdf:type owl:Class ;
+                     rdfs:subClassOf :RequestingResearcher ;
+                     rdfs:comment "The lead researcher responsible for submitting and managing the data access application."@en ;
+                     rdfs:label "Principal Researcher"@en .
+
+
+###  https://w3id.org/orda#ProcessEvent
+:ProcessEvent rdf:type owl:Class ;
+              rdfs:subClassOf <http://www.w3.org/2006/time#Instant> ;
+              rdfs:comment "A key instantaneous moment within the data access process, typed by a controlled EventType individual. Carries a timestamp via time:inXSDDateTimeStamp and is linked to the agent who performed it via :performedBy. Use typed ProcessEvent subclasses where event type and permitted performer are jointly constrained."@en ;
+              rdfs:label "Process Event"@en .
+
+
+###  https://w3id.org/orda#ReasonedRequest
+:ReasonedRequest rdf:type owl:Class ;
+                 rdfs:subClassOf <http://xmlns.com/foaf/0.1/Document> ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :issuedBy ;
+                                   owl:someValuesFrom :DigitalServicesCoordinatorOfEstablishment
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :documentStage ;
+                                   owl:allValuesFrom [ rdf:type owl:Class ;
+                                                       owl:oneOf ( :Amended
+                                                                   :Initial
+                                                                   :Mediated
+                                                                 )
+                                                     ]
+                                 ] ;
+                 rdfs:comment "Issued by DSC-E following vetting. Use :documentStage to distinguish initial, amended, and mediated versions. Use dcterms:isVersionOf to link versions to each other."@en ;
+                 rdfs:label "Reasoned Request"@en ;
+                 :hasLegalBasis "Art. 40(4) DSA; Art. 7(2) DA"@en .
+
+
+###  https://w3id.org/orda#RejectedPlatformVettingPhase
+:RejectedPlatformVettingPhase rdf:type owl:Class ;
+                              owl:equivalentClass [ owl:intersectionOf ( :PlatformVettingPhase
+                                                                         [ rdf:type owl:Restriction ;
+                                                                           owl:onProperty :hasDecision ;
+                                                                           owl:someValuesFrom :ApplicationRejected
+                                                                         ]
+                                                                       ) ;
+                                                    rdf:type owl:Class
+                                                  ] ;
+                              rdfs:comment "Art. 40(12). A :PlatformVettingPhase whose outcome is :ApplicationRejected. Terminal — precludes access grant."@en ;
+                              rdfs:label "Rejected Platform Vetting Phase"@en .
+
+
+###  https://w3id.org/orda#RejectedVettingPhase
+:RejectedVettingPhase rdf:type owl:Class ;
+                      owl:equivalentClass [ owl:intersectionOf ( :VettingPhase
+                                                                 [ rdf:type owl:Restriction ;
+                                                                   owl:onProperty :hasDecision ;
+                                                                   owl:someValuesFrom :ApplicationRejected
+                                                                 ]
+                                                               ) ;
+                                            rdf:type owl:Class
+                                          ] ;
+                      rdfs:comment "Art. 40(4). A :VettingPhase whose outcome is :ApplicationRejected. Terminal — precludes amendment, mediation, and access grant."@en ;
+                      rdfs:label "Rejected Vetting Phase"@en .
+
+
+###  https://w3id.org/orda#RequestingResearcher
+:RequestingResearcher rdf:type owl:Class ;
+                      rdfs:subClassOf :Researcher ;
+                      rdfs:comment "A researcher who has initiated or is party to a data access request."@en ;
+                      rdfs:label "Requesting Researcher"@en .
+
+
+###  https://w3id.org/orda#ResearchOrganisation
+:ResearchOrganisation rdf:type owl:Class ;
+                      rdfs:subClassOf <http://xmlns.com/foaf/0.1/Organization>  ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty vcard:hasAddress ;
+                              owl:someValuesFrom vcard:Address
+                            ] .
+
+
+###  https://w3id.org/orda#Researcher
+:Researcher rdf:type owl:Class ;
+            rdfs:subClassOf <http://xmlns.com/foaf/0.1/Person> ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty vcard:hasAddress ;
+                              owl:someValuesFrom vcard:Address
+                            ] ;
+            rdfs:label "Researcher"@en .
+
+
+###  https://w3id.org/orda#VeryLargeOnlinePlatform
+:VeryLargeOnlinePlatform rdf:type owl:Class ;
+                         rdfs:subClassOf :DataProvider ;
+                         rdfs:comment "Designated online platforms with equal to or more than 45 million average monthly active recipients of the service in the Union."@en ;
+                         rdfs:label "Very Large Online Platform"@en ;
+                         :hasLegalBasis "Art. 33 DSA"@en .
+
+
+###  https://w3id.org/orda#VeryLargeOnlineSearchEngine
+:VeryLargeOnlineSearchEngine rdf:type owl:Class ;
+                             rdfs:subClassOf :DataProvider ;
+                             rdfs:comment "Designated online search engines with equal to or more than 45 million average monthly active recipients of the service in the Union."@en ;
+                             rdfs:label "Very Large Online Search Engine"@en ;
+                             :hasLegalBasis "Art. 33 DSA"@en .
+
+
+###  https://w3id.org/orda#VettedResearcher
+:VettedResearcher rdf:type owl:Class ;
+                  rdfs:subClassOf :Researcher ;
+                  rdfs:comment "A researcher who has successfully completed the vetting process."@en ;
+                  rdfs:label "Vetted Researcher"@en .
+
+
+###  https://w3id.org/orda#VettingPhase
+:VettingPhase rdf:type owl:Class ;
+              rdfs:subClassOf <http://www.w3.org/2006/time#Interval> ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty <http://www.w3.org/2006/time#after> ;
+                                owl:someValuesFrom :CompletenessCheckPhase
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :hasDecision ;
+                                owl:someValuesFrom [ rdf:type owl:Class ;
+                                                     owl:unionOf ( :ApplicationAccepted
+                                                                   :ApplicationRejected
+                                                                 )
+                                                   ]
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :hasDecision ;
+                                owl:allValuesFrom [ rdf:type owl:Class ;
+                                                    owl:unionOf ( :ApplicationAccepted
+                                                                  :ApplicationRejected
+                                                                )
+                                                  ]
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :isTriggeredBy ;
+                                owl:allValuesFrom :CompletenessCheckPassedProcessEvent
+                              ] ;
+              rdfs:comment "Art. 40(4) only. DSC-E vets the application and records either :ApplicationAccepted or :ApplicationRejected. Max. 80 working days. Amendment, mediation, and access grant require acceptance. Triggered by :CompletenessCheckPassedProcessEvent."@en ;
+              rdfs:label "Vetting Phase"@en ;
+              :hasLegalBasis "Art. 40(4) DSA; Art. 7(2) DA"@en .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  https://w3id.org/orda#AccessEndedEvent
+:AccessEndedEvent rdf:type owl:NamedIndividual ,
+                           :EventType ;
+                  rdfs:comment "The data access period ends as specified in the reasoned request. Ends the Data Access Phase."@en ;
+                  rdfs:label "Access Ended"@en .
+
+
+###  https://w3id.org/orda#AccessGrantedEvent
+:AccessGrantedEvent rdf:type owl:NamedIndividual ,
+                             :EventType ;
+                    rdfs:comment "Data provider grants data access. Requires prior application acceptance. May follow accepted vetting, amendment, or mediation. Triggers the Data Access Phase. Performed by a :DataProvider."@en ;
+                    rdfs:label "Access Granted"@en .
+
+
+###  https://w3id.org/orda#AccessRevokedEvent
+:AccessRevokedEvent rdf:type owl:NamedIndividual ,
+                             :EventType ;
+                    rdfs:comment "Access is revoked before the end of the agreed period. Ends the Data Access Phase."@en ;
+                    rdfs:label "Access Revoked"@en .
+
+
+###  https://w3id.org/orda#AdditionalInformationProvidedEvent
+:AdditionalInformationProvidedEvent rdf:type owl:NamedIndividual ,
+                                             :EventType ;
+                                    rdfs:comment "Art. 40(12). Researcher provides supplementary information. Occurs only after an optional :AdditionalInformationPhase; triggers a further :PlatformVettingPhase. Performed by a :PrincipalResearcher."@en ;
+                                    rdfs:label "Additional Information Provided"@en .
+
+
+###  https://w3id.org/orda#AdditionalInformationRequestedEvent
+:AdditionalInformationRequestedEvent rdf:type owl:NamedIndividual ,
+                                              :EventType ;
+                                     rdfs:comment "Optional. Art. 40(12). Platform requests supplementary information from the researcher during :PlatformVettingPhase. May occur zero or more times. When it occurs, triggers :AdditionalInformationPhase. Performed by a :DataProvider."@en ;
+                                     rdfs:label "Additional Information Requested"@en .
+
+
+###  https://w3id.org/orda#Amended
+:Amended rdf:type owl:NamedIndividual ,
+                  :DocumentStage ;
+         rdfs:comment "The document has been revised following a request for changes. Permitted for DataAccessApplication and ReasonedRequest."@en ;
+         rdfs:label "Amended"@en .
+
+
+###  https://w3id.org/orda#AmendmentAcceptedEvent
+:AmendmentAcceptedEvent rdf:type owl:NamedIndividual ,
+                                 :EventType ;
+                        rdfs:comment "Art. 40(4). DSC-E accepts an amendment during the Amendment Phase. Occurs via :AmendmentAcceptedProcessEvent. Performed exclusively by :DigitalServicesCoordinatorOfEstablishment."@en ;
+                        rdfs:label "Amendment Accepted"@en .
+
+
+###  https://w3id.org/orda#AmendmentPhaseInstance
+:AmendmentPhaseInstance rdf:type owl:NamedIndividual ,
+                                 :AmendmentPhase ;
+                        :maxWorkingDays 15 ;
+                        rdfs:label "Amendment Phase (statutory limit)"@en .
+
+
+###  https://w3id.org/orda#AmendmentRejectedEvent
+:AmendmentRejectedEvent rdf:type owl:NamedIndividual ,
+                                 :EventType ;
+                        rdfs:comment "Art. 40(4). DSC-E rejects an amendment during the Amendment Phase. Occurs via :AmendmentRejectedProcessEvent. Performed exclusively by :DigitalServicesCoordinatorOfEstablishment."@en ;
+                        rdfs:label "Amendment Rejected"@en .
+
+
+###  https://w3id.org/orda#AmendmentRequestedEvent
+:AmendmentRequestedEvent rdf:type owl:NamedIndividual ,
+                                  :EventType ;
+                         rdfs:comment "Data provider requests an amendment. Optional; requires prior application acceptance. Triggers the Amendment Phase. Performed by a :DataProvider."@en ;
+                         rdfs:label "Amendment Requested"@en .
+
+
+###  https://w3id.org/orda#ApplicationAcceptedEvent
+:ApplicationAcceptedEvent rdf:type owl:NamedIndividual ,
+                                   :EventType ;
+                          rdfs:comment "Application acceptance event during vetting. Art. 40(4): performed by DSC-E via :ApplicationAcceptedProcessEvent. Art. 40(12): performed by the platform via :PlatformApplicationAcceptedProcessEvent."@en ;
+                          rdfs:label "Application Accepted"@en .
+
+
+###  https://w3id.org/orda#ApplicationRejectedEvent
+:ApplicationRejectedEvent rdf:type owl:NamedIndividual ,
+                                   :EventType ;
+                          rdfs:comment "Application rejection event during vetting. Art. 40(4): performed by DSC-E via :ApplicationRejectedProcessEvent. Art. 40(12): performed by the platform via :PlatformApplicationRejectedProcessEvent."@en ;
+                          rdfs:label "Application Rejected"@en .
+
+
+###  https://w3id.org/orda#ApplicationSubmittedEvent
+:ApplicationSubmittedEvent rdf:type owl:NamedIndividual ,
+                                    :EventType ;
+                           rdfs:comment "The Principal Researcher submits the data access application. Art. 40(4): via :Art40_4ApplicationSubmittedProcessEvent, triggers :CompletenessCheckPhase. Art. 40(12): via :Art40_12ApplicationSubmittedProcessEvent, triggers :PlatformVettingPhase. Performed by a :PrincipalResearcher."@en ;
+                           rdfs:label "Application Submitted"@en .
+
+
+###  https://w3id.org/orda#CompletenessCheckPassedEvent
+:CompletenessCheckPassedEvent rdf:type owl:NamedIndividual ,
+                                       :EventType ;
+                              rdfs:comment "DSC-M or DSC-E confirm the application is complete. Triggers the Vetting Phase. Performed by :DigitalServicesCoordinatorOfMemberState or :DigitalServicesCoordinatorOfEstablishment."@en ;
+                              rdfs:label "Completeness Check Passed"@en .
+
+
+###  https://w3id.org/orda#DigitalServicesCoordinatorOfEstablishment
+:DigitalServicesCoordinatorOfEstablishment rdf:type owl:NamedIndividual .
+
+
+###  https://w3id.org/orda#DigitalServicesCoordinatorOfMemberState
+:DigitalServicesCoordinatorOfMemberState rdf:type owl:NamedIndividual .
+
+
+###  https://w3id.org/orda#Draft
+:Draft rdf:type owl:NamedIndividual ,
+                :DocumentStage ;
+       rdfs:comment "The document is being prepared but has not yet been submitted. Permitted for DataAccessApplication only."@en ;
+       rdfs:label "Draft"@en .
+
+
+###  https://w3id.org/orda#Initial
+:Initial rdf:type owl:NamedIndividual ,
+                  :DocumentStage ;
+         rdfs:comment "The first issued version of the document. Permitted for ReasonedRequest only."@en ;
+         rdfs:label "Initial"@en .
+
+
+###  https://w3id.org/orda#Mediated
+:Mediated rdf:type owl:NamedIndividual ,
+                   :DocumentStage ;
+          rdfs:comment "The version produced following mediation. Permitted for ReasonedRequest only."@en ;
+          rdfs:label "Mediated"@en .
+
+
+###  https://w3id.org/orda#MediationAcceptedEvent
+:MediationAcceptedEvent rdf:type owl:NamedIndividual ,
+                                 :EventType ;
+                        rdfs:comment "Art. 40(4). DSC-E accepts the mediation outcome during the Mediation Phase. Occurs via :MediationAcceptedProcessEvent. Performed exclusively by :DigitalServicesCoordinatorOfEstablishment."@en ;
+                        rdfs:label "Mediation Accepted"@en ;
+                        :hasLegalBasis "Art. 13(1) DA"@en .
+
+
+###  https://w3id.org/orda#MediationConcludedEvent
+:MediationConcludedEvent rdf:type owl:NamedIndividual ,
+                                  :EventType ;
+                         rdfs:comment "The mediator issues the result. Distinct from :MediationAcceptedEvent and :MediationRejectedEvent, which record the subsequent DSC-E decision."@en ;
+                         rdfs:label "Mediation Concluded"@en .
+
+
+###  https://w3id.org/orda#MediationPhaseInstance
+:MediationPhaseInstance rdf:type owl:NamedIndividual ,
+                                 :MediationPhase ;
+                        :maxWorkingDays 40 ;
+                        rdfs:label "Mediation Phase (statutory limit)"@en .
+
+
+###  https://w3id.org/orda#MediationRejectedEvent
+:MediationRejectedEvent rdf:type owl:NamedIndividual ,
+                                 :EventType ;
+                        rdfs:comment "Art. 40(4). DSC-E rejects the mediation outcome during the Mediation Phase. Occurs via :MediationRejectedProcessEvent. Performed exclusively by :DigitalServicesCoordinatorOfEstablishment."@en ;
+                        rdfs:label "Mediation Rejected"@en ;
+                        :hasLegalBasis "Art. 13(1) DA"@en .
+
+
+###  https://w3id.org/orda#MediationRequestedEvent
+:MediationRequestedEvent rdf:type owl:NamedIndividual ,
+                                  :EventType ;
+                         rdfs:comment "Data provider requests mediation within max. 5 working days. Must follow an amendment after application acceptance. Triggers the Mediation Phase. Performed by a :DataProvider."@en ;
+                         rdfs:label "Mediation Requested"@en ;
+                         :hasLegalBasis "Art. 13(1) DA"@en .
+
+
+###  https://w3id.org/orda#ReasonedRequestIssuedEvent
+:ReasonedRequestIssuedEvent rdf:type owl:NamedIndividual ,
+                                     :EventType ;
+                            rdfs:comment "DSC-E issues the reasoned request following application acceptance. Art. 40(4) only. Occurs during an :AcceptedVettingPhase. An amendment may follow; access may also be granted without amendment or mediation."@en ;
+                            rdfs:label "Reasoned Request Issued"@en .
+
+
+###  https://w3id.org/orda#Submitted
+:Submitted rdf:type owl:NamedIndividual ,
+                    :DocumentStage ;
+           rdfs:comment "The document has been formally submitted. Permitted for DataAccessApplication only."@en ;
+           rdfs:label "Submitted"@en .
+
+
+###  https://w3id.org/orda#VettingPhaseInstance
+:VettingPhaseInstance rdf:type owl:NamedIndividual ,
+                               :VettingPhase ;
+                      :maxWorkingDays 80 ;
+                      rdfs:label "Vetting Phase (statutory limit)"@en .
+
+
+#################################################################
+#    Annotations
+#################################################################
+
+:DigitalServicesCoordinatorOfEstablishment rdfs:comment "DSC-E: primary vetting body responsible for formulating the reasoned request."@en ;
+                                           rdfs:label "DSC of Establishment"@en .
+
+
+:DigitalServicesCoordinatorOfMemberState rdfs:comment "DSC-M: performs the completeness check on the application."@en ;
+                                         rdfs:label "DSC of Member State"@en .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi
