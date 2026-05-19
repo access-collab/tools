@@ -8,6 +8,12 @@ For usage, use docker.
 
 The service will be available at `localhost:3000`. Swagger API under `localhost:8000/docs`
 
+## Configuration
+
+Both VLOPSE and DSA Questions are saved in a SQLite Database (`backend/app/data/app.db`)
+To modify them, either use the swagger API, interact with the questions endpoint (`localhost:8000/api/question`) or modify the database directly with a tool of your choice (recommended).
+Mappings and conditionals are defined in `backend/app/data/vlopse/{VLOPSE_NAME}.json`. You can use the (fake) configuration for myspace for orientation.
+
 
 ## Development
 
