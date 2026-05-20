@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { healthHealthCheck, type HealthResponse } from "@api";
+  import { Button } from "$lib/components/ui/button/index.js";
 
   let health: HealthResponse | undefined = $state(undefined);
   let error: string | undefined = $state(undefined);
@@ -21,36 +22,47 @@
 <svelte:head>
   <title>DSA40 Application Helper</title>
 </svelte:head>
-<main>
-  <h1>DSA40 Application Helper</h1>
-  <p>Skeleton scaffold — both backend and frontend are running.</p>
 
-  <section>
-    <h2>Backend health</h2>
+<div class="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
+  <p class="text-sm font-medium uppercase tracking-wider text-primary">DSA Art. 40(12)</p>
+  <h1 class="font-heading mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+    Application Helper
+  </h1>
+  <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
+    Answer cross-platform questions once, then get platform-specific answers for your VLOPSE
+    access applications.
+  </p>
+
+  <section class="mt-10 rounded-xl border border-border bg-card p-6 shadow-sm">
+    <h2 class="font-heading text-lg font-bold">System status</h2>
+
     {#if health}
-      <p>
-        API: <strong>{health.api}</strong> &nbsp;|&nbsp; DB:
-        <strong>{health.db}</strong>
-        DSA Questions: <strong>{health.dsa_status}</strong>
-        Mappings: <strong>{health.mapping_status}</strong>
-      </p>
-      <p><a href="/helper">Start</a></p>
+      <dl class="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+        <div class="rounded-lg bg-muted/60 px-3 py-2">
+          <dt class="text-muted-foreground">API</dt>
+          <dd class="mt-0.5 font-medium capitalize">{health.api}</dd>
+        </div>
+        <div class="rounded-lg bg-muted/60 px-3 py-2">
+          <dt class="text-muted-foreground">Database</dt>
+          <dd class="mt-0.5 font-medium capitalize">{health.db}</dd>
+        </div>
+        <div class="rounded-lg bg-muted/60 px-3 py-2">
+          <dt class="text-muted-foreground">DSA questions</dt>
+          <dd class="mt-0.5 font-medium capitalize">{health.dsa_status}</dd>
+        </div>
+        <div class="rounded-lg bg-muted/60 px-3 py-2">
+          <dt class="text-muted-foreground">Mappings</dt>
+          <dd class="mt-0.5 font-medium capitalize">{health.mapping_status}</dd>
+        </div>
+      </dl>
+
+      <div class="mt-8">
+        <Button href="/helper" size="lg">Start application</Button>
+      </div>
     {:else if error}
-      <p style="color: red">Could not reach /health — {error}</p>
+      <p class="mt-4 text-sm text-destructive">Could not reach the API — {error}</p>
     {:else}
-      <p>Checking…</p>
+      <p class="mt-4 text-sm text-muted-foreground">Checking backend…</p>
     {/if}
   </section>
-</main>
-
-<style>
-  main {
-    font-family: system-ui, sans-serif;
-    max-width: 600px;
-    margin: 4rem auto;
-    padding: 0 1rem;
-  }
-  h1 {
-    font-size: 1.75rem;
-  }
-</style>
+</div>

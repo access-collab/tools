@@ -50,7 +50,7 @@
           <div class="flex items-start justify-between gap-4 py-3">
             <div class="flex min-w-0 flex-col gap-2">
               <p class="text-xs text-muted-foreground">{answer.question_id}</p>
-              <p class="text-base font-semibold">{answer.text}</p>
+              <p class="font-heading text-base font-bold">{answer.text}</p>
               <p class="text-sm text-foreground/80">{answer.value}</p>
             </div>
             <Button

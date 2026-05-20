@@ -565,6 +565,22 @@
           }
         }
       }
+    },
+    "/": {
+      "get": {
+        "summary": "Index Fallback",
+        "operationId": "/-index_fallback",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

@@ -1,6 +1,7 @@
 from pycountry import countries
 
 from app.core.mapping import QuestionMapper
+from app.schemas import Selection, config_adapter
 from app.core.models import (
     Answer,
     ErrorDetails,
@@ -21,12 +22,37 @@ class FormService:
         self.question_service = QuestionService()
         pass
 
-    def compute_options(self, question: DSAQuestion, vlopses: list[str]):
-        # TODO: think this should go to mapper and check dependent questions
+    def compute_options(self, question: DSAQuestion, vlopses: list[str]) -> list[str] | None:
         if question.input_type == InputType.ISO_3166_1:
             return [c.name for c in countries]
-        else:
-            return None
+
+        merged: list[str] = []
+        seen: set[str] = set()
+
+        def add_options(options: list[str]) -> None:
+            for option in options:
+                if option and option not in seen:
+                    seen.add(option)
+                    merged.append(option)
+
+        if question.config:
+            cfg = config_adapter.validate_python(question.config)
+            if isinstance(cfg, Selection):
+                add_options(cfg.options)
+
+        mapper = QuestionMapper.from_vlopse_names(vlopses, self.question_service)
+        for dsa_id, vlopse_ids in mapper._map().items():
+            if dsa_id != question.id:
+                continue
+            for vlopse_id in vlopse_ids:
+                vlopse_q = self.question_service.get(vlopse_id)
+                if not vlopse_q or not vlopse_q.config:
+                    continue
+                cfg = config_adapter.validate_python(vlopse_q.config)
+                if isinstance(cfg, Selection):
+                    add_options(cfg.options)
+
+        return merged if merged else None
 
     def validate_vlopse_question(self, question: VLOPSEQuestion, answer: Answer): ...
     def map_unified_to_vlopse_and_validate(

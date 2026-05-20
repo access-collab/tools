@@ -1,10 +1,1 @@
-{
-  "info": {
-    "name": "X",
-    "account_required": "False",
-    "application_link": "https://docs.google.com/forms/d/e/1FAIpQLSdo0O-D6Kxa3cV4g1JLz2T_0Sk3hdEnTdv8dJmibagCnzJ7kg/viewform",
-    "modality": "form"
-  },
-  "mappings": {},
-  "conditions": {}
-}
+{"info":{"name":"X","platform_information":null,"account_required":false,"application_link":"https://docs.google.com/forms/d/e/1FAIpQLSdo0O-D6Kxa3cV4g1JLz2T_0Sk3hdEnTdv8dJmibagCnzJ7kg/viewform","modality":"form"},"mappings":{"X1":{"src":["first-name","last-name"],"operation":"join-space"},"X2":"email-inst","X3":"org-name","X4":{"src":["affiliation-type","np-status"],"operation":"join-paragraph"},"X5":"funding-sources","X6":"commercial-purpose","X7":"tom-general","X8":{"src":["research-title","research-summary","research-sysrisk","research-publication"],"operation":"join-paragraph"},"X9":{"src":["data-requested","data-geoscope","data-expl"],"operation":"join-paragraph"},"X10":{"src":["data-acc-start","data-acc-end"],"operation":"join-date-range"}},"conditions":{}}

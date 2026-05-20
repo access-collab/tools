@@ -1,10 +1,1 @@
-{
-  "info": {
-    "name": "YouTube",
-    "account_required": "False",
-    "application_link": "https://support.google.com/youtube/contact/yt_researcher_certification",
-    "modality": "form"
-  },
-  "mappings": {},
-  "conditions": {}
-}
+{"info":{"name":"YouTube","platform_information":null,"account_required":false,"application_link":"https://support.google.com/youtube/contact/yt_researcher_certification","modality":"form"},"mappings":{"Y1":"prev-experience","Y2":{"src":["first-name","last-name"],"operation":"join-space"},"Y3":"email-inst","Y4":"org-addr-country","Y5":"org-name","Y6":"org-name","Y7":"org-website","Y8":{"src":["org-addr-street","org-addr-city","org-addr-postcode","org-addr-state","org-addr-country"],"operation":"join-comma"},"Y9":"org-role","Y10":"org-department","Y11":"profile-inst","Y12":"research-title","Y13":"research-start","Y14":"research-publication","Y15":{"src":["research-question","data-requested","research-timeline","research-outcomes","research-summary"],"operation":"join-paragraph"},"Y16":"research-keywords","Y17":"funding-sources","Y18":"funding-sources","Y19":{"src":["tom-storage-start","tom-storage-end"],"operation":"make-duration"},"Y20":"data-refresh"},"conditions":{"Y6":[{"question_id":"Y5","operator":"eq","value":"Other"}],"Y18":[{"question_id":"Y17","operator":"eq","value":"Yes"}]}}

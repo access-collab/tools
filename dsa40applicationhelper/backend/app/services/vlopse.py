@@ -33,7 +33,11 @@ class VlopseConfigService:
             return None
 
     def get_all(self):
-        return [p.stem for p in _DATA_DIR.glob("*.json")]
+        return sorted(
+            p.stem
+            for p in _DATA_DIR.glob("*.json")
+            if p.stem not in {"platform_info"}
+        )
 
     def delete(self, name: str):
         path = [p for p in _DATA_DIR.glob("*json") if p.stem == name]
