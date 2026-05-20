@@ -1,565 +1,2717 @@
-@prefix :      <https://w3id.org/orda#> .
-@prefix owl:   <http://www.w3.org/2002/07/owl#> .
-@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix xml:   <http://www.w3.org/XML/1998/namespace> .
-@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
-@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <https://w3id.org/orda#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix time: <http://www.w3.org/2006/time#> .
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
-@prefix prov:  <http://www.w3.org/ns/prov#> .
-@prefix time:  <http://www.w3.org/2006/time#> .
-@prefix odrl:  <http://www.w3.org/ns/odrl/2/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @base <https://w3id.org/orda#> .
 
 <https://w3id.org/orda> rdf:type owl:Ontology ;
-    owl:imports <http://xmlns.com/foaf/0.1/> ;
-    dcterms:description "Models the data access process under the delegated act on data access (DA) and Art. 40(4) DSA, including application drafting, authorisation, and data access phases."@en ;
-    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
-    dcterms:title "ORDA — Ontology for Research Data Access"@en .
-
+                         owl:imports <http://www.w3.org/2006/time> ,
+                                     <http://www.w3.org/ns/prov-o#> ,
+                                     <http://xmlns.com/foaf/0.1/> ;
+                         dcterms:description "Models DSA Art. 40 data access (ORDA + OWL Time + PROV) and CERIF Core 2 research metadata (projects, people, organisations, funding, outputs). Procedural phases use time:Interval; CRIS-facing project description uses cerif:Project, cerif:Person, cerif:Organisation_Unit, cerif:Funding, cerif:Document. See ORDA.md and ORDA.shacl.ttl."@en ;
+                         dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+                         dcterms:title "ORDA — Ontology for Research Data Access"@en ;
+                         rdfs:seeAlso <http://www.w3.org/ns/csvw#> ,
+                                      <http://www.w3.org/ns/dcat#> ,
+                                      <https://w3id.org/cerif2/> ,
+                                      <https://w3id.org/dpv/owl#> ,
+                                      <https://w3id.org/orda/shapes> ;
+                         owl:versionInfo "0.6.0"@en .
 
 #################################################################
-#    Annotation Properties
+#    Annotation properties
 #################################################################
 
 ###  http://purl.org/dc/terms/description
 dcterms:description rdf:type owl:AnnotationProperty .
 
+
 ###  http://purl.org/dc/terms/license
 dcterms:license rdf:type owl:AnnotationProperty .
+
 
 ###  http://purl.org/dc/terms/title
 dcterms:title rdf:type owl:AnnotationProperty .
 
-###  https://w3id.org/orda#hasLegalBasis
-:hasLegalBasis rdf:type owl:AnnotationProperty ;
-    rdfs:comment "Cites the legal provision governing this class or property, e.g. Art. 40(4) DSA."@en ;
-    rdfs:label "has legal basis"@en .
+
+###  http://www.w3.org/ns/prov#wasRevisionOf
+prov:wasRevisionOf rdf:type owl:AnnotationProperty ;
+                   rdfs:range prov:Entity .
+
+
+#################################################################
+#    Datatypes
+#################################################################
+
+###  http://www.w3.org/2001/XMLSchema#date
+xsd:date rdf:type rdfs:Datatype .
+
+
+###  https://w3id.org/cerif2/DOI_ID
+<https://w3id.org/cerif2/DOI_ID> rdf:type rdfs:Datatype ;
+                                 rdfs:isDefinedBy <https://w3id.org/cerif2/> .
+
+
+###  https://w3id.org/cerif2/Date
+<https://w3id.org/cerif2/Date> rdf:type rdfs:Datatype ;
+                               rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                               owl:equivalentClass xsd:date .
+
+
+###  https://w3id.org/cerif2/Multilingual_String
+<https://w3id.org/cerif2/Multilingual_String> rdf:type rdfs:Datatype ;
+                                              rdfs:isDefinedBy <https://w3id.org/cerif2/> .
+
+
+###  https://w3id.org/cerif2/ORCID_iD
+<https://w3id.org/cerif2/ORCID_iD> rdf:type rdfs:Datatype ;
+                                   rdfs:isDefinedBy <https://w3id.org/cerif2/> .
+
+
+###  https://w3id.org/cerif2/ROR_ID
+<https://w3id.org/cerif2/ROR_ID> rdf:type rdfs:Datatype ;
+                                 rdfs:isDefinedBy <https://w3id.org/cerif2/> .
 
 
 #################################################################
 #    Object Properties
 #################################################################
 
+###  http://data.europa.eu/eli/ontology#based_on
+<http://data.europa.eu/eli/ontology#based_on> rdf:type owl:ObjectProperty ;
+                                              rdfs:domain <http://data.europa.eu/eli/ontology#LegalResource> ;
+                                              rdfs:range <http://data.europa.eu/eli/ontology#LegalResource> ;
+                                              rdfs:comment "Legal basis link between acts (e.g. delegated regulation supplementing a parent regulation)."@en ;
+                                              rdfs:isDefinedBy <http://data.europa.eu/eli/ontology> ;
+                                              rdfs:label "based on"@en .
+
+
+###  http://data.europa.eu/eli/ontology#is_part_of
+<http://data.europa.eu/eli/ontology#is_part_of> rdf:type owl:ObjectProperty ;
+                                                rdfs:domain <http://data.europa.eu/eli/ontology#LegalResource> ;
+                                                rdfs:range <http://data.europa.eu/eli/ontology#LegalResource> ;
+                                                rdfs:isDefinedBy <http://data.europa.eu/eli/ontology> ;
+                                                rdfs:label "is part of"@en .
+
+
+###  http://data.europa.eu/eli/ontology#type_document
+<http://data.europa.eu/eli/ontology#type_document> rdf:type owl:ObjectProperty ;
+                                                   rdfs:domain <http://data.europa.eu/eli/ontology#LegalResource> ;
+                                                   rdfs:isDefinedBy <http://data.europa.eu/eli/ontology> ;
+                                                   rdfs:label "type of document"@en ;
+                                                   rdfs:seeAlso <https://op.europa.eu/en/web/eu-vocabularies/at-dataset/-/resource/dataset/resource-type> .
+
+
+###  http://purl.org/dc/terms/format
+dcterms:format rdf:type owl:ObjectProperty ;
+               rdfs:domain <http://www.w3.org/ns/dcat#Distribution> ;
+               rdfs:range dcterms:MediaTypeOrExtent ;
+               rdfs:isDefinedBy dcterms: ;
+               rdfs:label "format"@en .
+
+
+###  http://purl.org/dc/terms/hasFormat
+dcterms:hasFormat rdf:type owl:ObjectProperty ;
+                  rdfs:domain <http://www.w3.org/ns/dcat#Distribution> ;
+                  rdfs:comment "Links a dcat:Distribution to a machine-readable schema description (csvw:Schema for CSV, foaf:Document for OpenAPI/JSON Schema)."@en ;
+                  rdfs:isDefinedBy dcterms: ;
+                  rdfs:label "has format"@en .
+
+
 ###  http://www.w3.org/2006/time#after
 time:after rdf:type owl:ObjectProperty .
 
+
 ###  http://www.w3.org/2006/time#hasBeginning
 time:hasBeginning rdf:type owl:ObjectProperty ;
-    rdfs:domain time:Interval ;
-    rdfs:range time:Instant .
+                  rdfs:domain time:Interval ;
+                  rdfs:range time:Instant .
+
 
 ###  http://www.w3.org/2006/time#hasEnd
 time:hasEnd rdf:type owl:ObjectProperty ;
-    rdfs:domain time:Interval ;
-    rdfs:range time:Instant .
+            rdfs:domain time:Interval ;
+            rdfs:range time:Instant .
+
 
 ###  http://www.w3.org/2006/vcard/ns#hasAddress
 vcard:hasAddress rdf:type owl:ObjectProperty ;
-    rdfs:domain <http://xmlns.com/foaf/0.1/Person> ;
-    rdfs:range vcard:Address .
+                 rdfs:domain <http://xmlns.com/foaf/0.1/Person> ;
+                 rdfs:range vcard:Address .
+
+
+###  http://www.w3.org/ns/csvw#column
+<http://www.w3.org/ns/csvw#column> rdf:type owl:ObjectProperty ;
+                                   rdfs:domain <http://www.w3.org/ns/csvw#Schema> ;
+                                   rdfs:range <http://www.w3.org/ns/csvw#Column> ;
+                                   rdfs:isDefinedBy <http://www.w3.org/ns/csvw#> ;
+                                   rdfs:label "column"@en .
+
+
+###  http://www.w3.org/ns/prov#used
+prov:used rdf:type owl:ObjectProperty ;
+          rdfs:domain prov:Activity ;
+          rdfs:range prov:Entity ;
+          rdfs:comment "An activity consumed or built upon a prior entity (e.g. a draft application revised into a submitted one)."@en ;
+          rdfs:label "used"@en .
+
 
 ###  http://www.w3.org/ns/prov#wasAssociatedWith
 prov:wasAssociatedWith rdf:type owl:ObjectProperty .
 
+
+###  http://www.w3.org/ns/prov#wasDerivedFrom
+prov:wasDerivedFrom rdf:type owl:ObjectProperty ;
+                    rdfs:domain prov:Entity ;
+                    rdfs:range prov:Entity ;
+                    rdfs:comment "A weaker derivation link between entities when wasRevisionOf is too strict."@en ;
+                    rdfs:label "was derived from"@en .
+
+
+###  http://www.w3.org/ns/prov#wasGeneratedBy
+prov:wasGeneratedBy rdf:type owl:ObjectProperty ;
+                    owl:inverseOf :produces ;
+                    rdfs:domain prov:Entity ;
+                    rdfs:range prov:Activity .
+
+
+###  http://www.w3.org/ns/prov#wasInformedBy
+prov:wasInformedBy rdf:type owl:ObjectProperty ;
+                   rdfs:domain prov:Activity ;
+                   rdfs:range prov:Activity ;
+                   rdfs:comment "One activity followed or depended on another in the process."@en ;
+                   rdfs:label "was informed by"@en .
+
+
+###  http://www.w3.org/ns/prov#wasRevisionOf
+prov:wasRevisionOf rdf:type owl:ObjectProperty ;
+                   rdfs:domain prov:Entity .
+
+
+###  https://w3id.org/cerif2/Acknowledgement_Statement#testify
+<https://w3id.org/cerif2/Acknowledgement_Statement#testify> rdf:type owl:ObjectProperty ;
+                                                            rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                            rdfs:label "testify"@en .
+
+
+###  https://w3id.org/cerif2/Activity#hasActor
+<https://w3id.org/cerif2/Activity#hasActor> rdf:type owl:ObjectProperty ;
+                                            rdfs:range <https://w3id.org/cerif2/Agent> ;
+                                            rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                            rdfs:label "has actor"@en .
+
+
+###  https://w3id.org/cerif2/Affiliation_Statement#hasInstitution
+<https://w3id.org/cerif2/Affiliation_Statement#hasInstitution> rdf:type owl:ObjectProperty ;
+                                                               rdfs:range <https://w3id.org/cerif2/Organisation_Unit> ;
+                                                               rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                               rdfs:label "has institution"@en .
+
+
+###  https://w3id.org/cerif2/Affiliation_Statement#hasPerson
+<https://w3id.org/cerif2/Affiliation_Statement#hasPerson> rdf:type owl:ObjectProperty ;
+                                                          owl:inverseOf <https://w3id.org/cerif2/Person#isThePersonIn> ;
+                                                          rdfs:range <https://w3id.org/cerif2/Person> ;
+                                                          rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                          rdfs:label "has person"@en .
+
+
+###  https://w3id.org/cerif2/Agent#hasIdentifier
+<https://w3id.org/cerif2/Agent#hasIdentifier> rdf:type owl:ObjectProperty ;
+                                              rdfs:domain <https://w3id.org/cerif2/Agent> ;
+                                              rdfs:range <https://w3id.org/cerif2/Agent_Identifier> ;
+                                              rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                              rdfs:label "has identifier"@en .
+
+
+###  https://w3id.org/cerif2/Contribution_to_Document#hasTarget
+<https://w3id.org/cerif2/Contribution_to_Document#hasTarget> rdf:type owl:ObjectProperty ;
+                                                             rdfs:range <https://w3id.org/cerif2/Document> ;
+                                                             rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                             rdfs:label "has target"@en .
+
+
+###  https://w3id.org/cerif2/Contribution_to_Project#hasTarget
+<https://w3id.org/cerif2/Contribution_to_Project#hasTarget> rdf:type owl:ObjectProperty ;
+                                                            owl:inverseOf <https://w3id.org/cerif2/Project#hasContribution> ;
+                                                            rdfs:range <https://w3id.org/cerif2/Project> ;
+                                                            rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                            rdfs:label "has target"@en .
+
+
+###  https://w3id.org/cerif2/Document#hasContribution
+<https://w3id.org/cerif2/Document#hasContribution> rdf:type owl:ObjectProperty ;
+                                                   rdfs:domain <https://w3id.org/cerif2/Document> ;
+                                                   rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                   rdfs:label "has contribution"@en .
+
+
+###  https://w3id.org/cerif2/Document#publishedAs
+<https://w3id.org/cerif2/Document#publishedAs> rdf:type owl:ObjectProperty ;
+                                               rdfs:domain <https://w3id.org/cerif2/Document> ;
+                                               rdfs:range <https://w3id.org/cerif2/Document_Publication> ;
+                                               rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                               rdfs:label "published as"@en .
+
+
+###  https://w3id.org/cerif2/Funding#covers
+<https://w3id.org/cerif2/Funding#covers> rdf:type owl:ObjectProperty ;
+                                         owl:inverseOf <https://w3id.org/cerif2/Project#fundedBy> ;
+                                         rdfs:domain <https://w3id.org/cerif2/Funding> ;
+                                         rdfs:range <https://w3id.org/cerif2/Project> ;
+                                         rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                         rdfs:label "covers"@en .
+
+
+###  https://w3id.org/cerif2/Person#isThePersonIn
+<https://w3id.org/cerif2/Person#isThePersonIn> rdf:type owl:ObjectProperty ;
+                                               rdfs:domain <https://w3id.org/cerif2/Person> ;
+                                               rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                               rdfs:label "is the person in"@en .
+
+
+###  https://w3id.org/cerif2/Project#fundedBy
+<https://w3id.org/cerif2/Project#fundedBy> rdf:type owl:ObjectProperty ;
+                                           rdfs:domain :ResearchProject ;
+                                           rdfs:range <https://w3id.org/cerif2/Funding> ;
+                                           rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                           rdfs:label "funded by"@en .
+
+
+###  https://w3id.org/cerif2/Project#hasContribution
+<https://w3id.org/cerif2/Project#hasContribution> rdf:type owl:ObjectProperty ;
+                                                  rdfs:domain <https://w3id.org/cerif2/Project> ;
+                                                  rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                  rdfs:label "has contribution"@en .
+
+
+###  https://w3id.org/cerif2/Resource#hasDescription
+<https://w3id.org/cerif2/Resource#hasDescription> rdf:type owl:ObjectProperty ;
+                                                  rdfs:domain <https://w3id.org/cerif2/Resource> ;
+                                                  rdfs:range <https://w3id.org/cerif2/Document> ;
+                                                  rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                  rdfs:label "has description"@en .
+
+
+###  https://w3id.org/cerif2/Resource#hasIdentifier
+<https://w3id.org/cerif2/Resource#hasIdentifier> rdf:type owl:ObjectProperty ;
+                                                 rdfs:domain <https://w3id.org/cerif2/Resource> ;
+                                                 rdfs:range <https://w3id.org/cerif2/Resource_Identifier> ;
+                                                 rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                 rdfs:label "has identifier"@en .
+
+
+###  https://w3id.org/dpv/owl#hasLegalBasis
+<https://w3id.org/dpv/owl#hasLegalBasis> rdf:type owl:ObjectProperty ;
+                                         rdfs:domain [ rdf:type owl:Class ;
+                                                       owl:unionOf ( :DataAccessProcess
+                                                                     :DataAccessRequest
+                                                                     :ResearchOrganisation
+                                                                     :ResearchProject
+                                                                   )
+                                                     ] ;
+                                         rdfs:range <https://w3id.org/dpv/owl#LegalBasis> ;
+                                         rdfs:comment "Links an entity to the legal act or provision that authorises or defines it (DPV pattern). Used for projects, processes, and taxonomy categories."@en .
+
+
+###  https://w3id.org/orda#addressesSystemicRiskCategory
+:addressesSystemicRiskCategory rdf:type owl:ObjectProperty ;
+                               rdfs:domain :ResearchProject ;
+                               rdfs:range :SystemicRiskCategory ;
+                               rdfs:comment "Links a research project to one or more DSA Art. 34(1) systemic risk categories. Use named vocabulary individuals (e.g. :IllegalContentRiskCategory). Validated by ORDA.shacl.ttl."@en ;
+                               rdfs:label "addresses systemic risk category"@en .
+
+
+###  https://w3id.org/orda#amendmentRequestedBy
+:amendmentRequestedBy rdf:type owl:ObjectProperty ;
+                      rdfs:domain :AmendmentRequest ;
+                      rdfs:range :DataProvider ;
+                      rdfs:label "amendment requested by"@en .
+
+
+###  https://w3id.org/orda#amendsRequest
+:amendsRequest rdf:type owl:ObjectProperty ;
+               rdfs:domain :AmendmentRequest ;
+               rdfs:range :ReasonedRequest ;
+               rdfs:label "amends request"@en .
+
+
+###  https://w3id.org/orda#assessedBy
+:assessedBy rdf:type owl:ObjectProperty ;
+            rdfs:domain :Art40_4_DataAccessRequest ;
+            rdfs:range :DigitalServicesCoordinatorOfEstablishment ;
+            rdfs:comment "DSC-E: final vetting and reasoned request formulation."@en ;
+            rdfs:label "assessed by"@en .
+
+
+###  https://w3id.org/orda#assessesMitigationMeasureCategory
+:assessesMitigationMeasureCategory rdf:type owl:ObjectProperty ;
+                                   rdfs:domain :ResearchProject ;
+                                   rdfs:range :MitigationMeasureCategory ;
+                                   rdfs:comment "Links a research project to mitigation measure categories assessed under Art. 40(4). Use named vocabulary individuals (e.g. :ServiceDesignMitigationCategory). Validated by ORDA.shacl.ttl."@en ;
+                                   rdfs:label "assesses mitigation measure category"@en .
+
+
+###  https://w3id.org/orda#assessesMitigationMeasures
+:assessesMitigationMeasures rdf:type owl:ObjectProperty ;
+                            rdfs:domain :ResearchProject ;
+                            rdfs:range :DataProvider ;
+                            rdfs:comment "The VLOP or VLOSE whose risk mitigation measures under DSA Art. 35 the project assesses for adequacy, efficiency and impact (Art. 40(4) purpose)."@en ;
+                            rdfs:label "assesses mitigation measures"@en .
+
+
 ###  https://w3id.org/orda#communicationBetween
 :communicationBetween rdf:type owl:ObjectProperty ;
-    rdfs:domain :CommunicationEvent ;
-    rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
-    rdfs:label "communication between"@en .
+                      rdfs:domain :CommunicationEvent ;
+                      rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
+                      rdfs:label "communication between"@en .
+
 
 ###  https://w3id.org/orda#concerns
 :concerns rdf:type owl:ObjectProperty ;
-    rdfs:comment "Links a document or action to the dataset or resource it pertains to."@en ;
-    rdfs:label "concerns"@en .
+          rdfs:comment "Links a document or action to the dataset or resource it pertains to."@en ;
+          rdfs:label "concerns"@en .
+
+
+###  https://w3id.org/orda#consultationConductedWith
+:consultationConductedWith rdf:type owl:ObjectProperty ;
+                           rdfs:domain :DataProtectionConsultation ;
+                           rdfs:range :DataProtectionAuthority ;
+                           rdfs:comment "The data protection authority involved in a consultation on GDPR or LED aspects of an application."@en ;
+                           rdfs:label "consultation conducted with"@en .
+
+
+###  https://w3id.org/orda#consultationRequestedBy
+:consultationRequestedBy rdf:type owl:ObjectProperty ;
+                         rdfs:domain :ExpertConsultation ;
+                         rdfs:range :DigitalServicesCoordinator ;
+                         rdfs:comment "The DSC that requested an expert consultation during Art. 40(4) assessment (DA Art. 14)."@en ;
+                         rdfs:label "consultation requested by"@en .
+
 
 ###  https://w3id.org/orda#decisionMadeBy
 :decisionMadeBy rdf:type owl:ObjectProperty ;
-    rdfs:subPropertyOf prov:wasAssociatedWith ;
-    rdfs:domain :Decision ;
-    rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
-    rdfs:label "decision made by"@en .
+                rdfs:subPropertyOf prov:wasAssociatedWith ;
+                rdfs:domain :Decision ;
+                rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
+                rdfs:label "decision made by"@en .
+
+
+###  https://w3id.org/orda#documentStage
+:documentStage rdf:type owl:ObjectProperty ;
+               rdfs:domain :ProcessDocument ;
+               rdfs:range :DocumentStage ;
+               rdfs:comment "Links a document to its controlled DocumentStage individual (procedural status). Link versions with prov:wasRevisionOf; prov:used and :usesDocument connect activities to prior snapshots."@en ;
+               rdfs:label "document stage"@en .
+
+
+###  https://w3id.org/orda#employsMethod
+:employsMethod rdf:type owl:ObjectProperty ;
+               rdfs:domain :ResearchActivity ;
+               rdfs:range :ResearchMethod ;
+               rdfs:label "employs method"@en .
+
+
+###  https://w3id.org/orda#filedWith
+:filedWith rdf:type owl:ObjectProperty ;
+           rdfs:domain :ComplaintFiling ;
+           rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
+           rdfs:comment "Links a complaint filing to the European Commission and/or relevant Digital Services Coordinator(s) receiving it under Art. 40(12)."@en ;
+           rdfs:label "filed with"@en .
+
+
+###  https://w3id.org/orda#formulatedBy
+:formulatedBy rdf:type owl:ObjectProperty ;
+              rdfs:domain :ReasonedRequest ;
+              rdfs:range :DigitalServicesCoordinatorOfEstablishment ;
+              rdfs:comment "The DSC of establishment that formulated the reasoned request."@en ;
+              rdfs:label "formulated by"@en .
+
+
+###  https://w3id.org/orda#hasAccessModality
+:hasAccessModality rdf:type owl:ObjectProperty ;
+                   rdfs:domain :ReasonedRequest ;
+                   rdfs:range :AccessModality ;
+                   rdfs:comment "Access modality determined by DSC-E per DA Art. 9 (distinct from researcher-proposed :suggestsModality on the application)."@en ;
+                   rdfs:label "has access modality"@en .
+
+
+###  https://w3id.org/orda#hasAffiliationStatement
+:hasAffiliationStatement rdf:type owl:ObjectProperty ;
+                         rdfs:subPropertyOf <https://w3id.org/cerif2/Person#isThePersonIn> ;
+                         rdfs:domain :Researcher ;
+                         rdfs:comment "CERIF affiliation of a researcher. Link the statement to :ResearchOrganisation via cerifaff:hasInstitution."@en ;
+                         rdfs:label "has affiliation statement"@en .
+
+
+###  https://w3id.org/orda#hasApplication
+:hasApplication rdf:type owl:ObjectProperty ;
+                rdfs:domain :DataAccessProcess ;
+                rdfs:range :DataAccessApplication ;
+                rdfs:comment "Links a data access process to an application document (version chain via prov:wasRevisionOf)."@en ;
+                rdfs:label "has application"@en .
+
 
 ###  https://w3id.org/orda#hasCommunication
 :hasCommunication rdf:type owl:ObjectProperty ;
-    rdfs:range :CommunicationEvent ;
-    rdfs:label "has communication"@en .
+                  rdfs:range :CommunicationEvent ;
+                  rdfs:label "has communication"@en .
+
+
+###  https://w3id.org/orda#hasContribution
+:hasContribution rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf <https://w3id.org/cerif2/Project#hasContribution> ;
+                 rdfs:domain :ResearchProject ;
+                 rdfs:comment "CERIF project membership or participation. Each contribution is a cerif:Contribution_to_Project with cerifctr:hasTarget pointing at the project and cerifact:hasActor pointing at the participating cerif:Person."@en ;
+                 rdfs:label "has contribution"@en .
+
+
+###  https://w3id.org/orda#hasDataAccessProcess
+:hasDataAccessProcess rdf:type owl:ObjectProperty ;
+                      rdfs:domain :ResearchProject ;
+                      rdfs:range :DataAccessProcess ;
+                      rdfs:comment "Links a research project to a procedural data access workflow governed by a specific Art. 40 paragraph."@en ;
+                      rdfs:label "has data access process"@en .
+
+
+###  https://w3id.org/orda#hasDataAccessRequest
+:hasDataAccessRequest rdf:type owl:ObjectProperty ;
+                      owl:inverseOf :isPartOf ;
+                      rdfs:domain :ResearchProject ;
+                      rdfs:range :DataAccessRequest ;
+                      rdfs:comment "Links a research project to a formal data access request. Inverse of :isPartOf."@en ;
+                      rdfs:label "has data access request"@en .
+
+
+###  https://w3id.org/orda#hasDataCatalogue
+:hasDataCatalogue rdf:type owl:ObjectProperty ;
+                  rdfs:domain :DataProvider ;
+                  rdfs:range :DSADataCatalogue ;
+                  rdfs:comment "Platform catalogue per DA Art. 6(4)."@en ;
+                  rdfs:label "has data catalogue"@en .
+
+
+###  https://w3id.org/orda#hasDataManagementPlan
+:hasDataManagementPlan rdf:type owl:ObjectProperty ;
+                       rdfs:domain :ResearchProject ;
+                       rdfs:range :DataManagementPlan ;
+                       rdfs:label "has data management plan"@en .
+
+
+###  https://w3id.org/orda#hasDataProtectionConsultation
+:hasDataProtectionConsultation rdf:type owl:ObjectProperty ;
+                               rdfs:domain :Art40_4_DataAccessRequest ;
+                               rdfs:range :DataProtectionConsultation ;
+                               rdfs:comment "Consultation with a national data protection authority or the European Data Protection Board on personal-data aspects of the request."@en ;
+                               rdfs:label "has data protection consultation"@en .
+
+
+###  https://w3id.org/orda#hasDataProvider
+:hasDataProvider rdf:type owl:ObjectProperty ;
+                 rdfs:domain :ResearchProject ;
+                 rdfs:range :DataProvider ;
+                 rdfs:comment "Links a research project to the VLOP or VLOSE whose data is requested or whose mitigation measures are assessed."@en ;
+                 rdfs:label "has data provider"@en .
+
+
+###  https://w3id.org/orda#hasDateRange
+:hasDateRange rdf:type owl:ObjectProperty ;
+              rdfs:domain :ResearchProject ;
+              rdfs:range <https://w3id.org/cerif2/Date_Range> ;
+              rdfs:comment "Project schedule using CERIF Date_Range (cerifdr:startDate / cerifdr:endDate on the range individual)."@en ;
+              rdfs:label "has date range"@en .
+
 
 ###  https://w3id.org/orda#hasDecision
 :hasDecision rdf:type owl:ObjectProperty ;
-    rdfs:range :Decision ;
-    rdfs:comment "Links a process event or phase to a formal Decision."@en ;
-    rdfs:label "has decision"@en .
+             rdfs:range :Decision ;
+             rdfs:comment "Links a process activity or phase to a formal Decision."@en ;
+             rdfs:label "has decision"@en .
+
+
+###  https://w3id.org/orda#hasDistribution
+:hasDistribution rdf:type owl:ObjectProperty ;
+                 rdfs:domain :DSADataCatalogue ;
+                 rdfs:range <http://www.w3.org/ns/dcat#Distribution> ;
+                 rdfs:comment "A data asset offered in the catalogue."@en ;
+                 rdfs:label "has distribution"@en .
+
 
 ###  https://w3id.org/orda#hasDuration
 :hasDuration rdf:type owl:ObjectProperty ;
-    rdfs:domain time:Interval ;
-    rdfs:range time:Duration ;
-    rdfs:label "has duration"@en .
+             rdfs:domain time:Interval ;
+             rdfs:range time:Duration ;
+             rdfs:label "has duration"@en .
 
-###  https://w3id.org/orda#hasEventType
-:hasEventType rdf:type owl:ObjectProperty ;
-    rdfs:domain :ProcessEvent ;
-    rdfs:range :EventType ;
-    rdfs:comment "Classifies a ProcessEvent using a controlled vocabulary of EventType individuals."@en ;
-    rdfs:label "has event type"@en .
+
+###  https://w3id.org/orda#hasExpertConsultation
+:hasExpertConsultation rdf:type owl:ObjectProperty ;
+                       rdfs:domain :Art40_4_DataAccessRequest ;
+                       rdfs:range :ExpertConsultation ;
+                       rdfs:comment "Optional expert consultation during assessment of an Art. 40(4) application (DA Art. 14)."@en ;
+                       rdfs:label "has expert consultation"@en .
+
+
+###  https://w3id.org/orda#hasFormalRequest
+:hasFormalRequest rdf:type owl:ObjectProperty ;
+                  rdfs:domain :DataAccessProcess ;
+                  rdfs:range :DataAccessRequest ;
+                  rdfs:comment "Links a data access process to the formal request it realises (typed as :Art40_4_DataAccessRequest or :Art40_12_DataAccessRequest)."@en ;
+                  rdfs:label "has formal request"@en .
+
+
+###  https://w3id.org/orda#hasMethod
+:hasMethod rdf:type owl:ObjectProperty ;
+           rdfs:domain [ rdf:type owl:Class ;
+                         owl:unionOf ( :ResearchActivity
+                                       :ResearchProject
+                                     )
+                       ] ;
+           rdfs:range :ResearchMethod ;
+           rdfs:label "has method"@en .
+
+
+###  https://w3id.org/orda#hasOrcidIdentifier
+:hasOrcidIdentifier rdf:type owl:ObjectProperty ;
+                    rdfs:subPropertyOf <https://w3id.org/cerif2/Agent#hasIdentifier> ;
+                    rdfs:domain :Researcher ;
+                    rdfs:range <https://w3id.org/cerif2/ORCID_Identifier> ;
+                    rdfs:comment "ORCID iD for a researcher (CERIF Agent identifier)."@en ;
+                    rdfs:label "has ORCID identifier"@en .
+
 
 ###  https://w3id.org/orda#hasOutput
 :hasOutput rdf:type owl:ObjectProperty ;
-    rdfs:domain time:Interval ;
-    rdfs:range <http://xmlns.com/foaf/0.1/Document> ;
-    rdfs:comment "Links a process phase to its document output."@en ;
-    rdfs:label "has output"@en .
+           rdfs:domain time:Interval ;
+           rdfs:range :ProcessDocument ;
+           rdfs:comment "Links a process phase to its document output."@en ;
+           rdfs:label "has output"@en .
+
+
+###  https://w3id.org/orda#hasPhase
+:hasPhase rdf:type owl:ObjectProperty ;
+          owl:inverseOf :occursInProcess ;
+          rdfs:domain :DataAccessProcess ;
+          rdfs:range time:Interval ;
+          rdfs:comment "Links a data access process to one of its temporal phases."@en ;
+          rdfs:label "has phase"@en .
+
+
+###  https://w3id.org/orda#hasResearchActivity
+:hasResearchActivity rdf:type owl:ObjectProperty ;
+                     rdfs:domain :ResearchProject ;
+                     rdfs:range :ResearchActivity ;
+                     rdfs:label "has research activity"@en .
+
+
+###  https://w3id.org/orda#hasResearchOutput
+:hasResearchOutput rdf:type owl:ObjectProperty ;
+                   owl:inverseOf :isOutputOf ;
+                   rdfs:domain :ResearchProject ;
+                   rdfs:range :ResearchOutput ;
+                   rdfs:comment "Links a project to a CERIF research output (publication, report, or dataset resource) produced using accessed data."@en ;
+                   rdfs:label "has research output"@en .
+
+
+###  https://w3id.org/orda#hasResearchQuestion
+:hasResearchQuestion rdf:type owl:ObjectProperty ;
+                     rdfs:domain :ResearchProject ;
+                     rdfs:range :ResearchQuestion ;
+                     rdfs:label "has research question"@en .
+
+
+###  https://w3id.org/orda#hasReview
+:hasReview rdf:type owl:ObjectProperty ;
+           rdfs:domain :ResearchMethod ;
+           rdfs:range :ExpertConsultation ;
+           rdfs:comment "Links a research method to an expert consultation (e.g. :MethodologicalReview) reviewing necessity and proportionality."@en ;
+           rdfs:label "has review"@en .
+
+
+###  https://w3id.org/orda#hasRorIdentifier
+:hasRorIdentifier rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf <https://w3id.org/cerif2/Agent#hasIdentifier> ;
+                  rdfs:domain :ResearchOrganisation ;
+                  rdfs:range <https://w3id.org/cerif2/ROR_Identifier> ;
+                  rdfs:comment "ROR identifier for a research organisation (CERIF Agent identifier)."@en ;
+                  rdfs:label "has ROR identifier"@en .
+
+
+###  https://w3id.org/orda#hasStartInstant
+:hasStartInstant rdf:type owl:ObjectProperty ;
+                 owl:inverseOf :startInstantOf ;
+                 rdfs:domain prov:Activity ;
+                 rdfs:range time:Instant ;
+                 rdfs:comment "Links an activity to the time:Instant at which it starts. Phase triggers use this instant as the interval beginning via :isTriggeredBy."@en ;
+                 rdfs:label "has start instant"@en .
+
 
 ###  https://w3id.org/orda#hasSubPhase
 :hasSubPhase rdf:type owl:ObjectProperty ;
-    rdfs:domain time:Interval ;
-    rdfs:range time:Interval ;
-    rdfs:label "has sub-phase"@en .
+             rdfs:domain time:Interval ;
+             rdfs:range time:Interval ;
+             rdfs:label "has sub-phase"@en .
+
+
+###  https://w3id.org/orda#hasTopic
+:hasTopic rdf:type owl:ObjectProperty ;
+          rdfs:domain :ResearchProject ;
+          rdfs:range :ResearchTopic ;
+          rdfs:label "has topic"@en .
+
+
+###  https://w3id.org/orda#includesResearcher
+:includesResearcher rdf:type owl:ObjectProperty ;
+                    rdfs:domain :DataAccessRequest ;
+                    rdfs:range :Researcher ;
+                    rdfs:comment "Additional researchers covered by the same application (DA Art. 10)."@en ;
+                    rdfs:label "includes researcher"@en .
+
+
+###  https://w3id.org/orda#initiallyAssessedBy
+:initiallyAssessedBy rdf:type owl:ObjectProperty ;
+                     rdfs:domain :Art40_4_DataAccessRequest ;
+                     rdfs:range :DigitalServicesCoordinatorOfMemberState ;
+                     rdfs:comment "DSC-M initial assessment under Art. 40(9)."@en ;
+                     rdfs:label "initially assessed by"@en .
+
+
+###  https://w3id.org/orda#investigates
+:investigates rdf:type owl:ObjectProperty ;
+              rdfs:domain :ResearchQuestion ;
+              rdfs:range [ rdf:type owl:Class ;
+                           owl:unionOf ( :ResearchTopic
+                                         :SystemicRiskCategory
+                                       )
+                         ] ;
+              rdfs:label "investigates"@en .
+
+
+###  https://w3id.org/orda#isOutputOf
+:isOutputOf rdf:type owl:ObjectProperty ;
+            rdfs:domain :ResearchOutput ;
+            rdfs:range :ResearchProject ;
+            rdfs:comment "Inverse of :hasResearchOutput."@en ;
+            rdfs:label "is output of"@en .
+
+
+###  https://w3id.org/orda#isPartOf
+:isPartOf rdf:type owl:ObjectProperty ;
+          rdfs:domain :DataAccessRequest ;
+          rdfs:range :ResearchProject ;
+          rdfs:comment "Links a data access request to the research project it supports."@en ;
+          rdfs:label "is part of"@en .
+
 
 ###  https://w3id.org/orda#isTriggeredBy
 :isTriggeredBy rdf:type owl:ObjectProperty ;
-    rdfs:subPropertyOf time:hasBeginning ;
-    rdfs:domain time:Interval ;
-    rdfs:range :ProcessEvent ;
-    rdfs:comment "Links a process phase to the ProcessEvent that marks its beginning. Subproperty of time:hasBeginning, aligning with OWL Time's interval/instant model."@en ;
-    rdfs:label "is triggered by"@en .
+               rdfs:domain time:Interval ;
+               rdfs:range :TriggerActivity ;
+               owl:propertyChainAxiom ( time:hasBeginning
+                                        :startInstantOf
+                                      ) ;
+               rdfs:comment "Links a process phase to the trigger activity that marks its beginning. Inferred when the phase's time:hasBeginning instant is the activity's :hasStartInstant."@en ;
+               rdfs:label "is triggered by"@en .
 
-###  https://w3id.org/orda#issuedBy
-:issuedBy rdf:type owl:ObjectProperty ;
-    rdfs:subPropertyOf :performedBy ;
-    rdfs:label "issued by"@en .
+
+###  https://w3id.org/orda#issuedTo
+:issuedTo rdf:type owl:ObjectProperty ;
+          rdfs:domain :ReasonedRequest ;
+          rdfs:range :DataProvider ;
+          rdfs:label "issued to"@en .
+
+
+###  https://w3id.org/orda#madeBy
+:madeBy rdf:type owl:ObjectProperty ;
+        rdfs:domain [ rdf:type owl:Class ;
+                      owl:unionOf ( :DataAccessApplication
+                                    :DataAccessRequest
+                                  )
+                    ] ;
+        rdfs:range :PrincipalResearcher ;
+        rdfs:label "made by"@en .
+
+
+###  https://w3id.org/orda#occursInProcess
+:occursInProcess rdf:type owl:ObjectProperty ;
+                 rdfs:domain time:Interval ;
+                 rdfs:range :DataAccessProcess ;
+                 rdfs:comment "Scopes a temporal phase to the data access process it belongs to."@en ;
+                 rdfs:label "occurs in process"@en .
+
 
 ###  https://w3id.org/orda#occursWithin
 :occursWithin rdf:type owl:ObjectProperty ;
-    rdfs:domain :ProcessEvent ;
-    rdfs:range time:Interval ;
-    rdfs:comment "Links a ProcessEvent or document to the process phase in which it occurs."@en ;
-    rdfs:label "occurs within"@en .
+              rdfs:domain prov:Activity ;
+              rdfs:range time:Interval ;
+              rdfs:comment "Links a process activity or document to the process phase in which it occurs."@en ;
+              rdfs:label "occurs within"@en .
+
+
+###  https://w3id.org/orda#operatedBy
+:operatedBy rdf:type owl:ObjectProperty ;
+            rdfs:domain :DSADataAccessPortal ;
+            rdfs:range :RegulatoryAuthority ;
+            rdfs:comment "The public authority operating the central Art. 40(4) data access portal (European Commission under DA Art. 3)."@en ;
+            rdfs:label "operated by"@en .
+
 
 ###  https://w3id.org/orda#performedBy
 :performedBy rdf:type owl:ObjectProperty ;
-    rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
-    rdfs:label "performed by"@en .
+             rdfs:subPropertyOf prov:wasAssociatedWith ;
+             rdfs:domain prov:Activity ;
+             rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
+             rdfs:comment "Links a process activity to the agent who performed it. Subproperty of prov:wasAssociatedWith."@en ;
+             rdfs:label "performed by"@en .
+
 
 ###  https://w3id.org/orda#produces
 :produces rdf:type owl:ObjectProperty ;
-    rdfs:domain :ProcessEvent ;
-    rdfs:range <http://xmlns.com/foaf/0.1/Document> ;
-    rdfs:comment "Links a ProcessEvent to the document it produces as output."@en ;
-    rdfs:label "produces"@en .
+          rdfs:domain prov:Activity ;
+          rdfs:range :ProcessDocument ;
+          rdfs:comment "Links a process activity to the :ProcessDocument it produces. Inverse of prov:wasGeneratedBy."@en ;
+          rdfs:label "produces"@en .
+
+
+###  https://w3id.org/orda#publishedIn
+:publishedIn rdf:type owl:ObjectProperty ;
+             rdfs:domain :ReasonedRequest ;
+             rdfs:range :DSADataAccessPortal ;
+             rdfs:comment "Overview published per DA Art. 11."@en ;
+             rdfs:label "published in"@en .
+
+
+###  https://w3id.org/orda#referencesDataCatalogue
+:referencesDataCatalogue rdf:type owl:ObjectProperty ;
+                         rdfs:domain [ rdf:type owl:Class ;
+                                       owl:unionOf ( :DataAccessApplication
+                                                     :DataAccessRequest
+                                                   )
+                                     ] ;
+                         rdfs:range :DSADataCatalogue ;
+                         rdfs:label "references data catalogue"@en .
+
+
+###  https://w3id.org/orda#requestedFrom
+:requestedFrom rdf:type owl:ObjectProperty ;
+               rdfs:domain :Art40_12_DataAccessRequest ;
+               rdfs:range [ rdf:type owl:Class ;
+                            owl:unionOf ( :VeryLargeOnlinePlatform
+                                          :VeryLargeOnlineSearchEngine
+                                        )
+                          ] ;
+               rdfs:label "requested from"@en .
+
+
+###  https://w3id.org/orda#requestsData
+:requestsData rdf:type owl:ObjectProperty ;
+              rdfs:domain [ rdf:type owl:Class ;
+                            owl:unionOf ( :DataAccessApplication
+                                          :DataAccessRequest
+                                        )
+                          ] ;
+              rdfs:range <http://www.w3.org/ns/dcat#Distribution> ;
+              rdfs:label "requests data"@en .
+
+
+###  https://w3id.org/orda#resultsIn
+:resultsIn rdf:type owl:ObjectProperty ;
+           rdfs:domain :Art40_4_DataAccessRequest ;
+           rdfs:range :ReasonedRequest ;
+           rdfs:label "results in"@en .
+
+
+###  https://w3id.org/orda#startInstantOf
+:startInstantOf rdf:type owl:ObjectProperty ;
+                rdfs:domain time:Instant ;
+                rdfs:range prov:Activity ;
+                rdfs:label "start instant of"@en .
+
 
 ###  https://w3id.org/orda#submittedBy
 :submittedBy rdf:type owl:ObjectProperty ;
-    rdfs:subPropertyOf :performedBy ;
-    rdfs:label "submitted by"@en .
+             rdfs:subPropertyOf :performedBy ;
+             rdfs:domain prov:Activity ;
+             rdfs:label "submitted by"@en .
+
+
+###  https://w3id.org/orda#submittedVia
+:submittedVia rdf:type owl:ObjectProperty ;
+              rdfs:domain :Art40_4_DataAccessRequest ;
+              rdfs:range :DSADataAccessPortal ;
+              rdfs:comment "Art. 40(4) applications must use the portal (DA Art. 3). Prefer linking to :DSADataAccessPortalInstance."@en ;
+              rdfs:label "submitted via"@en .
+
+
+###  https://w3id.org/orda#suggestsModality
+:suggestsModality rdf:type owl:ObjectProperty ;
+                  rdfs:domain [ rdf:type owl:Class ;
+                                owl:unionOf ( :DataAccessApplication
+                                              :DataAccessRequest
+                                            )
+                              ] ;
+                  rdfs:range :AccessModality ;
+                  rdfs:comment "Researcher-proposed access modality at application stage."@en ;
+                  rdfs:label "suggests modality"@en .
+
+
+###  https://w3id.org/orda#targets
+:targets rdf:type owl:ObjectProperty ;
+         rdfs:domain :DataAccessRequest ;
+         rdfs:range :DataProvider ;
+         rdfs:label "targets"@en .
+
+
+###  https://w3id.org/orda#usesAccessInterface
+:usesAccessInterface rdf:type owl:ObjectProperty ;
+                     rdfs:domain :AccessModality ;
+                     rdfs:range :AccessInterface ;
+                     rdfs:comment "A concrete technical interface (REST API, scraping, bulk download, etc.) realising an access modality."@en ;
+                     rdfs:label "uses access interface"@en .
+
+
+###  https://w3id.org/orda#usesDocument
+:usesDocument rdf:type owl:ObjectProperty ;
+              rdfs:subPropertyOf prov:used ;
+              rdfs:domain prov:Activity ;
+              rdfs:range :ProcessDocument ;
+              rdfs:comment "An activity used a prior :ProcessDocument as input. Subproperty of prov:used."@en ;
+              rdfs:label "uses document"@en .
 
 
 #################################################################
-#    Data Properties
+#    Data properties
 #################################################################
 
 ###  http://www.w3.org/2006/time#inXSDDateTimeStamp
 time:inXSDDateTimeStamp rdf:type owl:DatatypeProperty ;
-    rdfs:domain time:Instant ;
-    rdfs:range xsd:dateTimeStamp ;
-    rdfs:comment "The timestamp of a time:Instant, expressed as an XSD dateTimeStamp."@en ;
-    rdfs:label "in XSD dateTimeStamp"@en .
+                        rdfs:domain time:Instant ;
+                        rdfs:range xsd:dateTimeStamp ;
+                        rdfs:comment "The timestamp of a time:Instant, expressed as an XSD dateTimeStamp."@en ;
+                        rdfs:label "in XSD dateTimeStamp"@en .
+
 
 ###  http://www.w3.org/2006/vcard/ns#country-name
 vcard:country-name rdf:type owl:DatatypeProperty ;
-    rdfs:domain vcard:Address .
+                   rdfs:domain vcard:Address .
+
 
 ###  http://www.w3.org/2006/vcard/ns#locality
 vcard:locality rdf:type owl:DatatypeProperty ;
-    rdfs:domain vcard:Address .
+               rdfs:domain vcard:Address .
+
 
 ###  http://www.w3.org/2006/vcard/ns#region
 vcard:region rdf:type owl:DatatypeProperty ;
-    rdfs:domain vcard:Address .
+             rdfs:domain vcard:Address .
+
+
+###  http://www.w3.org/ns/csvw#datatype
+<http://www.w3.org/ns/csvw#datatype> rdf:type owl:DatatypeProperty ;
+                                     rdfs:domain <http://www.w3.org/ns/csvw#Column> ;
+                                     rdfs:range xsd:string ;
+                                     rdfs:isDefinedBy <http://www.w3.org/ns/csvw#> ;
+                                     rdfs:label "datatype"@en .
+
+
+###  http://www.w3.org/ns/csvw#name
+<http://www.w3.org/ns/csvw#name> rdf:type owl:DatatypeProperty ;
+                                 rdfs:domain <http://www.w3.org/ns/csvw#Column> ;
+                                 rdfs:range xsd:string ;
+                                 rdfs:isDefinedBy <http://www.w3.org/ns/csvw#> ;
+                                 rdfs:label "name"@en .
+
+
+###  http://www.w3.org/ns/csvw#required
+<http://www.w3.org/ns/csvw#required> rdf:type owl:DatatypeProperty ;
+                                     rdfs:domain <http://www.w3.org/ns/csvw#Column> ;
+                                     rdfs:range xsd:boolean ;
+                                     rdfs:isDefinedBy <http://www.w3.org/ns/csvw#> ;
+                                     rdfs:label "required"@en .
+
+
+###  http://www.w3.org/ns/csvw#titles
+<http://www.w3.org/ns/csvw#titles> rdf:type owl:DatatypeProperty ;
+                                   rdfs:domain <http://www.w3.org/ns/csvw#Column> ;
+                                   rdfs:range xsd:string ;
+                                   rdfs:isDefinedBy <http://www.w3.org/ns/csvw#> ;
+                                   rdfs:label "titles"@en .
+
+
+###  https://w3id.org/cerif2/Acknowledgement_Statement#statement
+<https://w3id.org/cerif2/Acknowledgement_Statement#statement> rdf:type owl:DatatypeProperty ;
+                                                              rdfs:range <https://w3id.org/cerif2/Multilingual_String> ;
+                                                              rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                              rdfs:label "statement"@en .
+
+
+###  https://w3id.org/cerif2/DOI_Identifier#doiId
+<https://w3id.org/cerif2/DOI_Identifier#doiId> rdf:type owl:DatatypeProperty ;
+                                               rdfs:domain <https://w3id.org/cerif2/DOI_Identifier> ;
+                                               rdfs:range <https://w3id.org/cerif2/DOI_ID> ;
+                                               rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                               rdfs:label "DOI"@en .
+
+
+###  https://w3id.org/cerif2/Date_Range#endDate
+<https://w3id.org/cerif2/Date_Range#endDate> rdf:type owl:DatatypeProperty ;
+                                             rdfs:domain <https://w3id.org/cerif2/Date_Range> ;
+                                             rdfs:range <https://w3id.org/cerif2/Date> ;
+                                             rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                             rdfs:label "end date"@en .
+
+
+###  https://w3id.org/cerif2/Date_Range#startDate
+<https://w3id.org/cerif2/Date_Range#startDate> rdf:type owl:DatatypeProperty ;
+                                               rdfs:domain <https://w3id.org/cerif2/Date_Range> ;
+                                               rdfs:range <https://w3id.org/cerif2/Date> ;
+                                               rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                               rdfs:label "start date"@en .
+
+
+###  https://w3id.org/cerif2/Document#title
+<https://w3id.org/cerif2/Document#title> rdf:type owl:DatatypeProperty ;
+                                         rdfs:domain <https://w3id.org/cerif2/Document> ;
+                                         rdfs:range <https://w3id.org/cerif2/Multilingual_String> ;
+                                         rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                         rdfs:label "title"@en .
+
+
+###  https://w3id.org/cerif2/Document_Publication#publicationDate
+<https://w3id.org/cerif2/Document_Publication#publicationDate> rdf:type owl:DatatypeProperty ;
+                                                               rdfs:domain <https://w3id.org/cerif2/Document_Publication> ;
+                                                               rdfs:range <https://w3id.org/cerif2/Date> ;
+                                                               rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                               rdfs:label "publication date"@en .
+
+
+###  https://w3id.org/cerif2/ORCID_Identifier#orcidId
+<https://w3id.org/cerif2/ORCID_Identifier#orcidId> rdf:type owl:DatatypeProperty ;
+                                                   rdfs:domain <https://w3id.org/cerif2/ORCID_Identifier> ;
+                                                   rdfs:range <https://w3id.org/cerif2/ORCID_iD> ;
+                                                   rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                   rdfs:label "ORCID iD"@en .
+
+
+###  https://w3id.org/cerif2/Project#name
+<https://w3id.org/cerif2/Project#name> rdf:type owl:DatatypeProperty ;
+                                       rdfs:domain :ResearchProject ;
+                                       rdfs:range <https://w3id.org/cerif2/Multilingual_String> ;
+                                       rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                       rdfs:label "name"@en .
+
+
+###  https://w3id.org/cerif2/ROR_Identifier#rorId
+<https://w3id.org/cerif2/ROR_Identifier#rorId> rdf:type owl:DatatypeProperty ;
+                                               rdfs:domain <https://w3id.org/cerif2/ROR_Identifier> ;
+                                               rdfs:range <https://w3id.org/cerif2/ROR_ID> ;
+                                               rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                               rdfs:label "ROR ID"@en .
+
+
+###  https://w3id.org/orda#amendmentGrounds
+:amendmentGrounds rdf:type owl:DatatypeProperty ;
+                  rdfs:domain :AmendmentRequest ;
+                  rdfs:range xsd:string ;
+                  rdfs:comment "Grounds per Art. 40(5) DSA: (a) no access to data, or (b) significant security vulnerabilities."@en ;
+                  rdfs:label "amendment grounds"@en .
+
 
 ###  https://w3id.org/orda#decisionDate
 :decisionDate rdf:type owl:DatatypeProperty ;
-    rdfs:domain :Decision ;
-    rdfs:range xsd:dateTime ;
-    rdfs:label "decision date"@en .
+              rdfs:domain :Decision ;
+              rdfs:range xsd:dateTime ;
+              rdfs:label "decision date"@en .
+
 
 ###  https://w3id.org/orda#decisionOutcome
 :decisionOutcome rdf:type owl:DatatypeProperty ;
-    rdfs:domain :Decision ;
-    rdfs:range xsd:string ;
-    rdfs:comment "The result of a Decision: accepted, rejected, conditional."@en ;
-    rdfs:label "decision outcome"@en .
+                 rdfs:domain :Decision ;
+                 rdfs:range xsd:string ;
+                 rdfs:comment "The result of a Decision: accepted, rejected, conditional."@en ;
+                 rdfs:label "decision outcome"@en .
 
-###  https://w3id.org/orda#documentStage
-:documentStage rdf:type owl:ObjectProperty ;
-    rdfs:domain <http://xmlns.com/foaf/0.1/Document> ;
-    rdfs:range :DocumentStage ;
-    rdfs:comment "Links a document to its controlled DocumentStage individual. Use together with dcterms:isVersionOf to link versions."@en ;
-    rdfs:label "document stage"@en .
+
+###  https://w3id.org/orda#hasPublicationCommitment
+:hasPublicationCommitment rdf:type owl:DatatypeProperty ;
+                          rdfs:domain :DataAccessApplication ;
+                          rdfs:range xsd:boolean ;
+                          rdfs:comment "Commitment to publish results publicly and free of charge (Art. 40(8)(g) DSA)."@en ;
+                          rdfs:label "has publication commitment"@en .
+
+
+###  https://w3id.org/orda#independenceDeclaration
+:independenceDeclaration rdf:type owl:DatatypeProperty ;
+                         rdfs:domain :DataAccessApplication ;
+                         rdfs:range xsd:string ;
+                         rdfs:comment "Declaration of independence from commercial interests (Art. 40(8)(b) DSA)."@en ;
+                         rdfs:label "independence declaration"@en .
+
 
 ###  https://w3id.org/orda#maxWorkingDays
 :maxWorkingDays rdf:type owl:DatatypeProperty ;
-    rdfs:domain time:Interval ;
-    rdfs:range xsd:integer ;
-    rdfs:comment "Statutory time limit for a process phase, expressed in working days."@en ;
-    rdfs:label "maximum working days"@en .
+                rdfs:domain time:Interval ;
+                rdfs:range xsd:integer ;
+                rdfs:comment "Statutory time limit for a process phase, expressed in working days."@en ;
+                rdfs:label "maximum working days"@en .
+
+
+###  https://w3id.org/orda#publicationTimeline
+:publicationTimeline rdf:type owl:DatatypeProperty ;
+                     rdfs:domain :DataAccessApplication ;
+                     rdfs:range xsd:string ;
+                     rdfs:comment "Planned timeline for making results publicly available."@en ;
+                     rdfs:label "publication timeline"@en .
+
+
+###  https://w3id.org/orda#requestDate
+:requestDate rdf:type owl:DatatypeProperty ;
+             rdfs:domain :DataAccessRequest ;
+             rdfs:range xsd:date ;
+             rdfs:label "request date"@en .
+
+
+###  https://w3id.org/orda#researcherEmail
+:researcherEmail rdf:type owl:DatatypeProperty ;
+                 rdfs:domain :Researcher ;
+                 rdfs:range xsd:string ;
+                 rdfs:label "researcher email"@en .
+
+
+###  https://w3id.org/orda#researcherName
+:researcherName rdf:type owl:DatatypeProperty ;
+                rdfs:domain :Researcher ;
+                rdfs:range xsd:string ;
+                rdfs:label "researcher name"@en .
 
 
 #################################################################
 #    Classes
 #################################################################
 
+###  http://data.europa.eu/eli/ontology#LegalResource
+<http://data.europa.eu/eli/ontology#LegalResource> rdf:type owl:Class ;
+                                                   rdfs:comment "A legal resource such as a law, regulation or treaty."@en ;
+                                                   rdfs:isDefinedBy <http://data.europa.eu/eli/ontology> ;
+                                                   rdfs:label "Legal Resource"@en .
+
+
+###  http://data.europa.eu/eli/ontology#LegalResourceSubdivision
+<http://data.europa.eu/eli/ontology#LegalResourceSubdivision> rdf:type owl:Class ;
+                                                              rdfs:subClassOf <http://data.europa.eu/eli/ontology#LegalResource> ;
+                                                              rdfs:isDefinedBy <http://data.europa.eu/eli/ontology> ;
+                                                              rdfs:label "Legal Resource Subdivision"@en .
+
+
+###  http://purl.org/dc/terms/MediaTypeOrExtent
+dcterms:MediaTypeOrExtent rdf:type owl:Class ;
+                          rdfs:isDefinedBy dcterms: ;
+                          rdfs:label "Media Type or Extent"@en .
+
+
 ###  http://www.w3.org/2006/time#Duration
 time:Duration rdf:type owl:Class .
+
 
 ###  http://www.w3.org/2006/time#Instant
 time:Instant rdf:type owl:Class .
 
+
 ###  http://www.w3.org/2006/time#Interval
 time:Interval rdf:type owl:Class .
+
 
 ###  http://www.w3.org/2006/vcard/ns#Address
 vcard:Address rdf:type owl:Class .
 
+
+###  http://www.w3.org/ns/csvw#Column
+<http://www.w3.org/ns/csvw#Column> rdf:type owl:Class ;
+                                   rdfs:isDefinedBy <http://www.w3.org/ns/csvw#> ;
+                                   rdfs:label "Column"@en .
+
+
+###  http://www.w3.org/ns/csvw#Schema
+<http://www.w3.org/ns/csvw#Schema> rdf:type owl:Class ;
+                                   rdfs:isDefinedBy <http://www.w3.org/ns/csvw#> ;
+                                   rdfs:label "Schema"@en .
+
+
+###  http://www.w3.org/ns/dcat#Catalog
+<http://www.w3.org/ns/dcat#Catalog> rdf:type owl:Class ;
+                                    rdfs:isDefinedBy <http://www.w3.org/ns/dcat#> ;
+                                    rdfs:label "Catalog"@en .
+
+
+###  http://www.w3.org/ns/dcat#Dataset
+<http://www.w3.org/ns/dcat#Dataset> rdf:type owl:Class .
+
+
+###  http://www.w3.org/ns/dcat#Distribution
+<http://www.w3.org/ns/dcat#Distribution> rdf:type owl:Class ;
+                                         rdfs:isDefinedBy <http://www.w3.org/ns/dcat#> ;
+                                         rdfs:label "Distribution"@en .
+
+
 ###  http://www.w3.org/ns/odrl/2/Request
 odrl:Request rdf:type owl:Class .
+
 
 ###  http://www.w3.org/ns/prov#Activity
 prov:Activity rdf:type owl:Class .
 
-###  https://w3id.org/orda#AccessGranted
-:AccessGranted rdf:type owl:Class ;
-    rdfs:subClassOf :Decision ;
-    owl:disjointWith :AccessRejected , :AccessRevoked ;
-    rdfs:label "Access Granted"@en .
 
-###  https://w3id.org/orda#AccessRejected
-:AccessRejected rdf:type owl:Class ;
-    rdfs:subClassOf :Decision ;
-    owl:disjointWith :AccessRevoked ;
-    rdfs:label "Access Rejected"@en .
+###  http://www.w3.org/ns/prov#Entity
+prov:Entity rdf:type owl:Class .
 
-###  https://w3id.org/orda#AccessRevoked
-:AccessRevoked rdf:type owl:Class ;
-    rdfs:subClassOf :Decision ;
-    rdfs:label "Access Revoked"@en .
+
+###  http://xmlns.com/foaf/0.1/Document
+<http://xmlns.com/foaf/0.1/Document> rdf:type owl:Class ;
+                                     rdfs:isDefinedBy <http://xmlns.com/foaf/0.1/> ;
+                                     rdfs:label "Document"@en .
+
+
+###  http://xmlns.com/foaf/0.1/Organization
+<http://xmlns.com/foaf/0.1/Organization> rdf:type owl:Class ;
+                                         rdfs:isDefinedBy <http://xmlns.com/foaf/0.1/> ;
+                                         rdfs:label "Organization"@en .
+
+
+###  https://w3id.org/cerif2/Agent
+<https://w3id.org/cerif2/Agent> rdf:type owl:Class ;
+                                rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                rdfs:label "Agent"@en .
+
+
+###  https://w3id.org/cerif2/Agent_Identifier
+<https://w3id.org/cerif2/Agent_Identifier> rdf:type owl:Class ;
+                                           rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                           rdfs:label "Agent Identifier"@en .
+
+
+###  https://w3id.org/cerif2/DOI_Identifier
+<https://w3id.org/cerif2/DOI_Identifier> rdf:type owl:Class ;
+                                         rdfs:subClassOf <https://w3id.org/cerif2/Resource_Identifier> ;
+                                         rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                         rdfs:label "DOI Identifier"@en .
+
+
+###  https://w3id.org/cerif2/Date_Range
+<https://w3id.org/cerif2/Date_Range> rdf:type owl:Class ;
+                                     rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                     rdfs:label "Date Range"@en .
+
+
+###  https://w3id.org/cerif2/Document
+<https://w3id.org/cerif2/Document> rdf:type owl:Class ;
+                                   rdfs:subClassOf <https://w3id.org/cerif2/Resource> ;
+                                   rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                   rdfs:label "Document"@en .
+
+
+###  https://w3id.org/cerif2/Document_Publication
+<https://w3id.org/cerif2/Document_Publication> rdf:type owl:Class ;
+                                               rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                               rdfs:label "Document Publication"@en .
+
+
+###  https://w3id.org/cerif2/Electronic_Address
+<https://w3id.org/cerif2/Electronic_Address> rdf:type owl:Class ;
+                                             rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                             rdfs:label "Electronic Address"@en .
+
+
+###  https://w3id.org/cerif2/Funding
+<https://w3id.org/cerif2/Funding> rdf:type owl:Class ;
+                                  rdfs:subClassOf <https://w3id.org/cerif2/Resource> ;
+                                  rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                  rdfs:label "Funding"@en .
+
+
+###  https://w3id.org/cerif2/Group_or_Organisation_Unit
+<https://w3id.org/cerif2/Group_or_Organisation_Unit> rdf:type owl:Class ;
+                                                     rdfs:subClassOf <https://w3id.org/cerif2/Agent> ;
+                                                     rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                     rdfs:label "Group or Organisation Unit"@en .
+
+
+###  https://w3id.org/cerif2/ORCID_Identifier
+<https://w3id.org/cerif2/ORCID_Identifier> rdf:type owl:Class ;
+                                           rdfs:subClassOf <https://w3id.org/cerif2/Agent_Identifier> ;
+                                           rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                           rdfs:label "ORCID Identifier"@en .
+
+
+###  https://w3id.org/cerif2/Organisation_Unit
+<https://w3id.org/cerif2/Organisation_Unit> rdf:type owl:Class ;
+                                            rdfs:subClassOf <https://w3id.org/cerif2/Group_or_Organisation_Unit> ;
+                                            rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                            rdfs:label "Organisation Unit"@en .
+
+
+###  https://w3id.org/cerif2/Person
+<https://w3id.org/cerif2/Person> rdf:type owl:Class ;
+                                 rdfs:subClassOf <https://w3id.org/cerif2/Agent> ;
+                                 rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                 rdfs:label "Person"@en .
+
+
+###  https://w3id.org/cerif2/Project
+<https://w3id.org/cerif2/Project> rdf:type owl:Class ;
+                                  rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                  rdfs:label "Project"@en ;
+                                  rdfs:seeAlso <https://github.com/EuroCRIS/CERIF-Core> .
+
+
+###  https://w3id.org/cerif2/ROR_Identifier
+<https://w3id.org/cerif2/ROR_Identifier> rdf:type owl:Class ;
+                                         rdfs:subClassOf <https://w3id.org/cerif2/Agent_Identifier> ;
+                                         rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                         rdfs:label "ROR Identifier"@en .
+
+
+###  https://w3id.org/cerif2/Resource
+<https://w3id.org/cerif2/Resource> rdf:type owl:Class ;
+                                   rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                   rdfs:label "Resource"@en .
+
+
+###  https://w3id.org/cerif2/Resource_Identifier
+<https://w3id.org/cerif2/Resource_Identifier> rdf:type owl:Class ;
+                                              rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                              rdfs:label "Resource Identifier"@en .
+
+
+###  https://w3id.org/dpv/legal/eu#DSA
+<https://w3id.org/dpv/legal/eu#DSA> rdf:type owl:Class .
+
+
+###  https://w3id.org/dpv/owl#LegalBasis
+<https://w3id.org/dpv/owl#LegalBasis> rdf:type owl:Class .
+
+
+###  https://w3id.org/orda#APIDistribution
+:APIDistribution rdf:type owl:Class ;
+                 rdfs:subClassOf <http://www.w3.org/ns/dcat#Distribution> ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty dcterms:hasFormat ;
+                                   owl:someValuesFrom <http://xmlns.com/foaf/0.1/Document>
+                                 ] ;
+                 rdfs:comment "A dcat:Distribution accessible via an API; :dct:hasFormat links to an OpenAPI or JSON Schema description (foaf:Document)."@en ;
+                 rdfs:label "API Distribution"@en .
+
+
+###  https://w3id.org/orda#AccessEndedEvent
+:AccessEndedEvent rdf:type owl:Class ;
+                  rdfs:subClassOf :TriggerActivity ;
+                  rdfs:comment "The data access period ends as specified in the reasoned request. Ends the Data Access Phase."@en ;
+                  rdfs:label "Access Ended"@en .
+
+
+###  https://w3id.org/orda#AccessGrantedDecision
+:AccessGrantedDecision rdf:type owl:Class ;
+                       rdfs:subClassOf :Decision ;
+                       owl:disjointWith :AccessGrantedEvent ,
+                                        :AccessRejectedDecision ,
+                                        :AccessRevokedDecision ;
+                       rdfs:comment "Outcome: DSC-E grants access. Distinct from :AccessGrantedEvent (phase trigger)."@en ;
+                       rdfs:label "Access Granted Decision"@en .
+
+
+###  https://w3id.org/orda#AccessGrantedEvent
+:AccessGrantedEvent rdf:type owl:Class ;
+                    rdfs:subClassOf :TriggerActivity ;
+                    owl:disjointWith :AccessRejectedDecision ,
+                                     :AccessRevokedDecision ;
+                    rdfs:comment "DSC-E grants data access. Triggers the Data Access Phase. Distinct from the :AccessGrantedDecision outcome class."@en ;
+                    rdfs:label "Access Granted (trigger)"@en .
+
+
+###  https://w3id.org/orda#AccessInterface
+:AccessInterface rdf:type owl:Class ;
+                 rdfs:subClassOf :TechnicalModality ;
+                 rdfs:comment "A concrete technical means of obtaining data, e.g. REST API, web scraping, bulk download, secure research environment."@en ;
+                 rdfs:label "Access Interface"@en .
+
+
+###  https://w3id.org/orda#AccessModality
+:AccessModality rdf:type owl:Class ;
+                rdfs:comment "Technical, legal or organisational arrangement for providing data (DA Art. 9)."@en ;
+                rdfs:label "Access Modality"@en .
+
+
+###  https://w3id.org/orda#AccessRejectedDecision
+:AccessRejectedDecision rdf:type owl:Class ;
+                        rdfs:subClassOf :Decision ;
+                        owl:disjointWith :AccessRevokedDecision ;
+                        rdfs:comment "Outcome: access is rejected."@en ;
+                        rdfs:label "Access Rejected Decision"@en .
+
+
+###  https://w3id.org/orda#AccessRevokedDecision
+:AccessRevokedDecision rdf:type owl:Class ;
+                       rdfs:subClassOf :Decision ;
+                       rdfs:comment "Outcome: access is revoked before the agreed end date."@en ;
+                       rdfs:label "Access Revoked Decision"@en .
+
+
+###  https://w3id.org/orda#AccessRevokedEvent
+:AccessRevokedEvent rdf:type owl:Class ;
+                    rdfs:subClassOf :TriggerActivity ;
+                    rdfs:comment "Access is revoked before the end of the agreed period. Ends the Data Access Phase."@en ;
+                    rdfs:label "Access Revoked"@en .
+
+
+###  https://w3id.org/orda#AdvertisingSystemsMitigation
+:AdvertisingSystemsMitigation rdf:type owl:Class ;
+                              rdfs:subClassOf :MitigationMeasureCategory ;
+                              rdfs:comment "Adapting their advertising systems and adopting targeted measures aimed at limiting or adjusting the presentation of advertisements in association with the service they provide."@en ;
+                              rdfs:label "Advertising systems mitigation"@en .
+
+
+###  https://w3id.org/orda#AlgorithmicSystemsMitigation
+:AlgorithmicSystemsMitigation rdf:type owl:Class ;
+                              rdfs:subClassOf :MitigationMeasureCategory ;
+                              rdfs:comment "Testing and adapting their algorithmic systems, including their recommender systems."@en ;
+                              rdfs:label "Algorithmic systems mitigation"@en .
+
 
 ###  https://w3id.org/orda#AmendmentPhase
 :AmendmentPhase rdf:type owl:Class ;
-    rdfs:subClassOf :AuthorisationPhase ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty time:after ;
-                      owl:someValuesFrom :VettingPhase ] ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty :isTriggeredBy ;
-                      owl:someValuesFrom :ProcessEvent ] ;
-    rdfs:comment "Data provider or researcher may submit amendment requests. Max. 15 days. Triggered by a ProcessEvent of type :ReasonedRequestIssued."@en ;
-    rdfs:label "Amendment Phase"@en ;
-    :hasLegalBasis "Art. 40(5) DSA"@en .
+                rdfs:subClassOf :AuthorisationPhase ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty time:after ;
+                                  owl:someValuesFrom :VettingPhase
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                  owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :isTriggeredBy ;
+                                  owl:someValuesFrom :ReasonedRequestIssued
+                                ] ;
+                rdfs:comment "Data provider or researcher may submit amendment requests. Max. 15 days. Triggered by a :ReasonedRequestIssued activity. Legal basis: Article 40, paragraph 5, of the DSA."@en ;
+                rdfs:label "Amendment Phase"@en .
+
 
 ###  https://w3id.org/orda#AmendmentRequest
 :AmendmentRequest rdf:type owl:Class ;
-    rdfs:subClassOf <http://xmlns.com/foaf/0.1/Document> ;
-    rdfs:comment "Submitted during the Amendment Phase by researcher or data provider."@en ;
-    rdfs:label "Amendment Request"@en .
+                  rdfs:subClassOf :ProcessDocument ;
+                  rdfs:comment "Submitted during the Amendment Phase by researcher or data provider."@en ;
+                  rdfs:label "Amendment Request"@en .
+
+
+###  https://w3id.org/orda#AmendmentRequestSubmitted
+:AmendmentRequestSubmitted rdf:type owl:Class ;
+                           rdfs:subClassOf :TriggerActivity ;
+                           rdfs:comment "Researcher or data provider submits an amendment request during the Amendment Phase."@en ;
+                           rdfs:label "Amendment Request Submitted"@en .
+
 
 ###  https://w3id.org/orda#ApplicantResearcher
 :ApplicantResearcher rdf:type owl:Class ;
-    rdfs:subClassOf :RequestingResearcher ;
-    rdfs:comment "A collaborating researcher that is part of the principal researcher's data access application."@en ;
-    rdfs:label "Applicant Researcher"@en .
+                     rdfs:subClassOf :RequestingResearcher ;
+                     rdfs:comment "A collaborating researcher that is part of the principal researcher's data access application."@en ;
+                     rdfs:label "Applicant Researcher"@en .
+
 
 ###  https://w3id.org/orda#ApplicationDraftingPhase
 :ApplicationDraftingPhase rdf:type owl:Class ;
-    rdfs:subClassOf time:Interval ;
-    rdfs:comment "Formulation and submission of the data access application by the Principal Researcher."@en ;
-    rdfs:label "Application Drafting Phase"@en .
+                          rdfs:subClassOf time:Interval ;
+                          rdfs:comment "Formulation and submission of the data access application by the Principal Researcher. Occurs in both Art. 40(4) and Art. 40(12) processes."@en ;
+                          rdfs:label "Application Drafting Phase"@en .
+
+
+###  https://w3id.org/orda#ApplicationSubmitted
+:ApplicationSubmitted rdf:type owl:Class ;
+                      rdfs:subClassOf :TriggerActivity ;
+                      rdfs:comment "The Principal Researcher submits the data access application. Triggers the Authorisation Phase."@en ;
+                      rdfs:label "Application Submitted"@en .
+
+
+###  https://w3id.org/orda#Art40_12_DataAccessProcess
+:Art40_12_DataAccessProcess rdf:type owl:Class ;
+                            rdfs:subClassOf :DataAccessProcess ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                              owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty :hasFormalRequest ;
+                                              owl:allValuesFrom :Art40_12_DataAccessRequest
+                                            ] ;
+                            rdfs:comment "Public-data access under Art. 40(12): submitted directly to the platform; the platform vets the request. Researchers cannot use the Art. 40(4) DSC/DA procedure; if dissatisfied they may file a :Complaint to the European Commission and relevant DSCs via :ComplaintFiling."@en ;
+                            rdfs:label "Art. 40(12) Data Access Process"@en .
+
+
+###  https://w3id.org/orda#Art40_12_DataAccessRequest
+:Art40_12_DataAccessRequest rdf:type owl:Class ;
+                            rdfs:subClassOf :DataAccessRequest ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                              owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                            ] ;
+                            rdfs:comment "Art. 40(12) DSA: public data access. The associated :ResearchProject contributes to the detection, identification and understanding of systemic risks in the Union pursuant to Article 34(1). Use :addressesSystemicRiskCategory for Art. 34(1) categories. Not governed by Delegated Regulation 2025/2050."@en ;
+                            rdfs:label "Art. 40(12) Data Access Request"@en .
+
+
+###  https://w3id.org/orda#Art40_4_DataAccessProcess
+:Art40_4_DataAccessProcess rdf:type owl:Class ;
+                           rdfs:subClassOf :DataAccessProcess ,
+                                           [ rdf:type owl:Restriction ;
+                                             owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                             owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                           ] ,
+                                           [ rdf:type owl:Restriction ;
+                                             owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                             owl:someValuesFrom :DataAccessDelegatedRegulation
+                                           ] ,
+                                           [ rdf:type owl:Restriction ;
+                                             owl:onProperty :hasFormalRequest ;
+                                             owl:allValuesFrom :Art40_4_DataAccessRequest
+                                           ] ;
+                           rdfs:comment "Non-public data access under Art. 40(4) and Delegated Regulation 2025/2050: DSC completeness check, vetting, reasoned request, amendments, mediation, and data access phases modelled in this ontology."@en ;
+                           rdfs:label "Art. 40(4) Data Access Process"@en ;
+                           rdfs:seeAlso <http://data.europa.eu/eli/reg_del/2025/2050/oj> .
+
+
+###  https://w3id.org/orda#Art40_4_DataAccessRequest
+:Art40_4_DataAccessRequest rdf:type owl:Class ;
+                           rdfs:subClassOf :DataAccessRequest ,
+                                           [ rdf:type owl:Restriction ;
+                                             owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                             owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                           ] ,
+                                           [ rdf:type owl:Restriction ;
+                                             owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                             owl:someValuesFrom :DataAccessDelegatedRegulation
+                                           ] ;
+                           rdfs:comment "Art. 40(4) DSA: non-public data via DSC. The associated :ResearchProject contributes to the detection, identification and understanding of systemic risks in the Union as set out pursuant to Article 34(1), and to the assessment of the adequacy, efficiency and impacts of risk mitigation measures pursuant to Article 35. Use :addressesSystemicRiskCategory and :assessesMitigationMeasures. Governed by Delegated Regulation 2025/2050."@en ;
+                           rdfs:label "Art. 40(4) Data Access Request"@en ;
+                           rdfs:seeAlso <http://data.europa.eu/eli/reg/2022/2065/oj> ,
+                                        <http://data.europa.eu/eli/reg_del/2025/2050/oj> .
+
 
 ###  https://w3id.org/orda#AuthorisationPhase
 :AuthorisationPhase rdf:type owl:Class ;
-    rdfs:subClassOf time:Interval ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty time:after ;
-                      owl:someValuesFrom :ApplicationDraftingPhase ] ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty :isTriggeredBy ;
-                      owl:someValuesFrom :ProcessEvent ] ;
-    rdfs:comment "Covers completeness check, vetting, reasoned request, amendments, and mediation. Triggered by a ProcessEvent of type :ApplicationSubmitted."@en ;
-    rdfs:label "Authorisation Phase"@en ;
-    :hasLegalBasis "Art. 40(4) DSA; DA"@en .
+                    rdfs:subClassOf time:Interval ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty time:after ;
+                                      owl:someValuesFrom :ApplicationDraftingPhase
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                      owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                      owl:someValuesFrom :DataAccessDelegatedRegulation
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :isTriggeredBy ;
+                                      owl:someValuesFrom :ApplicationSubmitted
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :occursInProcess ;
+                                      owl:someValuesFrom :Art40_4_DataAccessProcess
+                                    ] ;
+                    rdfs:comment "Covers completeness check, vetting, reasoned request, amendments, and mediation. Triggered by an :ApplicationSubmitted activity."@en ;
+                    rdfs:label "Authorisation Phase"@en .
+
+
+###  https://w3id.org/orda#AwarenessRaisingMitigation
+:AwarenessRaisingMitigation rdf:type owl:Class ;
+                            rdfs:subClassOf :MitigationMeasureCategory ;
+                            rdfs:comment "Taking awareness-raising measures and adapting their online interface in order to give recipients of the service more information."@en ;
+                            rdfs:label "Awareness-raising mitigation"@en .
+
+
+###  https://w3id.org/orda#CDSMDirective
+:CDSMDirective rdf:type owl:Class .
+
+
+###  https://w3id.org/orda#CSVDistribution
+:CSVDistribution rdf:type owl:Class ;
+                 rdfs:subClassOf <http://www.w3.org/ns/dcat#Distribution> ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty dcterms:hasFormat ;
+                                   owl:someValuesFrom <http://www.w3.org/ns/csvw#Schema>
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty dcterms:format ;
+                                   owl:hasValue <http://publications.europa.eu/resource/authority/file-type/CSV>
+                                 ] ;
+                 rdfs:comment "CSV distribution with csvw:Schema via dct:hasFormat."@en ;
+                 rdfs:label "CSV Distribution"@en ;
+                 rdfs:seeAlso <https://www.w3.org/ns/csvw> .
+
+
+###  https://w3id.org/orda#ChildProtectionMitigation
+:ChildProtectionMitigation rdf:type owl:Class ;
+                           rdfs:subClassOf :MitigationMeasureCategory ;
+                           rdfs:comment "Taking targeted measures to protect the rights of the child, including age verification and parental control tools, tools aimed at helping minors signal abuse or obtain support, as appropriate."@en ;
+                           rdfs:label "Child protection mitigation"@en .
+
+
+###  https://w3id.org/orda#CivicDiscourseRisk
+:CivicDiscourseRisk rdf:type owl:Class ;
+                    rdfs:subClassOf :SystemicRiskCategory ;
+                    rdfs:comment "Negative effects on civic discourse (Art. 34(1)(c))."@en ;
+                    rdfs:label "Civic Discourse Risk"@en .
+
 
 ###  https://w3id.org/orda#CommunicationEvent
 :CommunicationEvent rdf:type owl:Class ;
-    rdfs:subClassOf prov:Activity ;
-    rdfs:comment "An exchange between the platform and a researcher, modelled using schema:CommunicateAction semantics."@en ;
-    rdfs:label "Communication Event"@en .
+                    rdfs:subClassOf :ProcessActivity ;
+                    rdfs:comment "An exchange between the platform and a researcher, modelled as a :ProcessActivity with agents linked via :communicationBetween."@en ;
+                    rdfs:label "Communication Event"@en .
+
+
+###  https://w3id.org/orda#Complaint
+:Complaint rdf:type owl:Class ;
+           rdfs:subClassOf :ProcessDocument ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                             owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                           ] ;
+           rdfs:comment "A formal complaint filed with the European Commission and/or relevant DSCs when Art. 40(12) public-data access is unsatisfactory. Not part of the Art. 40(4) DA procedure."@en ;
+           rdfs:label "Complaint"@en .
+
+
+###  https://w3id.org/orda#ComplaintFiling
+:ComplaintFiling rdf:type owl:Class ;
+                 rdfs:subClassOf :TriggerActivity ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                   owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                 ] ;
+                 rdfs:comment "A researcher files a :Complaint with the European Commission and/or relevant DSCs under the Art. 40(12) process."@en ;
+                 rdfs:label "Complaint Filing"@en .
+
+
+###  https://w3id.org/orda#CompletenessCheckPassed
+:CompletenessCheckPassed rdf:type owl:Class ;
+                         rdfs:subClassOf :TriggerActivity ;
+                         rdfs:comment "DSC-M and DSC-E confirm the application is complete. Triggers the Vetting Phase."@en ;
+                         rdfs:label "Completeness Check Passed"@en .
+
 
 ###  https://w3id.org/orda#CompletenessCheckPhase
 :CompletenessCheckPhase rdf:type owl:Class ;
-    rdfs:subClassOf :AuthorisationPhase ;
-    rdfs:comment "DSC-M and DSC-E verify completeness of the application."@en ;
-    rdfs:label "Completeness Check Phase"@en .
+                        rdfs:subClassOf :AuthorisationPhase ;
+                        rdfs:comment "DSC-M and DSC-E verify completeness of the application. Art. 40(4) only."@en ;
+                        rdfs:label "Completeness Check Phase"@en .
+
+
+###  https://w3id.org/orda#ContentModerationMitigation
+:ContentModerationMitigation rdf:type owl:Class ;
+                             rdfs:subClassOf :MitigationMeasureCategory ;
+                             rdfs:comment "Adapting content moderation processes, including the speed and quality of processing notices related to specific types of illegal content and, where appropriate, the expeditious removal of, or the disabling of access to, the content notified, in particular in respect of illegal hate speech or cyber violence, as well as adapting any relevant decision-making processes and dedicated resources for content moderation."@en ;
+                             rdfs:label "Content moderation mitigation"@en .
+
+
+###  https://w3id.org/orda#DSADataAccessPortal
+:DSADataAccessPortal rdf:type owl:Class ;
+                     rdfs:comment "Centralised infrastructure for Art. 40(4) application submission, process management, and publication of reasoned-request overviews (DA Art. 3, 11). Operated by the European Commission; link instances with :operatedBy."@en ;
+                     rdfs:label "DSA Data Access Portal"@en ;
+                     rdfs:seeAlso <http://data.europa.eu/eli/reg_del/2025/2050/oj> .
+
+
+###  https://w3id.org/orda#DSADataCatalogue
+:DSADataCatalogue rdf:type owl:Class ;
+                  rdfs:subClassOf :DataCatalogue ;
+                  rdfs:comment "Platform data catalogue per DA Art. 6(4)."@en ;
+                  rdfs:label "DSA Data Catalogue"@en .
+
+
+###  https://w3id.org/orda#DSALegalProvision
+:DSALegalProvision rdf:type owl:Class ;
+                   rdfs:subClassOf <http://data.europa.eu/eli/ontology#LegalResourceSubdivision> ,
+                                   <https://w3id.org/dpv/owl#LegalBasis> ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty <http://data.europa.eu/eli/ontology#is_part_of> ;
+                                     owl:hasValue <https://w3id.org/dpv/legal/eu#DSA>
+                                   ] ;
+                   rdfs:comment "A specific article or paragraph of the DSA, modelled as an ELI subdivision of legal-eu:DSA and a dpv:LegalBasis."@en ;
+                   rdfs:label "DSA Legal Provision"@en .
+
 
 ###  https://w3id.org/orda#DataAccessApplication
 :DataAccessApplication rdf:type owl:Class ;
-    rdfs:subClassOf odrl:Request ,
-                    <http://xmlns.com/foaf/0.1/Document> ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty :submittedBy ;
-                      owl:someValuesFrom :PrincipalResearcher ] ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty :documentStage ;
-                      owl:allValuesFrom [ rdf:type owl:Class ;
-                                          owl:oneOf ( :StageDraft :StageSubmitted :StageAmended ) ] ] ;
-    rdfs:comment "The formal application submitted by the Principal Researcher to a DSC."@en ;
-    rdfs:label "Data Access Application"@en .
+                       rdfs:subClassOf odrl:Request ,
+                                       :ProcessDocument ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty :submittedBy ;
+                                         owl:someValuesFrom :PrincipalResearcher
+                                       ] ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty :documentStage ;
+                                         owl:allValuesFrom [ rdf:type owl:Class ;
+                                                             owl:oneOf ( :StageAmended
+                                                                         :StageDraft
+                                                                         :StageSubmitted
+                                                                       )
+                                                           ]
+                                       ] ;
+                       rdfs:comment "Formal application document. Carries application content (:independenceDeclaration, :hasPublicationCommitment, :publicationTimeline), data requests (:requestsData), catalogue references (:referencesDataCatalogue), and proposed modalities (:suggestsModality)."@en ;
+                       rdfs:label "Data Access Application"@en .
+
+
+###  https://w3id.org/orda#DataAccessDelegatedRegulation
+:DataAccessDelegatedRegulation rdf:type owl:Class .
+
 
 ###  https://w3id.org/orda#DataAccessPhase
 :DataAccessPhase rdf:type owl:Class ;
-    rdfs:subClassOf time:Interval ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty time:after ;
-                      owl:someValuesFrom :AuthorisationPhase ] ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty :isTriggeredBy ;
-                      owl:someValuesFrom :ProcessEvent ] ;
-    rdfs:comment "Period during which access is granted, exercised, ended, or revoked. Triggered by a ProcessEvent of type :AccessGrantedEvent."@en ;
-    rdfs:label "Data Access Phase"@en .
+                 rdfs:subClassOf time:Interval ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty time:after ;
+                                   owl:someValuesFrom :AuthorisationPhase
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :isTriggeredBy ;
+                                   owl:someValuesFrom :AccessGrantedEvent
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :occursInProcess ;
+                                   owl:someValuesFrom :Art40_4_DataAccessProcess
+                                 ] ;
+                 rdfs:comment "Period during which access is granted, exercised, ended, or revoked. Triggered by an :AccessGrantedEvent trigger activity."@en ;
+                 rdfs:label "Data Access Phase"@en .
+
+
+###  https://w3id.org/orda#DataAccessProcess
+:DataAccessProcess rdf:type owl:Class ;
+                   rdfs:comment "A procedural workflow for obtaining platform data under a specific Art. 40 legal basis. Use :Art40_4_DataAccessProcess or :Art40_12_DataAccessProcess; link phases via :hasPhase, the formal request via :hasFormalRequest, and the parent :ResearchProject via :hasDataAccessProcess."@en ;
+                   rdfs:label "Data Access Process"@en .
+
+
+###  https://w3id.org/orda#DataAccessRequest
+:DataAccessRequest rdf:type owl:Class ;
+                   rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                     owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                     owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                   ] ;
+                   rdfs:comment "A formal request by a researcher to access data from a VLOP or VLOSE under DSA Art. 40. Superclass for Art. 40(4) and Art. 40(12) requests."@en ;
+                   rdfs:label "Data Access Request"@en .
+
+
+###  https://w3id.org/orda#DataCatalogue
+:DataCatalogue rdf:type owl:Class ;
+               rdfs:subClassOf <http://www.w3.org/ns/dcat#Catalog> ;
+               rdfs:label "Data Catalogue"@en .
+
+
+###  https://w3id.org/orda#DataManagementPlan
+:DataManagementPlan rdf:type owl:Class ;
+                    rdfs:subClassOf <http://xmlns.com/foaf/0.1/Document> ;
+                    rdfs:comment "Plan governing storage, processing and protection of accessed data."@en ;
+                    rdfs:label "Data Management Plan"@en .
+
+
+###  https://w3id.org/orda#DataProtectionAuthority
+:DataProtectionAuthority rdf:type owl:Class ;
+                         rdfs:subClassOf :RegulatoryAuthority ;
+                         owl:disjointWith :ResearchOrganisation ;
+                         rdfs:comment "Independent supervisory authority under Regulation (EU) 2016/679 (GDPR) or Directive (EU) 2016/680 (LED). Distinct from :DigitalServicesCoordinator."@en ;
+                         rdfs:label "Data Protection Authority"@en ;
+                         rdfs:seeAlso <http://data.europa.eu/eli/reg/2016/679/oj> .
+
+
+###  https://w3id.org/orda#DataProtectionConsultation
+:DataProtectionConsultation rdf:type owl:Class ;
+                            rdfs:subClassOf :ProcessActivity ;
+                            rdfs:comment "Consultation with a data protection authority on GDPR/LED aspects of an Art. 40(4) request."@en ;
+                            rdfs:label "Data Protection Consultation"@en .
+
 
 ###  https://w3id.org/orda#DataProvider
 :DataProvider rdf:type owl:Class ;
-    rdfs:subClassOf <http://xmlns.com/foaf/0.1/Organization> ;
-    rdfs:comment "The organisation holding the data subject to the access request."@en ;
-    rdfs:label "Data Provider"@en .
+              rdfs:subClassOf <http://xmlns.com/foaf/0.1/Organization> ;
+              owl:disjointWith :ResearchOrganisation ;
+              rdfs:comment "The organisation holding the data subject to the access request."@en ;
+              rdfs:label "Data Provider"@en .
+
 
 ###  https://w3id.org/orda#Decision
 :Decision rdf:type owl:Class ;
-    rdfs:subClassOf prov:Activity ;
-    rdfs:comment "A formal decision taken by an authorised agent within a process phase. Modelled separately from documents to capture provenance, conditions, and revisability."@en ;
-    rdfs:label "Decision"@en .
+          rdfs:subClassOf :ProcessActivity ;
+          rdfs:comment "A formal decision taken by an authorised agent within a process phase. Modelled separately from documents to capture provenance, conditions, and revisability."@en ;
+          rdfs:label "Decision"@en .
+
 
 ###  https://w3id.org/orda#DigitalServicesCoordinator
 :DigitalServicesCoordinator rdf:type owl:Class ;
-    rdfs:subClassOf <http://xmlns.com/foaf/0.1/Organization> ;
-    rdfs:comment "A Digital Services Coordinator as set out in Art. 49(2) DSA."@en ;
-    rdfs:label "Digital Services Coordinator"@en ;
-    :hasLegalBasis "Art. 49(2) DSA"@en .
+                            rdfs:subClassOf :RegulatoryAuthority ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                              owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                            ] ;
+                            owl:disjointWith :ResearchOrganisation ;
+                            rdfs:comment "A Digital Services Coordinator as set out in Art. 49(2) DSA."@en ;
+                            rdfs:label "Digital Services Coordinator"@en .
+
 
 ###  https://w3id.org/orda#DigitalServicesCoordinatorOfEstablishment
 :DigitalServicesCoordinatorOfEstablishment rdf:type owl:Class ;
-    rdfs:subClassOf :DigitalServicesCoordinator ;
-    rdfs:comment "DSC-E: primary vetting body responsible for formulating the reasoned request."@en ;
-    rdfs:label "DSC of Establishment"@en .
+                                           rdfs:subClassOf :DigitalServicesCoordinator ;
+                                           rdfs:comment "DSC-E: primary vetting body responsible for formulating the reasoned request."@en ;
+                                           rdfs:label "DSC of Establishment"@en .
+
 
 ###  https://w3id.org/orda#DigitalServicesCoordinatorOfMemberState
 :DigitalServicesCoordinatorOfMemberState rdf:type owl:Class ;
-    rdfs:subClassOf :DigitalServicesCoordinator ;
-    rdfs:comment "DSC-M: performs the completeness check on the application."@en ;
-    rdfs:label "DSC of Member State"@en .
+                                         rdfs:subClassOf :DigitalServicesCoordinator ;
+                                         rdfs:comment "DSC-M: performs the completeness check on the application."@en ;
+                                         rdfs:label "DSC of Member State"@en .
+
 
 ###  https://w3id.org/orda#DocumentStage
 :DocumentStage rdf:type owl:Class ;
-    rdfs:comment "A controlled vocabulary class for typing the procedural stage of a document. Instances are named individuals. Not all stages are valid for all document types — see allValuesFrom restrictions on each document class."@en ;
-    rdfs:label "Document Stage"@en .
+               rdfs:comment "A controlled vocabulary class for typing the procedural stage of a document. Instances are named individuals. Not all stages are valid for all document types — see allValuesFrom restrictions on each document class."@en ;
+               rdfs:label "Document Stage"@en .
 
-###  https://w3id.org/orda#EventType
-:EventType rdf:type owl:Class ;
-    rdfs:comment "A controlled vocabulary class for typing ProcessEvent individuals. Instances are named individuals representing key moments in the data access process."@en ;
-    rdfs:label "Event Type"@en .
+
+###  https://w3id.org/orda#EUDelegatedRegulation
+:EUDelegatedRegulation rdf:type owl:Class ;
+                       rdfs:subClassOf :EURegulation ;
+                       rdfs:comment "Commission delegated regulations supplementing a parent EU regulation (typically linked with eli:based_on)."@en ;
+                       rdfs:label "EU Delegated Regulation"@en .
+
+
+###  https://w3id.org/orda#EUDirective
+:EUDirective rdf:type owl:Class ;
+             rdfs:subClassOf <http://data.europa.eu/eli/ontology#LegalResource> ,
+                             <https://w3id.org/dpv/owl#LegalBasis> ;
+             rdfs:comment "Grouping class for EU directives represented as eli:LegalResource individuals."@en ;
+             rdfs:label "EU Directive"@en .
+
+
+###  https://w3id.org/orda#EURegulation
+:EURegulation rdf:type owl:Class ;
+              rdfs:subClassOf <http://data.europa.eu/eli/ontology#LegalResource> ,
+                              <https://w3id.org/dpv/owl#LegalBasis> ;
+              rdfs:comment "Grouping class for EU regulations represented as eli:LegalResource individuals. Specific instrument kind uses eli:type_document with EU Publications Office resource-type concepts."@en ;
+              rdfs:label "EU Regulation"@en .
+
+
+###  https://w3id.org/orda#ElectoralProcessesRisk
+:ElectoralProcessesRisk rdf:type owl:Class ;
+                        rdfs:subClassOf :SystemicRiskCategory ;
+                        rdfs:comment "Negative effects on electoral processes (Art. 34(1)(c))."@en ;
+                        rdfs:label "Electoral Processes Risk"@en .
+
+
+###  https://w3id.org/orda#ExpertConsultation
+:ExpertConsultation rdf:type owl:Class ;
+                    rdfs:subClassOf :ProcessActivity ;
+                    rdfs:comment "Optional consultation with independent experts during assessment of an Art. 40(4) application (DA Art. 14)."@en ;
+                    rdfs:label "Expert Consultation"@en .
+
+
+###  https://w3id.org/orda#FundamentalRightsRisk
+:FundamentalRightsRisk rdf:type owl:Class ;
+                       rdfs:subClassOf :SystemicRiskCategory ;
+                       rdfs:comment "Negative effects on the exercise of fundamental rights (Art. 34(1)(b))."@en ;
+                       rdfs:label "Fundamental Rights Risk"@en .
+
+
+###  https://w3id.org/orda#GenderBasedViolenceRisk
+:GenderBasedViolenceRisk rdf:type owl:Class ;
+                         rdfs:subClassOf :SystemicRiskCategory ;
+                         rdfs:comment "Gender-based violence (Art. 34(1)(d))."@en ;
+                         rdfs:label "Gender-based Violence Risk"@en .
+
+
+###  https://w3id.org/orda#IllegalContentRisk
+:IllegalContentRisk rdf:type owl:Class ;
+                    rdfs:subClassOf :SystemicRiskCategory ;
+                    rdfs:comment "Dissemination of illegal content (Art. 34(1)(a))."@en ;
+                    rdfs:label "Illegal Content Risk"@en .
+
+
+###  https://w3id.org/orda#InternalProcessesMitigation
+:InternalProcessesMitigation rdf:type owl:Class ;
+                             rdfs:subClassOf :MitigationMeasureCategory ;
+                             rdfs:comment "Reinforcing the internal processes, resources, testing, documentation, or supervision of any of their activities in particular as regards detection of systemic risk."@en ;
+                             rdfs:label "Internal processes mitigation"@en .
+
+
+###  https://w3id.org/orda#LegalModality
+:LegalModality rdf:type owl:Class ;
+               rdfs:subClassOf :AccessModality ;
+               rdfs:label "Legal Modality"@en .
+
+
+###  https://w3id.org/orda#MediationConcluded
+:MediationConcluded rdf:type owl:Class ;
+                    rdfs:subClassOf :TriggerActivity ;
+                    rdfs:comment "The mediator issues the result. Ends the Mediation Phase."@en ;
+                    rdfs:label "Mediation Concluded"@en .
+
 
 ###  https://w3id.org/orda#MediationPhase
 :MediationPhase rdf:type owl:Class ;
-    rdfs:subClassOf :AuthorisationPhase ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty time:after ;
-                      owl:someValuesFrom :AmendmentPhase ] ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty :isTriggeredBy ;
-                      owl:someValuesFrom :ProcessEvent ] ;
-    rdfs:comment "Mediation requested within max. 5 working days; conducted within max. 40 working days. Triggered by a ProcessEvent of type :MediationRequested."@en ;
-    rdfs:label "Mediation Phase"@en ;
-    :hasLegalBasis "Art. 13(1) DA"@en .
+                rdfs:subClassOf :AuthorisationPhase ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty time:after ;
+                                  owl:someValuesFrom :AmendmentPhase
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                  owl:someValuesFrom :DataAccessDelegatedRegulation
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :isTriggeredBy ;
+                                  owl:someValuesFrom :MediationRequested
+                                ] ;
+                rdfs:comment "Mediation requested within max. 5 working days; conducted within max. 40 working days. Triggered by a :MediationRequested activity."@en ;
+                rdfs:label "Mediation Phase"@en .
+
 
 ###  https://w3id.org/orda#MediationRequest
 :MediationRequest rdf:type owl:Class ;
-    rdfs:subClassOf <http://xmlns.com/foaf/0.1/Document> ;
-    rdfs:comment "Filed within max. 5 working days of triggering event."@en ;
-    rdfs:label "Request for Mediation"@en ;
-    :hasLegalBasis "Art. 13(1) DA"@en .
+                  rdfs:subClassOf :ProcessDocument ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                    owl:someValuesFrom :DataAccessDelegatedRegulation
+                                  ] ;
+                  rdfs:comment "Filed within max. 5 working days of triggering event."@en ;
+                  rdfs:label "Request for Mediation"@en .
+
+
+###  https://w3id.org/orda#MediationRequested
+:MediationRequested rdf:type owl:Class ;
+                    rdfs:subClassOf :TriggerActivity ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                      owl:someValuesFrom :DataAccessDelegatedRegulation
+                                    ] ;
+                    rdfs:comment "A party requests mediation within max. 5 working days. Triggers the Mediation Phase."@en ;
+                    rdfs:label "Mediation Requested"@en .
+
 
 ###  https://w3id.org/orda#Mediator
 :Mediator rdf:type owl:Class ;
-    rdfs:subClassOf <http://xmlns.com/foaf/0.1/Agent> ;
-    rdfs:comment "An independent agent conducting mediation between DSC-E and the data provider."@en ;
-    rdfs:label "Mediator"@en .
+          rdfs:subClassOf <http://xmlns.com/foaf/0.1/Agent> ;
+          rdfs:comment "An independent agent conducting mediation between DSC-E and the data provider."@en ;
+          rdfs:label "Mediator"@en .
+
+
+###  https://w3id.org/orda#MethodologicalReview
+:MethodologicalReview rdf:type owl:Class ;
+                      rdfs:subClassOf :ExpertConsultation ;
+                      rdfs:comment "Review of research methodology to ensure requested data is necessary and proportionate to stated objectives."@en ;
+                      rdfs:label "Methodological Review"@en .
+
+
+###  https://w3id.org/orda#MitigationMeasureCategory
+:MitigationMeasureCategory rdf:type owl:Class ;
+                           rdfs:comment "Flat taxonomy of risk mitigation measure types under DSA Article 35. In ABox data, use named individuals (e.g. :ServiceDesignMitigationCategory) with :assessesMitigationMeasureCategory; enforced by ORDA.shacl.ttl."@en ;
+                           rdfs:label "Mitigation Measure Category"@en ;
+                           rdfs:seeAlso <http://data.europa.eu/eli/reg/2022/2065/oj> .
+
+
+###  https://w3id.org/orda#NationalDataProtectionAuthority
+:NationalDataProtectionAuthority rdf:type owl:Class ;
+                                 rdfs:subClassOf :DataProtectionAuthority ;
+                                 rdfs:comment "A member-state data protection authority (GDPR Art. 51)."@en ;
+                                 rdfs:label "National Data Protection Authority"@en .
+
+
+###  https://w3id.org/orda#OrganisationalModality
+:OrganisationalModality rdf:type owl:Class ;
+                        rdfs:subClassOf :AccessModality ;
+                        rdfs:label "Organisational Modality"@en .
+
+
+###  https://w3id.org/orda#PhysicalMentalWellbeingRisk
+:PhysicalMentalWellbeingRisk rdf:type owl:Class ;
+                             rdfs:subClassOf :SystemicRiskCategory ;
+                             rdfs:comment "Serious negative consequences to a person's physical and mental well-being (Art. 34(1)(d))."@en ;
+                             rdfs:label "Physical and Mental Well-being Risk"@en .
+
+
+###  https://w3id.org/orda#PlatformVettingPhase
+:PlatformVettingPhase rdf:type owl:Class ;
+                      rdfs:subClassOf time:Interval ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                        owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                      ] ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty :occursInProcess ;
+                                        owl:someValuesFrom :Art40_12_DataAccessProcess
+                                      ] ;
+                      rdfs:comment "Period in which the VLOP or VLOSE assesses an Art. 40(12) public-data request. No DSC vetting or reasoned request under the Delegated Act."@en ;
+                      rdfs:label "Platform Vetting Phase"@en .
+
 
 ###  https://w3id.org/orda#PrincipalResearcher
 :PrincipalResearcher rdf:type owl:Class ;
-    rdfs:subClassOf :RequestingResearcher ;
-    rdfs:comment "The lead researcher responsible for submitting and managing the data access application."@en ;
-    rdfs:label "Principal Researcher"@en .
+                     rdfs:subClassOf :RequestingResearcher ;
+                     rdfs:comment "The lead researcher responsible for submitting and managing the data access application."@en ;
+                     rdfs:label "Principal Researcher"@en .
 
-###  https://w3id.org/orda#ProcessEvent
-:ProcessEvent rdf:type owl:Class ;
-    rdfs:subClassOf time:Instant ;
-    rdfs:comment "A key instantaneous moment within the data access process, typed by a controlled EventType individual. Carries a timestamp via time:inXSDDateTimeStamp and is linked to the agent who performed it via :performedBy."@en ;
-    rdfs:label "Process Event"@en .
+
+###  https://w3id.org/orda#ProcessActivity
+:ProcessActivity rdf:type owl:Class ;
+                 rdfs:subClassOf prov:Activity ;
+                 rdfs:comment "Any action in the data access process, including phase triggers, decisions, consultations, and communications."@en ;
+                 rdfs:label "Process Activity"@en .
+
+
+###  https://w3id.org/orda#ProcessDocument
+:ProcessDocument rdf:type owl:Class ;
+                 rdfs:subClassOf prov:Entity ,
+                                 <http://xmlns.com/foaf/0.1/Document> ;
+                 rdfs:comment "A document in the DSA data access procedure (applications, reasoned requests, amendments). Distinct from cerif:Document research outputs; use prov:wasRevisionOf for version chains."@en ;
+                 rdfs:label "Process Document"@en .
+
+
+###  https://w3id.org/orda#ProviderCooperationMitigation
+:ProviderCooperationMitigation rdf:type owl:Class ;
+                               rdfs:subClassOf :MitigationMeasureCategory ;
+                               rdfs:comment "Initiating or adjusting cooperation with other providers of online platforms or of online search engines through the codes of conduct and the crisis protocols referred to in Articles 45 and 48 respectively."@en ;
+                               rdfs:label "Provider cooperation mitigation"@en .
+
+
+###  https://w3id.org/orda#PublicHealthRisk
+:PublicHealthRisk rdf:type owl:Class ;
+                  rdfs:subClassOf :SystemicRiskCategory ;
+                  rdfs:comment "Public health (Art. 34(1)(d))."@en ;
+                  rdfs:label "Public Health Risk"@en .
+
+
+###  https://w3id.org/orda#PublicSecurityRisk
+:PublicSecurityRisk rdf:type owl:Class ;
+                    rdfs:subClassOf :SystemicRiskCategory ;
+                    rdfs:comment "Negative effects on public security (Art. 34(1)(c))."@en ;
+                    rdfs:label "Public Security Risk"@en .
+
 
 ###  https://w3id.org/orda#ReasonedRequest
 :ReasonedRequest rdf:type owl:Class ;
-    rdfs:subClassOf <http://xmlns.com/foaf/0.1/Document> ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty :issuedBy ;
-                      owl:someValuesFrom :DigitalServicesCoordinatorOfEstablishment ] ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty :documentStage ;
-                      owl:allValuesFrom [ rdf:type owl:Class ;
-                                          owl:oneOf ( :StageInitial :StageAmended :StageMediated ) ] ] ;
-    rdfs:comment "Issued by DSC-E following vetting. Use :documentStage to distinguish initial, amended, and mediated versions. Use dcterms:isVersionOf to link versions to each other."@en ;
-    rdfs:label "Reasoned Request"@en ;
-    :hasLegalBasis "Art. 40(4) DSA; Art. 7(2) DA"@en .
+                 rdfs:subClassOf :ProcessDocument ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                   owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                   owl:someValuesFrom :DataAccessDelegatedRegulation
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :formulatedBy ;
+                                   owl:someValuesFrom :DigitalServicesCoordinatorOfEstablishment
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :documentStage ;
+                                   owl:allValuesFrom [ rdf:type owl:Class ;
+                                                       owl:oneOf ( :StageAmended
+                                                                   :StageInitial
+                                                                   :StageMediated
+                                                                 )
+                                                     ]
+                                 ] ;
+                 rdfs:comment "Issued by DSC-E following vetting. Use :documentStage for procedural status and prov:wasRevisionOf to link amended or mediated versions."@en ;
+                 rdfs:label "Reasoned Request"@en ;
+                 rdfs:seeAlso <http://data.europa.eu/eli/reg_del/2025/2050/oj> .
+
+
+###  https://w3id.org/orda#ReasonedRequestIssued
+:ReasonedRequestIssued rdf:type owl:Class ;
+                       rdfs:subClassOf :TriggerActivity ;
+                       rdfs:comment "DSC-E issues the initial reasoned request. Triggers the Amendment Phase."@en ;
+                       rdfs:label "Reasoned Request Issued"@en .
+
+
+###  https://w3id.org/orda#RegulatoryAuthority
+:RegulatoryAuthority rdf:type owl:Class ;
+                     rdfs:subClassOf <http://xmlns.com/foaf/0.1/Organization> ;
+                     rdfs:comment "Public authority with supervisory or coordination functions relevant to DSA Art. 40 (DSCs, data protection authorities, European Commission)."@en ;
+                     rdfs:label "Regulatory Authority"@en .
+
 
 ###  https://w3id.org/orda#RequestingResearcher
 :RequestingResearcher rdf:type owl:Class ;
-    rdfs:subClassOf :Researcher ;
-    rdfs:comment "A researcher who has initiated or is party to a data access request."@en ;
-    rdfs:label "Requesting Researcher"@en .
+                      rdfs:subClassOf :Researcher ;
+                      rdfs:comment "A researcher who has initiated or is party to a data access request."@en ;
+                      rdfs:label "Requesting Researcher"@en .
+
+
+###  https://w3id.org/orda#ResearchActivity
+:ResearchActivity rdf:type owl:Class ;
+                  rdfs:comment "Actions taken with accessed data (analysis, modelling, comparison, etc.)."@en ;
+                  rdfs:label "Research Activity"@en .
+
+
+###  https://w3id.org/orda#ResearchDataOutput
+:ResearchDataOutput rdf:type owl:Class ;
+                    rdfs:subClassOf <http://www.w3.org/ns/dcat#Dataset> ,
+                                    <https://w3id.org/cerif2/Resource> ,
+                                    :ResearchOutput ;
+                    rdfs:comment "A dataset released as a project output. Use cerifres:hasIdentifier (e.g. DOI) and DCAT properties for distribution details."@en ;
+                    rdfs:label "Research Data Output"@en .
+
+
+###  https://w3id.org/orda#ResearchMethod
+:ResearchMethod rdf:type owl:Class ;
+                rdfs:label "Research Method"@en .
+
+
+###  https://w3id.org/orda#ResearchOrganisation
+:ResearchOrganisation rdf:type owl:Class ;
+                      rdfs:subClassOf <http://xmlns.com/foaf/0.1/Organization> ,
+                                      <https://w3id.org/cerif2/Organisation_Unit> ,
+                                      [ rdf:type owl:Restriction ;
+                                        owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                        owl:someValuesFrom :CDSMDirective
+                                      ] ;
+                      rdfs:comment "A research organisation as defined in Article 2, point (1), of Directive (EU) 2019/790 (Copyright in the Digital Single Market). Researchers access platform data in an institutional capacity; distinct from :DataProvider (VLOP/VLOSE), :DigitalServicesCoordinator, and :DataProtectionAuthority."@en ;
+                      rdfs:label "Research Organisation"@en ;
+                      rdfs:seeAlso <http://data.europa.eu/eli/dir/2019/790/oj> .
+
+
+###  https://w3id.org/orda#ResearchOutput
+:ResearchOutput rdf:type owl:Class ;
+                rdfs:comment "A research result produced by a :ResearchProject. Superclass for CERIF documents and dataset resources."@en ;
+                rdfs:label "Research Output"@en .
+
+
+###  https://w3id.org/orda#ResearchProject
+:ResearchProject rdf:type owl:Class ;
+                 rdfs:subClassOf <https://w3id.org/cerif2/Project> ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                   owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :hasDataProvider ;
+                                   owl:someValuesFrom :DataProvider
+                                 ] ;
+                 rdfs:comment "A CERIF research project with contributors (:hasContribution), funding (cerifprj:fundedBy), schedule (:hasDateRange), outputs (:hasResearchOutput), name (cerifprj:name), description (dcterms:description), data providers, methodology, and Art. 34/35 categories. May have multiple :hasDataAccessProcess values."@en ;
+                 rdfs:label "Research Project"@en .
+
+
+###  https://w3id.org/orda#ResearchPublication
+:ResearchPublication rdf:type owl:Class ;
+                     rdfs:subClassOf <https://w3id.org/cerif2/Document> ,
+                                     :ResearchOutput ;
+                     rdfs:comment "A scholarly publication (article, preprint, book chapter) modelled as cerif:Document with optional cerif:Document_Publication metadata."@en ;
+                     rdfs:label "Research Publication"@en .
+
+
+###  https://w3id.org/orda#ResearchQuestion
+:ResearchQuestion rdf:type owl:Class ;
+                  rdfs:label "Research Question"@en .
+
+
+###  https://w3id.org/orda#ResearchReport
+:ResearchReport rdf:type owl:Class ;
+                rdfs:subClassOf <https://w3id.org/cerif2/Document> ,
+                                :ResearchOutput ;
+                rdfs:comment "A technical or project report released as a CERIF document."@en ;
+                rdfs:label "Research Report"@en .
+
+
+###  https://w3id.org/orda#ResearchTopic
+:ResearchTopic rdf:type owl:Class ;
+               rdfs:label "Research Topic"@en .
+
 
 ###  https://w3id.org/orda#Researcher
 :Researcher rdf:type owl:Class ;
-    rdfs:subClassOf <http://xmlns.com/foaf/0.1/Person> ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty vcard:hasAddress ;
-                      owl:someValuesFrom vcard:Address ] ;
-    rdfs:label "Researcher"@en .
+            rdfs:subClassOf <http://xmlns.com/foaf/0.1/Person> ,
+                            <https://w3id.org/cerif2/Person> ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty vcard:hasAddress ;
+                              owl:someValuesFrom vcard:Address
+                            ] ;
+            rdfs:label "Researcher"@en ;
+            rdfs:seeAlso <https://w3id.org/cerif2/Person> .
+
+
+###  https://w3id.org/orda#RiskToMinors
+:RiskToMinors rdf:type owl:Class ;
+              rdfs:subClassOf :SystemicRiskCategory ;
+              rdfs:comment "Protection of minors (Art. 34(1)(d))."@en ;
+              rdfs:label "Risk to Minors"@en .
+
+
+###  https://w3id.org/orda#ServiceDesignMitigation
+:ServiceDesignMitigation rdf:type owl:Class ;
+                         rdfs:subClassOf :MitigationMeasureCategory ;
+                         rdfs:comment "Adapting the design, features or functioning of their services, including their online interfaces."@en ;
+                         rdfs:label "Service design mitigation"@en .
+
+
+###  https://w3id.org/orda#SyntheticMediaMarkingMitigation
+:SyntheticMediaMarkingMitigation rdf:type owl:Class ;
+                                 rdfs:subClassOf :MitigationMeasureCategory ;
+                                 rdfs:comment "Ensuring that an item of information, whether it constitutes a generated or manipulated image, audio or video that appreciably resembles existing persons, objects, places or other entities or events and falsely appears to a person to be authentic or truthful is distinguishable through prominent markings when presented on their online interfaces, and, in addition, providing an easy to use functionality which enables recipients of the service to indicate such information."@en ;
+                                 rdfs:label "Synthetic media marking mitigation"@en .
+
+
+###  https://w3id.org/orda#SystemicRiskCategory
+:SystemicRiskCategory rdf:type owl:Class ;
+                      rdfs:comment "Flat taxonomy of systemic risk types under DSA Article 34(1). Distinct from dpv:Risk (data-processing risks). In ABox data, link projects to named individuals (e.g. :CivicDiscourseRiskCategory) via :addressesSystemicRiskCategory; enforced by ORDA.shacl.ttl."@en ;
+                      rdfs:label "Systemic Risk Category"@en ;
+                      rdfs:seeAlso <http://data.europa.eu/eli/reg/2022/2065/oj> .
+
+
+###  https://w3id.org/orda#TechnicalModality
+:TechnicalModality rdf:type owl:Class ;
+                   rdfs:subClassOf :AccessModality ;
+                   rdfs:comment "Technical controls — APIs, scraping, secure enclaves, pseudonymisation, query-only access."@en ;
+                   rdfs:label "Technical Modality"@en .
+
+
+###  https://w3id.org/orda#TermsAndConditionsMitigation
+:TermsAndConditionsMitigation rdf:type owl:Class ;
+                              rdfs:subClassOf :MitigationMeasureCategory ;
+                              rdfs:comment "Adapting their terms and conditions and their enforcement."@en ;
+                              rdfs:label "Terms and conditions mitigation"@en .
+
+
+###  https://w3id.org/orda#TriggerActivity
+:TriggerActivity rdf:type owl:Class ;
+                 rdfs:subClassOf :ProcessActivity ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :hasStartInstant ;
+                                   owl:someValuesFrom time:Instant
+                                 ] ;
+                 rdfs:comment "A provenance activity that marks the start (or other key point) of a process phase. Must be linked to a start instant via :hasStartInstant; use time:inXSDDateTimeStamp on that instant for the timestamp."@en ;
+                 rdfs:label "Trigger Activity"@en .
+
+
+###  https://w3id.org/orda#TrustedFlaggerCooperationMitigation
+:TrustedFlaggerCooperationMitigation rdf:type owl:Class ;
+                                     rdfs:subClassOf :MitigationMeasureCategory ;
+                                     rdfs:comment "Initiating or adjusting cooperation with trusted flaggers in accordance with Article 22 and the implementation of the decisions of out-of-court dispute settlement bodies pursuant to Article 21."@en ;
+                                     rdfs:label "Trusted flagger cooperation mitigation"@en .
+
 
 ###  https://w3id.org/orda#VeryLargeOnlinePlatform
 :VeryLargeOnlinePlatform rdf:type owl:Class ;
-    rdfs:subClassOf :DataProvider ;
-    rdfs:label "Very Large Online Platform"@en ;
-    rdfs:comment "Designated online platforms with equal to or more than 45 million average monthly active recipients of the service in the Union."@en ;
-    :hasLegalBasis "Art. 33 DSA"@en .
+                         rdfs:subClassOf :DataProvider ,
+                                         [ rdf:type owl:Restriction ;
+                                           owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                           owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                         ] ;
+                         rdfs:comment "Designated online platforms with equal to or more than 45 million average monthly active recipients of the service in the Union."@en ;
+                         rdfs:label "Very Large Online Platform"@en .
+
 
 ###  https://w3id.org/orda#VeryLargeOnlineSearchEngine
 :VeryLargeOnlineSearchEngine rdf:type owl:Class ;
-    rdfs:subClassOf :DataProvider ;
-    rdfs:label "Very Large Online Search Engine"@en ;
-    rdfs:comment "Designated online search engines with equal to or more than 45 million average monthly active recipients of the service in the Union."@en ;
-    :hasLegalBasis "Art. 33 DSA"@en .
+                             rdfs:subClassOf :DataProvider ,
+                                             [ rdf:type owl:Restriction ;
+                                               owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                               owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                                             ] ;
+                             rdfs:comment "Designated online search engines with equal to or more than 45 million average monthly active recipients of the service in the Union."@en ;
+                             rdfs:label "Very Large Online Search Engine"@en .
+
 
 ###  https://w3id.org/orda#VettedResearcher
 :VettedResearcher rdf:type owl:Class ;
-    rdfs:subClassOf :Researcher ;
-    rdfs:comment "A researcher who has successfully completed the vetting process."@en ;
-    rdfs:label "Vetted Researcher"@en .
+                  rdfs:subClassOf :Researcher ;
+                  rdfs:comment "A researcher vetted under DSA Art. 40(8) for Art. 40(4) non-public data access. Must have a cerif:Affiliation_Statement via :hasAffiliationStatement whose cerifaff:hasInstitution is a :ResearchOrganisation (CDSM Art. 2(1))."@en ;
+                  rdfs:label "Vetted Researcher"@en .
+
 
 ###  https://w3id.org/orda#VettingPhase
 :VettingPhase rdf:type owl:Class ;
-    rdfs:subClassOf :AuthorisationPhase ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty time:after ;
-                      owl:someValuesFrom :CompletenessCheckPhase ] ,
-                    [ rdf:type owl:Restriction ;
-                      owl:onProperty :isTriggeredBy ;
-                      owl:someValuesFrom :ProcessEvent ] ;
-    rdfs:comment "DSC-E formulates and issues the initial reasoned request. Max. 80 working days. Triggered by a ProcessEvent of type :CompletenessCheckPassed."@en ;
-    rdfs:label "Vetting Phase"@en ;
-    :hasLegalBasis "Art. 40(4) DSA; Art. 7(2) DA"@en .
+              rdfs:subClassOf :AuthorisationPhase ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty time:after ;
+                                owl:someValuesFrom :CompletenessCheckPhase
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                owl:someValuesFrom <https://w3id.org/dpv/legal/eu#DSA>
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
+                                owl:someValuesFrom :DataAccessDelegatedRegulation
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :isTriggeredBy ;
+                                owl:someValuesFrom :CompletenessCheckPassed
+                              ] ;
+              rdfs:comment "DSC-E formulates and issues the initial reasoned request. Max. 80 working days. Triggered by a :CompletenessCheckPassed activity."@en ;
+              rdfs:label "Vetting Phase"@en .
 
 
 #################################################################
 #    Individuals
 #################################################################
 
-#-- DocumentStage controlled vocabulary --
+###  http://publications.europa.eu/resource/authority/file-type/CSV
+<http://publications.europa.eu/resource/authority/file-type/CSV> rdf:type owl:NamedIndividual .
 
-###  https://w3id.org/orda#StageDraft
-:StageDraft rdf:type owl:NamedIndividual , :DocumentStage ;
-    rdfs:label "Draft"@en ;
-    rdfs:comment "The document is being prepared but has not yet been submitted. Valid for DataAccessApplication."@en .
 
-###  https://w3id.org/orda#StageSubmitted
-:StageSubmitted rdf:type owl:NamedIndividual , :DocumentStage ;
-    rdfs:label "Submitted"@en ;
-    rdfs:comment "The document has been formally submitted. Valid for DataAccessApplication."@en .
+###  http://publications.europa.eu/resource/authority/resource-type/DIR
+<http://publications.europa.eu/resource/authority/resource-type/DIR> rdf:type owl:NamedIndividual .
 
-###  https://w3id.org/orda#StageAmended
-:StageAmended rdf:type owl:NamedIndividual , :DocumentStage ;
-    rdfs:label "Amended"@en ;
-    rdfs:comment "The document has been revised following a request for changes. Valid for DataAccessApplication and ReasonedRequest."@en .
 
-###  https://w3id.org/orda#StageInitial
-:StageInitial rdf:type owl:NamedIndividual , :DocumentStage ;
-    rdfs:label "Initial"@en ;
-    rdfs:comment "The first issued version of the document. Valid for ReasonedRequest."@en .
+###  http://publications.europa.eu/resource/authority/resource-type/REG
+<http://publications.europa.eu/resource/authority/resource-type/REG> rdf:type owl:NamedIndividual .
 
-###  https://w3id.org/orda#StageMediated
-:StageMediated rdf:type owl:NamedIndividual , :DocumentStage ;
-    rdfs:label "Mediated"@en ;
-    rdfs:comment "The version produced following mediation. Exclusive to ReasonedRequest."@en .
 
-#-- EventType controlled vocabulary --
+###  http://publications.europa.eu/resource/authority/resource-type/REG_DEL
+<http://publications.europa.eu/resource/authority/resource-type/REG_DEL> rdf:type owl:NamedIndividual .
 
-###  https://w3id.org/orda#ApplicationSubmitted
-:ApplicationSubmitted rdf:type owl:NamedIndividual , :EventType ;
-    rdfs:label "Application Submitted"@en ;
-    rdfs:comment "The Principal Researcher submits the data access application. Triggers the Authorisation Phase."@en .
 
-###  https://w3id.org/orda#CompletenessCheckPassed
-:CompletenessCheckPassed rdf:type owl:NamedIndividual , :EventType ;
-    rdfs:label "Completeness Check Passed"@en ;
-    rdfs:comment "DSC-M and DSC-E confirm the application is complete. Triggers the Vetting Phase."@en .
+###  https://w3id.org/dpv/legal/eu#DSA
+<https://w3id.org/dpv/legal/eu#DSA> rdf:type owl:NamedIndividual ,
+                                             <http://data.europa.eu/eli/ontology#LegalResource> ,
+                                             <https://w3id.org/dpv/owl#LegalBasis> ,
+                                             :EURegulation ;
+                                    <http://data.europa.eu/eli/ontology#type_document> <http://publications.europa.eu/resource/authority/resource-type/REG> .
 
-###  https://w3id.org/orda#ReasonedRequestIssued
-:ReasonedRequestIssued rdf:type owl:NamedIndividual , :EventType ;
-    rdfs:label "Reasoned Request Issued"@en ;
-    rdfs:comment "DSC-E issues the initial reasoned request. Triggers the Amendment Phase."@en .
 
-###  https://w3id.org/orda#AmendmentRequestSubmitted
-:AmendmentRequestSubmitted rdf:type owl:NamedIndividual , :EventType ;
-    rdfs:label "Amendment Request Submitted"@en ;
-    rdfs:comment "Researcher or data provider submits an amendment request during the Amendment Phase."@en .
+###  https://w3id.org/orda#AdvertisingSystemsMitigationCategory
+:AdvertisingSystemsMitigationCategory rdf:type owl:NamedIndividual ,
+                                               :AdvertisingSystemsMitigation ;
+                                      <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_35_e ;
+                                      rdfs:label "Advertising systems"@en .
 
-###  https://w3id.org/orda#MediationRequested
-:MediationRequested rdf:type owl:NamedIndividual , :EventType ;
-    rdfs:label "Mediation Requested"@en ;
-    rdfs:comment "A party requests mediation within max. 5 working days. Triggers the Mediation Phase."@en ;
-    :hasLegalBasis "Art. 13(1) DA"@en .
 
-###  https://w3id.org/orda#MediationConcluded
-:MediationConcluded rdf:type owl:NamedIndividual , :EventType ;
-    rdfs:label "Mediation Concluded"@en ;
-    rdfs:comment "The mediator issues the result. Ends the Mediation Phase."@en .
+###  https://w3id.org/orda#AlgorithmicSystemsMitigationCategory
+:AlgorithmicSystemsMitigationCategory rdf:type owl:NamedIndividual ,
+                                               :AlgorithmicSystemsMitigation ;
+                                      <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_35_d ;
+                                      rdfs:label "Algorithmic systems"@en .
 
-###  https://w3id.org/orda#AccessGrantedEvent
-:AccessGrantedEvent rdf:type owl:NamedIndividual , :EventType ;
-    rdfs:label "Access Granted"@en ;
-    rdfs:comment "DSC-E grants data access. Triggers the Data Access Phase."@en .
-
-###  https://w3id.org/orda#AccessEndedEvent
-:AccessEndedEvent rdf:type owl:NamedIndividual , :EventType ;
-    rdfs:label "Access Ended"@en ;
-    rdfs:comment "The data access period ends as specified in the reasoned request. Ends the Data Access Phase."@en .
-
-###  https://w3id.org/orda#AccessRevokedEvent
-:AccessRevokedEvent rdf:type owl:NamedIndividual , :EventType ;
-    rdfs:label "Access Revoked"@en ;
-    rdfs:comment "Access is revoked before the end of the agreed period. Ends the Data Access Phase."@en .
-
-#-- Phase statutory limit individuals --
 
 ###  https://w3id.org/orda#AmendmentPhaseInstance
-:AmendmentPhaseInstance rdf:type owl:NamedIndividual , :AmendmentPhase ;
-    :maxWorkingDays 15 ;
-    rdfs:label "Amendment Phase (statutory limit)"@en .
+:AmendmentPhaseInstance rdf:type owl:NamedIndividual ,
+                                 :AmendmentPhase ;
+                        :maxWorkingDays 15 ;
+                        rdfs:label "Amendment Phase (statutory limit)"@en .
+
+
+###  https://w3id.org/orda#AwarenessRaisingMitigationCategory
+:AwarenessRaisingMitigationCategory rdf:type owl:NamedIndividual ,
+                                             :AwarenessRaisingMitigation ;
+                                    <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_35_i ;
+                                    rdfs:label "Awareness raising"@en .
+
+
+###  https://w3id.org/orda#CDSMDirective
+:CDSMDirective rdf:type owl:NamedIndividual ,
+                        <http://data.europa.eu/eli/ontology#LegalResource> ,
+                        <https://w3id.org/dpv/owl#LegalBasis> ,
+                        :EUDirective ;
+               <http://data.europa.eu/eli/ontology#type_document> <http://publications.europa.eu/resource/authority/resource-type/DIR> .
+
+
+###  https://w3id.org/orda#ChildProtectionMitigationCategory
+:ChildProtectionMitigationCategory rdf:type owl:NamedIndividual ,
+                                            :ChildProtectionMitigation ;
+                                   <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_35_j ;
+                                   rdfs:label "Child protection"@en .
+
+
+###  https://w3id.org/orda#CivicDiscourseRiskCategory
+:CivicDiscourseRiskCategory rdf:type owl:NamedIndividual ,
+                                     :CivicDiscourseRisk ;
+                            <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_34_1_c ;
+                            rdfs:label "Civic discourse"@en .
+
+
+###  https://w3id.org/orda#ContentModerationMitigationCategory
+:ContentModerationMitigationCategory rdf:type owl:NamedIndividual ,
+                                              :ContentModerationMitigation ;
+                                     <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_35_c ;
+                                     rdfs:label "Content moderation"@en .
+
+
+###  https://w3id.org/orda#DSADataAccessPortalInstance
+:DSADataAccessPortalInstance rdf:type owl:NamedIndividual ,
+                                      :DSADataAccessPortal ;
+                             :operatedBy :EuropeanCommission ;
+                             rdfs:comment "The centralised portal through which Art. 40(4) applications are submitted and reasoned-request overviews published (DA Art. 3, 11)."@en ;
+                             rdfs:label "DSA Data Access Portal"@en .
+
+
+###  https://w3id.org/orda#DataAccessDelegatedRegulation
+:DataAccessDelegatedRegulation rdf:type owl:NamedIndividual ,
+                                        <http://data.europa.eu/eli/ontology#LegalResource> ,
+                                        <https://w3id.org/dpv/owl#LegalBasis> ,
+                                        :EUDelegatedRegulation ;
+                               <http://data.europa.eu/eli/ontology#based_on> <https://w3id.org/dpv/legal/eu#DSA> ;
+                               <http://data.europa.eu/eli/ontology#type_document> <http://publications.europa.eu/resource/authority/resource-type/REG_DEL> .
+
+
+###  https://w3id.org/orda#ElectoralProcessesRiskCategory
+:ElectoralProcessesRiskCategory rdf:type owl:NamedIndividual ,
+                                         :ElectoralProcessesRisk ;
+                                <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_34_1_c ;
+                                rdfs:label "Electoral processes"@en .
+
+
+###  https://w3id.org/orda#EuropeanCommission
+:EuropeanCommission rdf:type owl:NamedIndividual ,
+                             :RegulatoryAuthority ;
+                    rdfs:comment "European Commission — operates the DSA data access portal (DA Art. 3) and receives Art. 40(12) complaints."@en ;
+                    rdfs:label "European Commission"@en ;
+                    rdfs:seeAlso <https://commission.europa.eu/> .
+
+
+###  https://w3id.org/orda#EuropeanDataProtectionBoard
+:EuropeanDataProtectionBoard rdf:type owl:NamedIndividual ,
+                                      :DataProtectionAuthority ;
+                             rdfs:comment "Independent European body ensuring consistent application of GDPR and LED (Regulation (EU) 2018/1725 for Union institutions; Art. 68 GDPR for cooperation)."@en ;
+                             rdfs:label "European Data Protection Board"@en ;
+                             rdfs:seeAlso <https://www.edpb.europa.eu/> .
+
+
+###  https://w3id.org/orda#FundamentalRightsRiskCategory
+:FundamentalRightsRiskCategory rdf:type owl:NamedIndividual ,
+                                        :FundamentalRightsRisk ;
+                               <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_34_1_b ;
+                               rdfs:label "Fundamental rights"@en .
+
+
+###  https://w3id.org/orda#GDPR
+:GDPR rdf:type owl:NamedIndividual ,
+               <http://data.europa.eu/eli/ontology#LegalResource> ,
+               <https://w3id.org/dpv/owl#LegalBasis> ,
+               :EURegulation ;
+      <http://data.europa.eu/eli/ontology#type_document> <http://publications.europa.eu/resource/authority/resource-type/REG> ;
+      rdfs:comment "Regulation (EU) 2016/679 (General Data Protection Regulation). Governs personal data in researcher applications and accessed datasets."@en ;
+      rdfs:label "General Data Protection Regulation (EU) 2016/679"@en ;
+      rdfs:seeAlso <http://data.europa.eu/eli/reg/2016/679/oj> .
+
+
+###  https://w3id.org/orda#GenderBasedViolenceRiskCategory
+:GenderBasedViolenceRiskCategory rdf:type owl:NamedIndividual ,
+                                          :GenderBasedViolenceRisk ;
+                                 <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_34_1_d ;
+                                 rdfs:label "Gender-based violence"@en .
+
+
+###  https://w3id.org/orda#IllegalContentRiskCategory
+:IllegalContentRiskCategory rdf:type owl:NamedIndividual ,
+                                     :IllegalContentRisk ;
+                            <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_34_1_a ;
+                            rdfs:label "Illegal content"@en .
+
+
+###  https://w3id.org/orda#InterfaceBulkDownload
+:InterfaceBulkDownload rdf:type owl:NamedIndividual ,
+                                :AccessInterface ;
+                       rdfs:comment "Batch download of datasets as files (CSV, JSON, etc.)."@en ;
+                       rdfs:label "Bulk download"@en .
+
+
+###  https://w3id.org/orda#InterfaceGraphQLAPI
+:InterfaceGraphQLAPI rdf:type owl:NamedIndividual ,
+                              :AccessInterface ;
+                     rdfs:comment "Programmatic access via a GraphQL API."@en ;
+                     rdfs:label "GraphQL API"@en .
+
+
+###  https://w3id.org/orda#InterfaceQueryOnly
+:InterfaceQueryOnly rdf:type owl:NamedIndividual ,
+                             :AccessInterface ;
+                    rdfs:comment "Query-only access without raw data export (e.g. SQL or bespoke query UI)."@en ;
+                    rdfs:label "Query-only access"@en .
+
+
+###  https://w3id.org/orda#InterfaceRESTAPI
+:InterfaceRESTAPI rdf:type owl:NamedIndividual ,
+                           :AccessInterface ;
+                  rdfs:comment "Programmatic access via a REST HTTP API."@en ;
+                  rdfs:label "REST API"@en .
+
+
+###  https://w3id.org/orda#InterfaceSecureResearchEnvironment
+:InterfaceSecureResearchEnvironment rdf:type owl:NamedIndividual ,
+                                             :AccessInterface ;
+                                    rdfs:comment "On-platform or third-party secure enclave / virtual research environment."@en ;
+                                    rdfs:label "Secure research environment"@en .
+
+
+###  https://w3id.org/orda#InterfaceWebScraping
+:InterfaceWebScraping rdf:type owl:NamedIndividual ,
+                               :AccessInterface ;
+                      rdfs:comment "Extraction of publicly available data from web interfaces where permitted."@en ;
+                      rdfs:label "Web scraping"@en .
+
+
+###  https://w3id.org/orda#InternalProcessesMitigationCategory
+:InternalProcessesMitigationCategory rdf:type owl:NamedIndividual ,
+                                              :InternalProcessesMitigation ;
+                                     <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_35_f ;
+                                     rdfs:label "Internal processes"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_34_1_a
+:LegalBasis_DSA_34_1_a rdf:type owl:NamedIndividual ,
+                                :DSALegalProvision ;
+                       <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                       rdfs:comment "DSA Art. 34(1)(a) — dissemination of illegal content."@en ;
+                       rdfs:label "DSA Art. 34(1)(a)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_34_1_b
+:LegalBasis_DSA_34_1_b rdf:type owl:NamedIndividual ,
+                                :DSALegalProvision ;
+                       <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                       rdfs:comment "DSA Art. 34(1)(b) — negative effects on fundamental rights."@en ;
+                       rdfs:label "DSA Art. 34(1)(b)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_34_1_c
+:LegalBasis_DSA_34_1_c rdf:type owl:NamedIndividual ,
+                                :DSALegalProvision ;
+                       <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                       rdfs:comment "DSA Art. 34(1)(c) — civic discourse, electoral processes or public security."@en ;
+                       rdfs:label "DSA Art. 34(1)(c)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_34_1_d
+:LegalBasis_DSA_34_1_d rdf:type owl:NamedIndividual ,
+                                :DSALegalProvision ;
+                       <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                       rdfs:comment "DSA Art. 34(1)(d) — public health, well-being, gender-based violence, minors."@en ;
+                       rdfs:label "DSA Art. 34(1)(d)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_35_a
+:LegalBasis_DSA_35_a rdf:type owl:NamedIndividual ,
+                              :DSALegalProvision ;
+                     <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                     rdfs:comment "DSA Art. 35(a) — service design and online interfaces."@en ;
+                     rdfs:label "DSA Art. 35(a)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_35_b
+:LegalBasis_DSA_35_b rdf:type owl:NamedIndividual ,
+                              :DSALegalProvision ;
+                     <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                     rdfs:comment "DSA Art. 35(b) — terms and conditions."@en ;
+                     rdfs:label "DSA Art. 35(b)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_35_c
+:LegalBasis_DSA_35_c rdf:type owl:NamedIndividual ,
+                              :DSALegalProvision ;
+                     <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                     rdfs:comment "DSA Art. 35(c) — content moderation."@en ;
+                     rdfs:label "DSA Art. 35(c)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_35_d
+:LegalBasis_DSA_35_d rdf:type owl:NamedIndividual ,
+                              :DSALegalProvision ;
+                     <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                     rdfs:comment "DSA Art. 35(d) — algorithmic and recommender systems."@en ;
+                     rdfs:label "DSA Art. 35(d)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_35_e
+:LegalBasis_DSA_35_e rdf:type owl:NamedIndividual ,
+                              :DSALegalProvision ;
+                     <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                     rdfs:comment "DSA Art. 35(e) — advertising systems."@en ;
+                     rdfs:label "DSA Art. 35(e)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_35_f
+:LegalBasis_DSA_35_f rdf:type owl:NamedIndividual ,
+                              :DSALegalProvision ;
+                     <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                     rdfs:comment "DSA Art. 35(f) — internal processes and systemic-risk detection."@en ;
+                     rdfs:label "DSA Art. 35(f)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_35_g
+:LegalBasis_DSA_35_g rdf:type owl:NamedIndividual ,
+                              :DSALegalProvision ;
+                     <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                     rdfs:comment "DSA Art. 35(g) — trusted flaggers and dispute settlement."@en ;
+                     rdfs:label "DSA Art. 35(g)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_35_h
+:LegalBasis_DSA_35_h rdf:type owl:NamedIndividual ,
+                              :DSALegalProvision ;
+                     <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                     rdfs:comment "DSA Art. 35(h) — cooperation with other providers."@en ;
+                     rdfs:label "DSA Art. 35(h)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_35_i
+:LegalBasis_DSA_35_i rdf:type owl:NamedIndividual ,
+                              :DSALegalProvision ;
+                     <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                     rdfs:comment "DSA Art. 35(i) — awareness raising."@en ;
+                     rdfs:label "DSA Art. 35(i)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_35_j
+:LegalBasis_DSA_35_j rdf:type owl:NamedIndividual ,
+                              :DSALegalProvision ;
+                     <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                     rdfs:comment "DSA Art. 35(j) — child protection."@en ;
+                     rdfs:label "DSA Art. 35(j)"@en .
+
+
+###  https://w3id.org/orda#LegalBasis_DSA_35_k
+:LegalBasis_DSA_35_k rdf:type owl:NamedIndividual ,
+                              :DSALegalProvision ;
+                     <http://data.europa.eu/eli/ontology#is_part_of> <https://w3id.org/dpv/legal/eu#DSA> ;
+                     rdfs:comment "DSA Art. 35(k) — synthetic media marking."@en ;
+                     rdfs:label "DSA Art. 35(k)"@en .
+
 
 ###  https://w3id.org/orda#MediationPhaseInstance
-:MediationPhaseInstance rdf:type owl:NamedIndividual , :MediationPhase ;
-    :maxWorkingDays 40 ;
-    rdfs:label "Mediation Phase (statutory limit)"@en .
+:MediationPhaseInstance rdf:type owl:NamedIndividual ,
+                                 :MediationPhase ;
+                        :maxWorkingDays 40 ;
+                        rdfs:label "Mediation Phase (statutory limit)"@en .
+
+
+###  https://w3id.org/orda#PhysicalMentalWellbeingRiskCategory
+:PhysicalMentalWellbeingRiskCategory rdf:type owl:NamedIndividual ,
+                                              :PhysicalMentalWellbeingRisk ;
+                                     <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_34_1_d ;
+                                     rdfs:label "Physical and mental well-being"@en .
+
+
+###  https://w3id.org/orda#ProviderCooperationMitigationCategory
+:ProviderCooperationMitigationCategory rdf:type owl:NamedIndividual ,
+                                                :ProviderCooperationMitigation ;
+                                       <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_35_h ;
+                                       rdfs:label "Provider cooperation"@en .
+
+
+###  https://w3id.org/orda#PublicHealthRiskCategory
+:PublicHealthRiskCategory rdf:type owl:NamedIndividual ,
+                                   :PublicHealthRisk ;
+                          <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_34_1_d ;
+                          rdfs:label "Public health"@en .
+
+
+###  https://w3id.org/orda#PublicSecurityRiskCategory
+:PublicSecurityRiskCategory rdf:type owl:NamedIndividual ,
+                                     :PublicSecurityRisk ;
+                            <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_34_1_c ;
+                            rdfs:label "Public security"@en .
+
+
+###  https://w3id.org/orda#RiskToMinorsCategory
+:RiskToMinorsCategory rdf:type owl:NamedIndividual ,
+                               :RiskToMinors ;
+                      <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_34_1_d ;
+                      rdfs:label "Risk to minors"@en .
+
+
+###  https://w3id.org/orda#ServiceDesignMitigationCategory
+:ServiceDesignMitigationCategory rdf:type owl:NamedIndividual ,
+                                          :ServiceDesignMitigation ;
+                                 <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_35_a ;
+                                 rdfs:label "Service design"@en .
+
+
+###  https://w3id.org/orda#StageAmended
+:StageAmended rdf:type owl:NamedIndividual ,
+                       :DocumentStage ;
+              rdfs:comment "The document has been revised following a request for changes. Valid for DataAccessApplication and ReasonedRequest."@en ;
+              rdfs:label "Amended"@en .
+
+
+###  https://w3id.org/orda#StageDraft
+:StageDraft rdf:type owl:NamedIndividual ,
+                     :DocumentStage ;
+            rdfs:comment "The document is being prepared but has not yet been submitted. Valid for DataAccessApplication."@en ;
+            rdfs:label "Draft"@en .
+
+
+###  https://w3id.org/orda#StageInitial
+:StageInitial rdf:type owl:NamedIndividual ,
+                       :DocumentStage ;
+              rdfs:comment "The first issued version of the document. Valid for ReasonedRequest."@en ;
+              rdfs:label "Initial"@en .
+
+
+###  https://w3id.org/orda#StageMediated
+:StageMediated rdf:type owl:NamedIndividual ,
+                        :DocumentStage ;
+               rdfs:comment "The version produced following mediation. Exclusive to ReasonedRequest."@en ;
+               rdfs:label "Mediated"@en .
+
+
+###  https://w3id.org/orda#StageSubmitted
+:StageSubmitted rdf:type owl:NamedIndividual ,
+                         :DocumentStage ;
+                rdfs:comment "The document has been formally submitted. Valid for DataAccessApplication."@en ;
+                rdfs:label "Submitted"@en .
+
+
+###  https://w3id.org/orda#SyntheticMediaMarkingMitigationCategory
+:SyntheticMediaMarkingMitigationCategory rdf:type owl:NamedIndividual ,
+                                                  :SyntheticMediaMarkingMitigation ;
+                                         <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_35_k ;
+                                         rdfs:label "Synthetic media marking"@en .
+
+
+###  https://w3id.org/orda#TermsAndConditionsMitigationCategory
+:TermsAndConditionsMitigationCategory rdf:type owl:NamedIndividual ,
+                                               :TermsAndConditionsMitigation ;
+                                      <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_35_b ;
+                                      rdfs:label "Terms and conditions"@en .
+
+
+###  https://w3id.org/orda#TrustedFlaggerCooperationMitigationCategory
+:TrustedFlaggerCooperationMitigationCategory rdf:type owl:NamedIndividual ,
+                                                      :TrustedFlaggerCooperationMitigation ;
+                                             <https://w3id.org/dpv/owl#hasLegalBasis> :LegalBasis_DSA_35_g ;
+                                             rdfs:label "Trusted flaggers and dispute settlement"@en .
+
 
 ###  https://w3id.org/orda#VettingPhaseInstance
-:VettingPhaseInstance rdf:type owl:NamedIndividual , :VettingPhase ;
-    :maxWorkingDays 80 ;
-    rdfs:label "Vetting Phase (statutory limit)"@en .
+:VettingPhaseInstance rdf:type owl:NamedIndividual ,
+                               :VettingPhase ;
+                      :maxWorkingDays 80 ;
+                      rdfs:label "Vetting Phase (statutory limit)"@en .
+
+
+#################################################################
+#    Annotations
+#################################################################
+
+prov:wasRevisionOf rdfs:comment "The newer entity supersedes an earlier entity in a version chain."@en ;
+                   rdfs:label "was revision of"@en .
+
+
+<https://w3id.org/dpv/legal/eu#DSA> rdfs:comment "Regulation (EU) 2022/2064 (Digital Services Act). Art. 40 grants vetted researchers access to platform data to investigate systemic risks within the EU."@en ;
+                                    rdfs:isDefinedBy <https://w3id.org/dpv/legal/eu> ;
+                                    rdfs:label "Digital Services Act"@en ;
+                                    rdfs:seeAlso <http://data.europa.eu/eli/reg/2022/2065/oj> .
+
+
+:CDSMDirective rdfs:comment "Directive (EU) 2019/790 on copyright in the Digital Single Market. Article 2, point (1) defines research organisation."@en ;
+               rdfs:label "Copyright in the Digital Single Market Directive (EU) 2019/790"@en ;
+               rdfs:seeAlso <http://data.europa.eu/eli/dir/2019/790/oj> .
+
+
+:DataAccessDelegatedRegulation rdfs:comment "Commission Delegated Regulation (EU) 2025/2050 supplementing the DSA with regard to data access by vetted researchers."@en ;
+                               rdfs:label "Delegated Regulation on data access (EU) 2025/2050"@en ;
+                               rdfs:seeAlso <http://data.europa.eu/eli/reg_del/2025/2050/oj> .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi

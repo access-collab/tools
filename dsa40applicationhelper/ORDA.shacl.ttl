@@ -1,0 +1,165 @@
+@prefix sh:     <http://www.w3.org/ns/shacl#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dpv:    <https://w3id.org/dpv/owl#> .
+@prefix cerifprj: <https://w3id.org/cerif2/Project#> .
+@prefix cerifdr: <https://w3id.org/cerif2/Date_Range#> .
+@prefix cerifdoc: <https://w3id.org/cerif2/Document#> .
+@prefix orda:   <https://w3id.org/orda#> .
+
+<https://w3id.org/orda/shapes> a sh:ShapeGraph ;
+    rdfs:label "ORDA SHACL shapes"@en ;
+    rdfs:comment "Validates ABox data for DSA Art. 40 research data access. Load together with ORDA.ttl."@en ;
+    dcterms:source <https://w3id.org/orda> .
+
+#################################################################
+#  Controlled vocabulary lists (Art. 34(1) and Art. 35)
+#################################################################
+
+orda:SystemicRiskCategoryList a rdfs:Resource ;
+    rdfs:label "Art. 34(1) systemic risk vocabulary"@en ;
+    sh:order 1 .
+
+orda:MitigationMeasureCategoryList a rdfs:Resource ;
+    rdfs:label "Art. 35 mitigation measure vocabulary"@en ;
+    sh:order 2 .
+
+#################################################################
+#  Research project
+#################################################################
+
+orda:ResearchProjectShape a sh:NodeShape ;
+    sh:targetClass orda:ResearchProject ;
+    sh:property [
+        sh:path orda:addressesSystemicRiskCategory ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:in (
+            orda:IllegalContentRiskCategory
+            orda:FundamentalRightsRiskCategory
+            orda:CivicDiscourseRiskCategory
+            orda:ElectoralProcessesRiskCategory
+            orda:PublicSecurityRiskCategory
+            orda:GenderBasedViolenceRiskCategory
+            orda:PublicHealthRiskCategory
+            orda:RiskToMinorsCategory
+            orda:PhysicalMentalWellbeingRiskCategory
+        ) ;
+        sh:message "Use a named Art. 34(1) vocabulary individual (e.g. orda:CivicDiscourseRiskCategory), not a class instance or ad hoc IRI."@en ;
+    ] ;
+    sh:property [
+        sh:path orda:assessesMitigationMeasureCategory ;
+        sh:nodeKind sh:IRI ;
+        sh:in (
+            orda:ServiceDesignMitigationCategory
+            orda:TermsAndConditionsMitigationCategory
+            orda:ContentModerationMitigationCategory
+            orda:AlgorithmicSystemsMitigationCategory
+            orda:AdvertisingSystemsMitigationCategory
+            orda:InternalProcessesMitigationCategory
+            orda:TrustedFlaggerCooperationMitigationCategory
+            orda:ProviderCooperationMitigationCategory
+            orda:AwarenessRaisingMitigationCategory
+            orda:ChildProtectionMitigationCategory
+            orda:SyntheticMediaMarkingMitigationCategory
+        ) ;
+        sh:message "Use a named Art. 35 mitigation vocabulary individual (e.g. orda:AlgorithmicSystemsMitigationCategory)."@en ;
+    ] .
+
+#################################################################
+#  Research outputs (optional CERIF publication metadata)
+#################################################################
+
+orda:ResearchPublicationShape a sh:NodeShape ;
+    sh:targetClass orda:ResearchPublication ;
+    sh:property [
+        sh:path orda:isOutputOf ;
+        sh:class orda:ResearchProject ;
+        sh:minCount 1 ;
+        sh:message "A research publication should link back to its project via orda:isOutputOf."@en ;
+    ] ;
+    sh:property [
+        sh:path cerifdoc:title ;
+        sh:minCount 1 ;
+        sh:message "Provide cerifdoc:title on research publications."@en ;
+    ] .
+
+#################################################################
+#  Vocabulary individuals (integrity of ORDA.ttl entries)
+#################################################################
+
+orda:SystemicRiskCategoryIndividualShape a sh:NodeShape ;
+    sh:targetClass orda:SystemicRiskCategory ;
+    sh:nodeKind sh:IRI ;
+    sh:in (
+        orda:IllegalContentRiskCategory
+        orda:FundamentalRightsRiskCategory
+        orda:CivicDiscourseRiskCategory
+        orda:ElectoralProcessesRiskCategory
+        orda:PublicSecurityRiskCategory
+        orda:GenderBasedViolenceRiskCategory
+        orda:PublicHealthRiskCategory
+        orda:RiskToMinorsCategory
+        orda:PhysicalMentalWellbeingRiskCategory
+    ) ;
+    sh:property [
+        sh:path dpv:hasLegalBasis ;
+        sh:class orda:DSALegalProvision ;
+        sh:minCount 1 ;
+        sh:message "Each Art. 34(1) vocabulary individual must declare dpv:hasLegalBasis to a orda:DSALegalProvision."@en ;
+    ] .
+
+orda:MitigationMeasureCategoryIndividualShape a sh:NodeShape ;
+    sh:targetClass orda:MitigationMeasureCategory ;
+    sh:nodeKind sh:IRI ;
+    sh:in (
+        orda:ServiceDesignMitigationCategory
+        orda:TermsAndConditionsMitigationCategory
+        orda:ContentModerationMitigationCategory
+        orda:AlgorithmicSystemsMitigationCategory
+        orda:AdvertisingSystemsMitigationCategory
+        orda:InternalProcessesMitigationCategory
+        orda:TrustedFlaggerCooperationMitigationCategory
+        orda:ProviderCooperationMitigationCategory
+        orda:AwarenessRaisingMitigationCategory
+        orda:ChildProtectionMitigationCategory
+        orda:SyntheticMediaMarkingMitigationCategory
+    ) ;
+    sh:property [
+        sh:path dpv:hasLegalBasis ;
+        sh:class orda:DSALegalProvision ;
+        sh:minCount 1 ;
+        sh:message "Each Art. 35 vocabulary individual must declare dpv:hasLegalBasis to a orda:DSALegalProvision."@en ;
+    ] .
+
+#################################################################
+#  Research questions investigating systemic risks
+#################################################################
+
+orda:ResearchQuestionRiskShape a sh:NodeShape ;
+    sh:targetClass orda:ResearchQuestion ;
+    sh:sparql [
+        sh:message "When orda:investigates an object, it must be a named systemic risk vocabulary individual or orda:ResearchTopic (not a blank node or OWL class instance)."@en ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                $this orda:investigates ?target .
+                FILTER NOT EXISTS { ?target a orda:ResearchTopic }
+                FILTER ( !isIRI(?target) || !EXISTS {
+                    ?target a orda:SystemicRiskCategory .
+                    FILTER ( ?target IN (
+                        orda:IllegalContentRiskCategory,
+                        orda:FundamentalRightsRiskCategory,
+                        orda:CivicDiscourseRiskCategory,
+                        orda:ElectoralProcessesRiskCategory,
+                        orda:PublicSecurityRiskCategory,
+                        orda:GenderBasedViolenceRiskCategory,
+                        orda:PublicHealthRiskCategory,
+                        orda:RiskToMinorsCategory,
+                        orda:PhysicalMentalWellbeingRiskCategory
+                    ) )
+                } )
+            }
+        """ ;
+    ] .
