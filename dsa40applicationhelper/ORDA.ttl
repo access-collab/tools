@@ -7,23 +7,23 @@
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix time: <http://www.w3.org/2006/time#> .
-@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @base <https://w3id.org/orda#> .
 
 <https://w3id.org/orda> rdf:type owl:Ontology ;
                          owl:imports <http://www.w3.org/2006/time> ,
-                                     <http://www.w3.org/ns/prov-o#> ,
-                                     <http://xmlns.com/foaf/0.1/> ;
-                         dcterms:description "Models DSA Art. 40 data access (ORDA + OWL Time + PROV) and CERIF Core 2 research metadata (projects, people, organisations, funding, outputs). Procedural phases use time:Interval; CRIS-facing project description uses cerif:Project, cerif:Person, cerif:Organisation_Unit, cerif:Funding, cerif:Document. See ORDA.md and ORDA.shacl.ttl."@en ;
+                                     <http://www.w3.org/ns/prov-o#> ;
+                         dcterms:description "Models DSA Art. 40 data access (ORDA + OWL Time + PROV), CERIF Core 2 research metadata, and DQV quality annotations on platform data (DCAT distributions). Procedural phases use time:Interval; CRIS-facing project description uses cerif:Project, cerif:Person, cerif:Organisation_Unit, cerif:Funding, cerif:Document. See ORDA.md and ORDA.shacl.ttl."@en ;
                          dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
                          dcterms:title "ORDA — Ontology for Research Data Access"@en ;
                          rdfs:seeAlso <http://www.w3.org/ns/csvw#> ,
                                       <http://www.w3.org/ns/dcat#> ,
+                                      <http://www.w3.org/ns/dqv#> ,
+                                      <http://www.w3.org/ns/odrl/2/> ,
                                       <https://w3id.org/cerif2/> ,
                                       <https://w3id.org/dpv/owl#> ,
                                       <https://w3id.org/orda/shapes> ;
-                         owl:versionInfo "0.6.0"@en .
+                         owl:versionInfo "0.8.0"@en .
 
 #################################################################
 #    Annotation properties
@@ -120,7 +120,7 @@ dcterms:format rdf:type owl:ObjectProperty ;
 ###  http://purl.org/dc/terms/hasFormat
 dcterms:hasFormat rdf:type owl:ObjectProperty ;
                   rdfs:domain <http://www.w3.org/ns/dcat#Distribution> ;
-                  rdfs:comment "Links a dcat:Distribution to a machine-readable schema description (csvw:Schema for CSV, foaf:Document for OpenAPI/JSON Schema)."@en ;
+                  rdfs:comment "Links a dcat:Distribution to a machine-readable schema description (csvw:Schema for CSV, cerif:Document for OpenAPI/JSON Schema)."@en ;
                   rdfs:isDefinedBy dcterms: ;
                   rdfs:label "has format"@en .
 
@@ -139,12 +139,6 @@ time:hasBeginning rdf:type owl:ObjectProperty ;
 time:hasEnd rdf:type owl:ObjectProperty ;
             rdfs:domain time:Interval ;
             rdfs:range time:Instant .
-
-
-###  http://www.w3.org/2006/vcard/ns#hasAddress
-vcard:hasAddress rdf:type owl:ObjectProperty ;
-                 rdfs:domain <http://xmlns.com/foaf/0.1/Person> ;
-                 rdfs:range vcard:Address .
 
 
 ###  http://www.w3.org/ns/csvw#column
@@ -370,7 +364,7 @@ prov:wasRevisionOf rdf:type owl:ObjectProperty ;
 ###  https://w3id.org/orda#communicationBetween
 :communicationBetween rdf:type owl:ObjectProperty ;
                       rdfs:domain :CommunicationEvent ;
-                      rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
+                      rdfs:range <https://w3id.org/cerif2/Agent> ;
                       rdfs:label "communication between"@en .
 
 
@@ -400,7 +394,7 @@ prov:wasRevisionOf rdf:type owl:ObjectProperty ;
 :decisionMadeBy rdf:type owl:ObjectProperty ;
                 rdfs:subPropertyOf prov:wasAssociatedWith ;
                 rdfs:domain :Decision ;
-                rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
+                rdfs:range <https://w3id.org/cerif2/Agent> ;
                 rdfs:label "decision made by"@en .
 
 
@@ -422,7 +416,7 @@ prov:wasRevisionOf rdf:type owl:ObjectProperty ;
 ###  https://w3id.org/orda#filedWith
 :filedWith rdf:type owl:ObjectProperty ;
            rdfs:domain :ComplaintFiling ;
-           rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
+           rdfs:range <https://w3id.org/cerif2/Agent> ;
            rdfs:comment "Links a complaint filing to the European Commission and/or relevant Digital Services Coordinator(s) receiving it under Art. 40(12)."@en ;
            rdfs:label "filed with"@en .
 
@@ -439,8 +433,34 @@ prov:wasRevisionOf rdf:type owl:ObjectProperty ;
 :hasAccessModality rdf:type owl:ObjectProperty ;
                    rdfs:domain :ReasonedRequest ;
                    rdfs:range :AccessModality ;
-                   rdfs:comment "Access modality determined by DSC-E per DA Art. 9 (distinct from researcher-proposed :suggestsModality on the application)."@en ;
+                   rdfs:comment "Access modality determined by DSC-E per DA Art. 9. Values are typically odrl:Offer individuals (typed also as :DeterminedAccessOffer) specifying permissions, targets, and constraints."@en ;
                    rdfs:label "has access modality"@en .
+
+
+###  https://w3id.org/orda#hasAccessAgreement
+:hasAccessAgreement rdf:type owl:ObjectProperty ;
+                    rdfs:domain :DataAccessProcess ;
+                    rdfs:range odrl:Agreement ;
+                    rdfs:comment "Instantiated ODRL Agreement when access is granted (assigner: data provider; assignee: research organisation). Terms should align with the reasoned request's :hasAccessModality offer."@en ;
+                    rdfs:label "has access agreement"@en .
+
+
+###  https://w3id.org/orda#hasPersonName
+:hasPersonName rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf <https://w3id.org/cerif2/Person#name> ;
+               rdfs:domain :Researcher ;
+               rdfs:range <https://w3id.org/cerif2/Person_Name> ;
+               rdfs:comment "Structured person name (cerifpn:firstNames, cerifpn:familyNames on the range individual)."@en ;
+               rdfs:label "has person name"@en .
+
+
+###  https://w3id.org/orda#hasContact
+:hasContact rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf <https://w3id.org/cerif2/Agent#contacts> ;
+           rdfs:domain <https://w3id.org/cerif2/Agent> ;
+           rdfs:range <https://w3id.org/cerif2/Contact_Information> ;
+           rdfs:comment "Postal, electronic, or other CERIF contact information for an agent."@en ;
+           rdfs:label "has contact"@en .
 
 
 ###  https://w3id.org/orda#hasAffiliationStatement
@@ -602,6 +622,19 @@ prov:wasRevisionOf rdf:type owl:ObjectProperty ;
           rdfs:range time:Interval ;
           rdfs:comment "Links a data access process to one of its temporal phases."@en ;
           rdfs:label "has phase"@en .
+
+
+###  https://w3id.org/orda#hasQualityAssessment
+:hasQualityAssessment rdf:type owl:ObjectProperty ;
+                      rdfs:subPropertyOf <http://www.w3.org/ns/dqv#hasQualityAnnotation> ;
+                      rdfs:domain [ rdf:type owl:Class ;
+                                    owl:unionOf ( <http://www.w3.org/ns/dcat#Dataset>
+                                                  <http://www.w3.org/ns/dcat#Distribution>
+                                                )
+                                  ] ;
+                      rdfs:range <http://www.w3.org/ns/dqv#QualityAnnotation> ;
+                      rdfs:comment "Documents known data quality limitations or assessments for a platform dataset or distribution (DQV). Use dqv:inDimension and dcterms:description on the annotation, or dqv:hasQualityMeasurement for numeric metrics."@en ;
+                      rdfs:label "has quality assessment"@en .
 
 
 ###  https://w3id.org/orda#hasResearchActivity
@@ -767,7 +800,7 @@ prov:wasRevisionOf rdf:type owl:ObjectProperty ;
 :performedBy rdf:type owl:ObjectProperty ;
              rdfs:subPropertyOf prov:wasAssociatedWith ;
              rdfs:domain prov:Activity ;
-             rdfs:range <http://xmlns.com/foaf/0.1/Agent> ;
+             rdfs:range <https://w3id.org/cerif2/Agent> ;
              rdfs:comment "Links a process activity to the agent who performed it. Subproperty of prov:wasAssociatedWith."@en ;
              rdfs:label "performed by"@en .
 
@@ -858,7 +891,7 @@ prov:wasRevisionOf rdf:type owl:ObjectProperty ;
                                             )
                               ] ;
                   rdfs:range :AccessModality ;
-                  rdfs:comment "Researcher-proposed access modality at application stage."@en ;
+                  rdfs:comment "Researcher-proposed access terms at application stage. Range individuals should be typed as :ProposedAccessOffer (odrl:Offer + :AccessModality) with odrl:permission rules targeting requested dcat:Distribution assets."@en ;
                   rdfs:label "suggests modality"@en .
 
 
@@ -896,21 +929,6 @@ time:inXSDDateTimeStamp rdf:type owl:DatatypeProperty ;
                         rdfs:range xsd:dateTimeStamp ;
                         rdfs:comment "The timestamp of a time:Instant, expressed as an XSD dateTimeStamp."@en ;
                         rdfs:label "in XSD dateTimeStamp"@en .
-
-
-###  http://www.w3.org/2006/vcard/ns#country-name
-vcard:country-name rdf:type owl:DatatypeProperty ;
-                   rdfs:domain vcard:Address .
-
-
-###  http://www.w3.org/2006/vcard/ns#locality
-vcard:locality rdf:type owl:DatatypeProperty ;
-               rdfs:domain vcard:Address .
-
-
-###  http://www.w3.org/2006/vcard/ns#region
-vcard:region rdf:type owl:DatatypeProperty ;
-             rdfs:domain vcard:Address .
 
 
 ###  http://www.w3.org/ns/csvw#datatype
@@ -1079,16 +1097,20 @@ vcard:region rdf:type owl:DatatypeProperty ;
 
 
 ###  https://w3id.org/orda#researcherEmail
-:researcherEmail rdf:type owl:DatatypeProperty ;
+:researcherEmail rdf:type owl:DatatypeProperty ,
+                               owl:DeprecatedProperty ;
                  rdfs:domain :Researcher ;
                  rdfs:range xsd:string ;
+                 rdfs:comment "Deprecated: use cerif:Electronic_Address via :hasContact."@en ;
                  rdfs:label "researcher email"@en .
 
 
 ###  https://w3id.org/orda#researcherName
-:researcherName rdf:type owl:DatatypeProperty ;
+:researcherName rdf:type owl:DatatypeProperty ,
+                              owl:DeprecatedProperty ;
                 rdfs:domain :Researcher ;
                 rdfs:range xsd:string ;
+                rdfs:comment "Deprecated: use cerif:Person_Name via :hasPersonName."@en ;
                 rdfs:label "researcher name"@en .
 
 
@@ -1128,10 +1150,6 @@ time:Instant rdf:type owl:Class .
 time:Interval rdf:type owl:Class .
 
 
-###  http://www.w3.org/2006/vcard/ns#Address
-vcard:Address rdf:type owl:Class .
-
-
 ###  http://www.w3.org/ns/csvw#Column
 <http://www.w3.org/ns/csvw#Column> rdf:type owl:Class ;
                                    rdfs:isDefinedBy <http://www.w3.org/ns/csvw#> ;
@@ -1160,8 +1178,273 @@ vcard:Address rdf:type owl:Class .
                                          rdfs:label "Distribution"@en .
 
 
+#################################################################
+#    DQV stubs (http://www.w3.org/ns/dqv#)
+#################################################################
+
+###  http://www.w3.org/ns/dqv#Category
+<http://www.w3.org/ns/dqv#Category> rdf:type owl:Class ;
+                                    rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                    rdfs:label "Category"@en ;
+                                    rdfs:seeAlso <http://www.w3.org/TR/vocab-dqv/> .
+
+###  http://www.w3.org/ns/dqv#Dimension
+<http://www.w3.org/ns/dqv#Dimension> rdf:type owl:Class ;
+                                     rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                     rdfs:label "Dimension"@en ;
+                                     rdfs:seeAlso <http://www.w3.org/TR/vocab-dqv/> .
+
+###  http://www.w3.org/ns/dqv#Metric
+<http://www.w3.org/ns/dqv#Metric> rdf:type owl:Class ;
+                                  rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                  rdfs:label "Metric"@en ;
+                                  rdfs:seeAlso <http://www.w3.org/TR/vocab-dqv/> .
+
+###  http://www.w3.org/ns/dqv#QualityAnnotation
+<http://www.w3.org/ns/dqv#QualityAnnotation> rdf:type owl:Class ;
+                                             rdfs:subClassOf <http://www.w3.org/ns/oa#Annotation> ;
+                                             rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                             rdfs:label "Quality Annotation"@en ;
+                                             rdfs:seeAlso <http://www.w3.org/TR/vocab-dqv/> .
+
+###  http://www.w3.org/ns/dqv#QualityMeasurement
+<http://www.w3.org/ns/dqv#QualityMeasurement> rdf:type owl:Class ;
+                                              rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                              rdfs:label "Quality Measurement"@en ;
+                                              rdfs:seeAlso <http://www.w3.org/TR/vocab-dqv/> .
+
+###  http://www.w3.org/ns/dqv#QualityMetadata
+<http://www.w3.org/ns/dqv#QualityMetadata> rdf:type owl:Class ;
+                                           rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                           rdfs:label "Quality Metadata"@en ;
+                                           rdfs:seeAlso <http://www.w3.org/TR/vocab-dqv/> .
+
+###  http://www.w3.org/ns/oa#Annotation
+<http://www.w3.org/ns/oa#Annotation> rdf:type owl:Class ;
+                                    rdfs:isDefinedBy <http://www.w3.org/ns/oa#> ;
+                                    rdfs:label "Annotation"@en .
+
+###  http://www.w3.org/ns/oa#Motivation
+<http://www.w3.org/ns/oa#Motivation> rdf:type owl:Class ;
+                                     rdfs:isDefinedBy <http://www.w3.org/ns/oa#> ;
+                                     rdfs:label "Motivation"@en .
+
+###  http://www.w3.org/ns/dqv#computedOn
+<http://www.w3.org/ns/dqv#computedOn> rdf:type owl:ObjectProperty ;
+                                      rdfs:domain <http://www.w3.org/ns/dqv#QualityMeasurement> ;
+                                      rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                      rdfs:label "computed on"@en .
+
+###  http://www.w3.org/ns/dqv#hasQualityAnnotation
+<http://www.w3.org/ns/dqv#hasQualityAnnotation> rdf:type owl:ObjectProperty ;
+                                              rdfs:range <http://www.w3.org/ns/dqv#QualityAnnotation> ;
+                                              rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                              rdfs:label "has quality annotation"@en .
+
+###  http://www.w3.org/ns/dqv#hasQualityMeasurement
+<http://www.w3.org/ns/dqv#hasQualityMeasurement> rdf:type owl:ObjectProperty ;
+                                                 rdfs:range <http://www.w3.org/ns/dqv#QualityMeasurement> ;
+                                                 rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                                 rdfs:label "has quality measurement"@en .
+
+###  http://www.w3.org/ns/dqv#hasQualityMetadata
+<http://www.w3.org/ns/dqv#hasQualityMetadata> rdf:type owl:ObjectProperty ;
+                                              rdfs:range <http://www.w3.org/ns/dqv#QualityMetadata> ;
+                                              rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                              rdfs:label "has quality metadata"@en .
+
+###  http://www.w3.org/ns/dqv#inDimension
+<http://www.w3.org/ns/dqv#inDimension> rdf:type owl:ObjectProperty ;
+                                       rdfs:range <http://www.w3.org/ns/dqv#Dimension> ;
+                                       rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                       rdfs:label "in dimension"@en .
+
+###  http://www.w3.org/ns/dqv#isMeasurementOf
+<http://www.w3.org/ns/dqv#isMeasurementOf> rdf:type owl:ObjectProperty ;
+                                           rdfs:domain <http://www.w3.org/ns/dqv#QualityMeasurement> ;
+                                           rdfs:range <http://www.w3.org/ns/dqv#Metric> ;
+                                           rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                           rdfs:label "is measurement of"@en .
+
+###  http://www.w3.org/ns/dqv#value
+<http://www.w3.org/ns/dqv#value> rdf:type owl:DatatypeProperty ;
+                                 rdfs:domain <http://www.w3.org/ns/dqv#QualityMeasurement> ;
+                                 rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                 rdfs:label "value"@en .
+
+###  http://www.w3.org/ns/oa#motivation
+<http://www.w3.org/ns/oa#motivation> rdf:type owl:ObjectProperty ;
+                                     rdfs:domain <http://www.w3.org/ns/oa#Annotation> ;
+                                     rdfs:range <http://www.w3.org/ns/oa#Motivation> ;
+                                     rdfs:isDefinedBy <http://www.w3.org/ns/oa#> ;
+                                     rdfs:label "motivation"@en .
+
+###  http://www.w3.org/ns/dqv#qualityAssessment
+<http://www.w3.org/ns/dqv#qualityAssessment> rdf:type <http://www.w3.org/ns/oa#Motivation> ;
+                                             rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                             rdfs:label "quality assessment"@en .
+
+###  http://www.w3.org/ns/dqv#completeness
+<http://www.w3.org/ns/dqv#completeness> rdf:type <http://www.w3.org/ns/dqv#Dimension> ;
+                                        rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                        rdfs:label "Completeness"@en ;
+                                        rdfs:seeAlso <http://www.w3.org/TR/vocab-dqv/> .
+
+###  http://www.w3.org/ns/dqv#accuracy
+<http://www.w3.org/ns/dqv#accuracy> rdf:type <http://www.w3.org/ns/dqv#Dimension> ;
+                                    rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                    rdfs:label "Accuracy"@en ;
+                                    rdfs:seeAlso <http://www.w3.org/TR/vocab-dqv/> .
+
+###  http://www.w3.org/ns/dqv#timeliness
+<http://www.w3.org/ns/dqv#timeliness> rdf:type <http://www.w3.org/ns/dqv#Dimension> ;
+                                      rdfs:isDefinedBy <http://www.w3.org/ns/dqv> ;
+                                      rdfs:label "Timeliness"@en ;
+                                      rdfs:seeAlso <http://www.w3.org/TR/vocab-dqv/> .
+
+
+#################################################################
+#    ODRL stubs (http://www.w3.org/ns/odrl/2/)
+#################################################################
+
+###  http://www.w3.org/ns/odrl/2/Policy
+odrl:Policy rdf:type owl:Class ;
+            rdfs:isDefinedBy odrl: ;
+            rdfs:label "Policy"@en ;
+            rdfs:seeAlso <https://www.w3.org/TR/odrl-vocab/> .
+
+###  http://www.w3.org/ns/odrl/2/Set
+odrl:Set rdf:type owl:Class ;
+         rdfs:subClassOf odrl:Policy ;
+         rdfs:isDefinedBy odrl: ;
+         rdfs:label "Set"@en .
+
+###  http://www.w3.org/ns/odrl/2/Offer
+odrl:Offer rdf:type owl:Class ;
+           rdfs:subClassOf odrl:Policy ;
+           rdfs:isDefinedBy odrl: ;
+           rdfs:label "Offer"@en .
+
+###  http://www.w3.org/ns/odrl/2/Agreement
+odrl:Agreement rdf:type owl:Class ;
+               rdfs:subClassOf odrl:Policy ;
+               rdfs:isDefinedBy odrl: ;
+               rdfs:label "Agreement"@en .
+
 ###  http://www.w3.org/ns/odrl/2/Request
-odrl:Request rdf:type owl:Class .
+odrl:Request rdf:type owl:Class ;
+             rdfs:subClassOf odrl:Policy ;
+             rdfs:isDefinedBy odrl: ;
+             rdfs:label "Request"@en .
+
+###  http://www.w3.org/ns/odrl/2/Rule
+odrl:Rule rdf:type owl:Class ;
+          rdfs:isDefinedBy odrl: ;
+          rdfs:label "Rule"@en .
+
+###  http://www.w3.org/ns/odrl/2/Permission
+odrl:Permission rdf:type owl:Class ;
+                rdfs:subClassOf odrl:Rule ;
+                rdfs:isDefinedBy odrl: ;
+                rdfs:label "Permission"@en .
+
+###  http://www.w3.org/ns/odrl/2/Prohibition
+odrl:Prohibition rdf:type owl:Class ;
+                 rdfs:subClassOf odrl:Rule ;
+                 rdfs:isDefinedBy odrl: ;
+                 rdfs:label "Prohibition"@en .
+
+###  http://www.w3.org/ns/odrl/2/Duty
+odrl:Duty rdf:type owl:Class ;
+          rdfs:subClassOf odrl:Rule ;
+          rdfs:isDefinedBy odrl: ;
+          rdfs:label "Duty"@en .
+
+###  http://www.w3.org/ns/odrl/2/Action
+odrl:Action rdf:type owl:Class ;
+            rdfs:isDefinedBy odrl: ;
+            rdfs:label "Action"@en .
+
+###  http://www.w3.org/ns/odrl/2/Constraint
+odrl:Constraint rdf:type owl:Class ;
+                rdfs:isDefinedBy odrl: ;
+                rdfs:label "Constraint"@en .
+
+###  http://www.w3.org/ns/odrl/2/Party
+odrl:Party rdf:type owl:Class ;
+           rdfs:isDefinedBy odrl: ;
+           rdfs:label "Party"@en .
+
+###  http://www.w3.org/ns/odrl/2/Asset
+odrl:Asset rdf:type owl:Class ;
+           rdfs:isDefinedBy odrl: ;
+           rdfs:label "Asset"@en .
+
+###  http://www.w3.org/ns/odrl/2/permission
+odrl:permission rdf:type owl:ObjectProperty ;
+                rdfs:domain odrl:Policy ;
+                rdfs:range odrl:Permission ;
+                rdfs:isDefinedBy odrl: ;
+                rdfs:label "permission"@en .
+
+###  http://www.w3.org/ns/odrl/2/prohibition
+odrl:prohibition rdf:type owl:ObjectProperty ;
+                 rdfs:domain odrl:Policy ;
+                 rdfs:range odrl:Prohibition ;
+                 rdfs:isDefinedBy odrl: ;
+                 rdfs:label "prohibition"@en .
+
+###  http://www.w3.org/ns/odrl/2/obligation
+odrl:obligation rdf:type owl:ObjectProperty ;
+                rdfs:domain odrl:Policy ;
+                rdfs:range odrl:Duty ;
+                rdfs:isDefinedBy odrl: ;
+                rdfs:label "obligation"@en .
+
+###  http://www.w3.org/ns/odrl/2/action
+odrl:action rdf:type owl:ObjectProperty ;
+            rdfs:domain odrl:Rule ;
+            rdfs:range odrl:Action ;
+            rdfs:isDefinedBy odrl: ;
+            rdfs:label "action"@en .
+
+###  http://www.w3.org/ns/odrl/2/target
+odrl:target rdf:type owl:ObjectProperty ;
+            rdfs:domain odrl:Rule ;
+            rdfs:range odrl:Asset ;
+            rdfs:isDefinedBy odrl: ;
+            rdfs:label "target"@en .
+
+###  http://www.w3.org/ns/odrl/2/assigner
+odrl:assigner rdf:type owl:ObjectProperty ;
+              rdfs:domain odrl:Rule ;
+              rdfs:range odrl:Party ;
+              rdfs:isDefinedBy odrl: ;
+              rdfs:label "assigner"@en .
+
+###  http://www.w3.org/ns/odrl/2/assignee
+odrl:assignee rdf:type owl:ObjectProperty ;
+              rdfs:domain odrl:Rule ;
+              rdfs:range odrl:Party ;
+              rdfs:isDefinedBy odrl: ;
+              rdfs:label "assignee"@en .
+
+###  http://www.w3.org/ns/odrl/2/constraint
+odrl:constraint rdf:type owl:ObjectProperty ;
+                rdfs:domain odrl:Rule ;
+                rdfs:range odrl:Constraint ;
+                rdfs:isDefinedBy odrl: ;
+                rdfs:label "constraint"@en .
+
+###  http://www.w3.org/ns/odrl/2/read
+odrl:read rdf:type odrl:Action ;
+          rdfs:isDefinedBy odrl: ;
+          rdfs:label "read"@en .
+
+###  http://www.w3.org/ns/odrl/2/use
+odrl:use rdf:type odrl:Action ;
+         rdfs:isDefinedBy odrl: ;
+         rdfs:label "use"@en .
 
 
 ###  http://www.w3.org/ns/prov#Activity
@@ -1170,18 +1453,6 @@ prov:Activity rdf:type owl:Class .
 
 ###  http://www.w3.org/ns/prov#Entity
 prov:Entity rdf:type owl:Class .
-
-
-###  http://xmlns.com/foaf/0.1/Document
-<http://xmlns.com/foaf/0.1/Document> rdf:type owl:Class ;
-                                     rdfs:isDefinedBy <http://xmlns.com/foaf/0.1/> ;
-                                     rdfs:label "Document"@en .
-
-
-###  http://xmlns.com/foaf/0.1/Organization
-<http://xmlns.com/foaf/0.1/Organization> rdf:type owl:Class ;
-                                         rdfs:isDefinedBy <http://xmlns.com/foaf/0.1/> ;
-                                         rdfs:label "Organization"@en .
 
 
 ###  https://w3id.org/cerif2/Agent
@@ -1224,8 +1495,111 @@ prov:Entity rdf:type owl:Class .
 
 ###  https://w3id.org/cerif2/Electronic_Address
 <https://w3id.org/cerif2/Electronic_Address> rdf:type owl:Class ;
+                                             rdfs:subClassOf <https://w3id.org/cerif2/Contact_Information> ;
                                              rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
                                              rdfs:label "Electronic Address"@en .
+
+
+###  https://w3id.org/cerif2/Contact_Information
+<https://w3id.org/cerif2/Contact_Information> rdf:type owl:Class ;
+                                              rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                              rdfs:label "Contact Information"@en .
+
+
+###  https://w3id.org/cerif2/Person_Name
+<https://w3id.org/cerif2/Person_Name> rdf:type owl:Class ;
+                                      rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                      rdfs:label "Person Name"@en .
+
+
+###  https://w3id.org/cerif2/Postal_Address
+<https://w3id.org/cerif2/Postal_Address> rdf:type owl:Class ;
+                                         rdfs:subClassOf <https://w3id.org/cerif2/Contact_Information> ;
+                                         rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                         rdfs:label "Postal Address"@en .
+
+
+###  https://w3id.org/cerif2/Physical_Address
+<https://w3id.org/cerif2/Physical_Address> rdf:type owl:Class ;
+                                         rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                         rdfs:label "Physical Address"@en .
+
+
+###  https://w3id.org/cerif2/Agent#contacts
+<https://w3id.org/cerif2/Agent#contacts> rdf:type owl:ObjectProperty ;
+                                         rdfs:domain <https://w3id.org/cerif2/Agent> ;
+                                         rdfs:range <https://w3id.org/cerif2/Contact_Information> ;
+                                         rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                         rdfs:label "contacts"@en .
+
+
+###  https://w3id.org/cerif2/Person#name
+<https://w3id.org/cerif2/Person#name> rdf:type owl:ObjectProperty ;
+                                      rdfs:domain <https://w3id.org/cerif2/Person> ;
+                                      rdfs:range <https://w3id.org/cerif2/Person_Name> ;
+                                      rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                      rdfs:label "name"@en .
+
+
+###  https://w3id.org/cerif2/Person_Name#firstNames
+<https://w3id.org/cerif2/Person_Name#firstNames> rdf:type owl:DatatypeProperty ;
+                                                 rdfs:domain <https://w3id.org/cerif2/Person_Name> ;
+                                                 rdfs:range <https://w3id.org/cerif2/Multilingual_String> ;
+                                                 rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                 rdfs:label "first names"@en .
+
+
+###  https://w3id.org/cerif2/Person_Name#familyNames
+<https://w3id.org/cerif2/Person_Name#familyNames> rdf:type owl:DatatypeProperty ;
+                                                  rdfs:domain <https://w3id.org/cerif2/Person_Name> ;
+                                                  rdfs:range <https://w3id.org/cerif2/Multilingual_String> ;
+                                                  rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                  rdfs:label "family names"@en .
+
+
+###  https://w3id.org/cerif2/Electronic_Address#uri
+<https://w3id.org/cerif2/Electronic_Address#uri> rdf:type owl:DatatypeProperty ;
+                                               rdfs:domain <https://w3id.org/cerif2/Electronic_Address> ;
+                                               rdfs:range <https://w3id.org/cerif2/URI> ;
+                                               rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                               rdfs:label "uri"@en .
+
+
+###  https://w3id.org/cerif2/Postal_Address#physicalAddress
+<https://w3id.org/cerif2/Postal_Address#physicalAddress> rdf:type owl:ObjectProperty ;
+                                                         rdfs:domain <https://w3id.org/cerif2/Postal_Address> ;
+                                                         rdfs:range <https://w3id.org/cerif2/Physical_Address> ;
+                                                         rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                         rdfs:label "physical address"@en .
+
+
+###  https://w3id.org/cerif2/Physical_Address#country
+<https://w3id.org/cerif2/Physical_Address#country> rdf:type owl:ObjectProperty ;
+                                                 rdfs:domain <https://w3id.org/cerif2/Physical_Address> ;
+                                                 rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                 rdfs:label "country"@en .
+
+
+###  https://w3id.org/cerif2/Physical_Address#locality
+<https://w3id.org/cerif2/Physical_Address#locality> rdf:type owl:DatatypeProperty ;
+                                                  rdfs:domain <https://w3id.org/cerif2/Physical_Address> ;
+                                                  rdfs:range <https://w3id.org/cerif2/Multilingual_String> ;
+                                                  rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                  rdfs:label "locality"@en .
+
+
+###  https://w3id.org/cerif2/Group_or_Organisation_Unit#name
+<https://w3id.org/cerif2/Group_or_Organisation_Unit#name> rdf:type owl:DatatypeProperty ;
+                                                          rdfs:domain <https://w3id.org/cerif2/Group_or_Organisation_Unit> ;
+                                                          rdfs:range <https://w3id.org/cerif2/Multilingual_String> ;
+                                                          rdfs:isDefinedBy <https://w3id.org/cerif2/> ;
+                                                          rdfs:label "name"@en .
+
+
+###  https://w3id.org/cerif2/URI
+<https://w3id.org/cerif2/URI> rdf:type rdfs:Datatype ;
+                            owl:equivalentClass xsd:anyURI ;
+                            rdfs:isDefinedBy <https://w3id.org/cerif2/> .
 
 
 ###  https://w3id.org/cerif2/Funding
@@ -1302,9 +1676,9 @@ prov:Entity rdf:type owl:Class .
                  rdfs:subClassOf <http://www.w3.org/ns/dcat#Distribution> ,
                                  [ rdf:type owl:Restriction ;
                                    owl:onProperty dcterms:hasFormat ;
-                                   owl:someValuesFrom <http://xmlns.com/foaf/0.1/Document>
+                                   owl:someValuesFrom <https://w3id.org/cerif2/Document>
                                  ] ;
-                 rdfs:comment "A dcat:Distribution accessible via an API; :dct:hasFormat links to an OpenAPI or JSON Schema description (foaf:Document)."@en ;
+                 rdfs:comment "A dcat:Distribution accessible via an API; dcterms:hasFormat links to an OpenAPI or JSON Schema cerif:Document."@en ;
                  rdfs:label "API Distribution"@en .
 
 
@@ -1343,8 +1717,25 @@ prov:Entity rdf:type owl:Class .
 
 ###  https://w3id.org/orda#AccessModality
 :AccessModality rdf:type owl:Class ;
-                rdfs:comment "Technical, legal or organisational arrangement for providing data (DA Art. 9)."@en ;
+                rdfs:subClassOf odrl:Set ;
+                rdfs:comment "Technical, legal or organisational access arrangement (DA Art. 9), modelled as an ODRL Set of rules. Proposals use :ProposedAccessOffer (odrl:Offer); DSC-determined terms use :DeterminedAccessOffer; granted access is recorded with :hasAccessAgreement (odrl:Agreement)."@en ;
                 rdfs:label "Access Modality"@en .
+
+
+###  https://w3id.org/orda#ProposedAccessOffer
+:ProposedAccessOffer rdf:type owl:Class ;
+                     rdfs:subClassOf :AccessModality ,
+                                     odrl:Offer ;
+                     rdfs:comment "Researcher-proposed access terms linked from :DataAccessApplication via :suggestsModality."@en ;
+                     rdfs:label "Proposed Access Offer"@en .
+
+
+###  https://w3id.org/orda#DeterminedAccessOffer
+:DeterminedAccessOffer rdf:type owl:Class ;
+                      rdfs:subClassOf :AccessModality ,
+                                      odrl:Offer ;
+                      rdfs:comment "DSC-E-determined access terms linked from :ReasonedRequest via :hasAccessModality."@en ;
+                      rdfs:label "Determined Access Offer"@en .
 
 
 ###  https://w3id.org/orda#AccessRejectedDecision
@@ -1549,7 +1940,7 @@ prov:Entity rdf:type owl:Class .
                                    owl:onProperty dcterms:format ;
                                    owl:hasValue <http://publications.europa.eu/resource/authority/file-type/CSV>
                                  ] ;
-                 rdfs:comment "CSV distribution with csvw:Schema via dct:hasFormat."@en ;
+                 rdfs:comment "CSV distribution with csvw:Schema via dct:hasFormat. Attach :hasQualityAssessment for documented data quality limitations."@en ;
                  rdfs:label "CSV Distribution"@en ;
                  rdfs:seeAlso <https://www.w3.org/ns/csvw> .
 
@@ -1628,7 +2019,7 @@ prov:Entity rdf:type owl:Class .
 ###  https://w3id.org/orda#DSADataCatalogue
 :DSADataCatalogue rdf:type owl:Class ;
                   rdfs:subClassOf :DataCatalogue ;
-                  rdfs:comment "Platform data catalogue per DA Art. 6(4)."@en ;
+                  rdfs:comment "Platform data catalogue per DA Art. 6(4). Distributions may carry :hasQualityAssessment annotations documenting known completeness, timeliness, or other limitations."@en ;
                   rdfs:label "DSA Data Catalogue"@en .
 
 
@@ -1712,7 +2103,7 @@ prov:Entity rdf:type owl:Class .
 
 ###  https://w3id.org/orda#DataManagementPlan
 :DataManagementPlan rdf:type owl:Class ;
-                    rdfs:subClassOf <http://xmlns.com/foaf/0.1/Document> ;
+                    rdfs:subClassOf :ProcessDocument ;
                     rdfs:comment "Plan governing storage, processing and protection of accessed data."@en ;
                     rdfs:label "Data Management Plan"@en .
 
@@ -1735,7 +2126,7 @@ prov:Entity rdf:type owl:Class .
 
 ###  https://w3id.org/orda#DataProvider
 :DataProvider rdf:type owl:Class ;
-              rdfs:subClassOf <http://xmlns.com/foaf/0.1/Organization> ;
+              rdfs:subClassOf <https://w3id.org/cerif2/Organisation_Unit> ;
               owl:disjointWith :ResearchOrganisation ;
               rdfs:comment "The organisation holding the data subject to the access request."@en ;
               rdfs:label "Data Provider"@en .
@@ -1901,8 +2292,8 @@ prov:Entity rdf:type owl:Class .
 
 ###  https://w3id.org/orda#Mediator
 :Mediator rdf:type owl:Class ;
-          rdfs:subClassOf <http://xmlns.com/foaf/0.1/Agent> ;
-          rdfs:comment "An independent agent conducting mediation between DSC-E and the data provider."@en ;
+          rdfs:subClassOf <https://w3id.org/cerif2/Person> ;
+          rdfs:comment "An independent person conducting mediation between DSC-E and the data provider."@en ;
           rdfs:label "Mediator"@en .
 
 
@@ -1971,8 +2362,7 @@ prov:Entity rdf:type owl:Class .
 
 ###  https://w3id.org/orda#ProcessDocument
 :ProcessDocument rdf:type owl:Class ;
-                 rdfs:subClassOf prov:Entity ,
-                                 <http://xmlns.com/foaf/0.1/Document> ;
+                 rdfs:subClassOf prov:Entity ;
                  rdfs:comment "A document in the DSA data access procedure (applications, reasoned requests, amendments). Distinct from cerif:Document research outputs; use prov:wasRevisionOf for version chains."@en ;
                  rdfs:label "Process Document"@en .
 
@@ -2036,7 +2426,7 @@ prov:Entity rdf:type owl:Class .
 
 ###  https://w3id.org/orda#RegulatoryAuthority
 :RegulatoryAuthority rdf:type owl:Class ;
-                     rdfs:subClassOf <http://xmlns.com/foaf/0.1/Organization> ;
+                     rdfs:subClassOf <https://w3id.org/cerif2/Organisation_Unit> ;
                      rdfs:comment "Public authority with supervisory or coordination functions relevant to DSA Art. 40 (DSCs, data protection authorities, European Commission)."@en ;
                      rdfs:label "Regulatory Authority"@en .
 
@@ -2070,8 +2460,7 @@ prov:Entity rdf:type owl:Class .
 
 ###  https://w3id.org/orda#ResearchOrganisation
 :ResearchOrganisation rdf:type owl:Class ;
-                      rdfs:subClassOf <http://xmlns.com/foaf/0.1/Organization> ,
-                                      <https://w3id.org/cerif2/Organisation_Unit> ,
+                      rdfs:subClassOf <https://w3id.org/cerif2/Organisation_Unit> ,
                                       [ rdf:type owl:Restriction ;
                                         owl:onProperty <https://w3id.org/dpv/owl#hasLegalBasis> ;
                                         owl:someValuesFrom :CDSMDirective
@@ -2130,12 +2519,12 @@ prov:Entity rdf:type owl:Class .
 
 ###  https://w3id.org/orda#Researcher
 :Researcher rdf:type owl:Class ;
-            rdfs:subClassOf <http://xmlns.com/foaf/0.1/Person> ,
-                            <https://w3id.org/cerif2/Person> ,
+            rdfs:subClassOf <https://w3id.org/cerif2/Person> ,
                             [ rdf:type owl:Restriction ;
-                              owl:onProperty vcard:hasAddress ;
-                              owl:someValuesFrom vcard:Address
+                              owl:onProperty :hasContact ;
+                              owl:someValuesFrom <https://w3id.org/cerif2/Postal_Address>
                             ] ;
+            rdfs:comment "A researcher modelled as cerif:Person with :hasPersonName, :hasContact (postal and/or electronic), and optional :hasAffiliationStatement."@en ;
             rdfs:label "Researcher"@en ;
             rdfs:seeAlso <https://w3id.org/cerif2/Person> .
 
